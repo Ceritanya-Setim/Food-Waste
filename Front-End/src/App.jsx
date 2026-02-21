@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RegisterPage } from "./pages/RegisterPage";
 import { SignInPage } from "./pages/SignInPage";
-
+import './App.css';
 function App() {
   return (
     <BrowserRouter>

@@ -103,7 +103,7 @@ export const RegisterPage = () => {
                             </div>
 
                             <button type="submit" className="btn-register">Daftar</button>
-                            <p className="login-prompt">
+                            <p className="register-text">
                                 Sudah punya akun? <Link to="/SignInPage">Masuk di sini</Link>
                             </p>
                         </form>

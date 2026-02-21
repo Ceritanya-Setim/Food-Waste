@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; // Gunakan Link untuk navigasi internal
+import { Link, useNavigate } from "react-router-dom";
 
 export const SignInPage = () => {
+    const navigate = useNavigate();
+
 
     const [formData, setFormData] = useState({
-        email: '', 
+        email: '',
         password: ''
     });
-    
+
     const handleChange = (e) => {
-    // Kita mengambil 'name' (id input) dan 'value' (teks yang diketik)
-    const { name, value } = e.target;
-    setFormData({
-        ...formData, 
-        [name]: value // variabel value ini yang menyimpan ketikan user
-    });
-};
+        // Kita mengambil 'name' (id input) dan 'value' (teks yang diketik)
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value // variabel value ini yang menyimpan ketikan user
+        });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -43,7 +45,7 @@ export const SignInPage = () => {
                         <form className="signin-form" onSubmit={handleSubmit}>
                             <div className="input-email">
                                 <label>Email</label>
-                                <input 
+                                <input
                                     name="email" // Harus sesuai dengan key di useState
                                     type="email"
                                     placeholder="name@gmail.com"
@@ -55,7 +57,7 @@ export const SignInPage = () => {
 
                             <div className="input-password">
                                 <label>Password</label>
-                                <input 
+                                <input
                                     name="password" // Harus sesuai dengan key di useState
                                     type="password"
                                     placeholder="password"
@@ -82,14 +84,13 @@ export const SignInPage = () => {
                                 </button>
                             </div>
 
-                            <p className="register-text">
+                            <p className="signin-text">
                                 Don't have an Account? <Link to="/RegisterPage">Register Now</Link>
                             </p>
                         </form>
                     </div>
                 </div>
-            </div>
-
+        </div>
             <footer className="footer">
                 <p>By Continuing, you agree to receive calls or messages from FoodSave and its affiliates.</p>
             </footer>
