@@ -1,0 +1,1 @@
+DROP TABLE surplus_foods;
