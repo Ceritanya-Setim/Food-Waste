@@ -1,7 +1,5 @@
 # Docker Setup & Manual Database Verification Guide
 
----
-
 ## 1. Prerequisites
 
 Make sure Docker is installed:
@@ -20,8 +18,6 @@ Enable auto-start on boot:
 sudo systemctl enable docker
 ```
 
----
-
 ## 2. Start PostgreSQL Container
 
 From the project root (where docker-compose.yml is located):
@@ -38,8 +34,6 @@ You should see
 ```bash
 foodapp-postgres
 ```
-
----
 
 ## 3. Run Migrations
 
@@ -58,8 +52,6 @@ To seed data:
 go run migrate.go seed
 ```
 
----
-
 ## 4. Access PostgreSQL Manually (Inside Container)
 
 To verify tables and data directly:
@@ -68,8 +60,6 @@ To verify tables and data directly:
 ```
 
 You are now inside the PostgreSQL CLI.
-
----
 
 ### Useful PostgreSQL Commands
 
@@ -93,8 +83,6 @@ Exit PostgreSQL:
 \q
 ```
 
----
-
 ## 5. Reset Database (Optional)
 
 To completely reset the database:
@@ -102,8 +90,6 @@ To completely reset the database:
 docker-compose down -v
 docker-compose up -d
 ```
-
----
 
 ## 6. Quick Workflow for Setup 
 
