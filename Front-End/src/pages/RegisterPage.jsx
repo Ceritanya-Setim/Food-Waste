@@ -4,7 +4,7 @@ export const RegisterPage = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        fullname: '', 
+        fullname: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -23,11 +23,11 @@ export const RegisterPage = () => {
     const handleRegis = (e) => {
         e.preventDefault();
         if (formData.password != formData.confirmPassword) {
-            alert("Password and Confirm Password did not match");
+            alert("Password dan konfirmasi password tidak cocok!");
             return;
         }
         console.log("Register Data", formData);
-        navigate("/SignInPage");
+        navigate("/PickRole");
     }
 
     return (
@@ -35,7 +35,7 @@ export const RegisterPage = () => {
             <nav className="navbar">
                 <h1 className="logo">FoodSave</h1>
             </nav>
-            
+
             <div className="main-content">
                 {/* Bagian Gambar (Desktop) */}
                 <div className="img-left-side"></div>
@@ -48,10 +48,10 @@ export const RegisterPage = () => {
                             <p>Bergabung dengan FoodSave untuk mengurangi food waste</p>
                         </header>
 
-                        <form className="register-form" onSubmit={(e) => e.preventDefault()}>
+                        <form className="register-form" onSubmit={handleRegis}>
                             <div className="input-group">
                                 <label>Nama Lengkap</label>
-                                <input 
+                                <input
                                     name="fullname"
                                     type="text"
                                     placeholder="Nama Anda"
@@ -62,7 +62,7 @@ export const RegisterPage = () => {
 
                             <div className="input-group">
                                 <label>Email</label>
-                                <input 
+                                <input
                                     name="email"
                                     type="email"
                                     placeholder="nama@email.com"
@@ -74,15 +74,15 @@ export const RegisterPage = () => {
                             <div className="input-group">
                                 <label>Password</label>
                                 <div className="password-field">
-                                    <input 
+                                    <input
                                         name="password"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Minimal 8 karakter"
                                         value={formData.password}
                                         onChange={handleChange}
                                     />
-                                    <button 
-                                        type="button" 
+                                    <button
+                                        type="button"
                                         className="eye-toggle"
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
@@ -93,7 +93,7 @@ export const RegisterPage = () => {
 
                             <div className="input-group">
                                 <label>Konfirmasi Password</label>
-                                <input 
+                                <input
                                     name="confirmPassword"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Ulangi password"
@@ -112,7 +112,7 @@ export const RegisterPage = () => {
             </div>
 
             <footer className="footer">
-                <p>By Continuing, you agree to receive calls or messages from FoodSave and its affiliates.</p>
+                <p>Dengan melanjutkan, Anda setuju untuk menerima panggilan atau pesanan dari FoodSave dan afiliasinya.</p>
             </footer>
         </div>
     );
