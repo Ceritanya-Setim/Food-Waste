@@ -9,9 +9,9 @@ export const PickRole = () => {
         if (!selected) return;
 
         if (selected === 'restoran') {
-            navigate("/ExplorePageBusiness");
+            navigate("/MerchantDashboard");
         } else {
-            navigate("/ExplorePageConsumer");
+            navigate("/ConsumerDashboard");
         }
     };
 
