@@ -3,6 +3,8 @@ services:
     image: postgres:16
     container_name: foodapp-postgres
     restart: always
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -12,6 +14,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/DB.sql:/docker-entrypoint-initdb.d/DB.sql
+
+  api:
+    build: .
+    container_name: foodapp-api
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5000:5000" 
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:

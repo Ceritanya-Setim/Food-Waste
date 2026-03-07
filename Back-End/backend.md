@@ -22,7 +22,7 @@ sudo systemctl enable docker
 
 From the project root (where docker-compose.yml is located):
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 Check if the container is running:
@@ -32,31 +32,14 @@ docker ps
 
 You should see
 ```bash
-foodapp-postgres
+foodapp-postgres and foodapp-api 
 ```
 
-## 3. Run Migrations
-
-After the database container is running:
-```bash
-go run migrate.go up
-```
-
-To rollback:
-```bash
-go run migrate.go down
-```
-
-To seed data:
-```bash
-go run migrate.go seed
-```
-
-## 4. Access PostgreSQL Manually (Inside Container)
+## 3. Access PostgreSQL Manually (Inside Container)
 
 To access PostgreSQL:
 ```bash
-sudo docker exec -it payment_postgres psql -U postgres -d payment_db
+sudo docker exec -it foodapp-postgres psql -U cihuy -d foodapp
 ```
 
 You are now inside the PostgreSQL CLI.
@@ -95,8 +78,9 @@ docker-compose up -d
 
 ```bash
 cd Back-End
-sudo docker-compose up -d
-go run migrate.go up
-go run migrate.go down
-go run migrate.go seed
+sudo docker-compose up -d --build
 ```
+
+## 7. Another Useful Documentation
+- [DB](./database/DB.sql)
+- [API](./routes/routes.go)
