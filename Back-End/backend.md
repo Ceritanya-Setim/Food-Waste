@@ -66,7 +66,7 @@ Exit PostgreSQL:
 \q
 ```
 
-## 5. Reset Database (Optional)
+## 4. Reset Database (Optional)
 
 To completely reset the database:
 ```bash
@@ -74,13 +74,13 @@ docker-compose down -v
 docker-compose up -d
 ```
 
-## 6. Quick Workflow for Setup 
+## 5. Quick Workflow for Setup 
 
 ```bash
 cd Back-End
 sudo docker-compose up -d --build
 ```
 
-## 7. Another Useful Documentation
+## 6. Another Useful Documentation
 - [DB](./database/DB.sql)
 - [API](./routes/routes.go)
