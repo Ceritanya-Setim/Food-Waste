@@ -3,8 +3,8 @@ package models
 type UserRole string
 
 const (
-	RoleBuyer         UserRole = "buyer"
-	RoleBusinessOwner UserRole = "business_owner"
+	RoleCustomer UserRole = "customer"
+	RoleMerchant UserRole = "merchant"
 )
 
 type User struct {
@@ -13,7 +13,7 @@ type User struct {
 	Email           string   `gorm:"type:varchar(100);uniqueIndex;not null"`
 	PhoneNumber     string   `gorm:"type:varchar(20)"`
 	PasswordHash    string   `gorm:"type:text;not null"`
-	Role            UserRole `gorm:"type:varchar(100);default:buyer;not null"`
+	Role            UserRole `gorm:"type:varchar(100);default:customer;not null"`
 	ProfileImageURL string   `gorm:"type:text"`
 	IsVerified      bool     `gorm:"default:false"`
 }

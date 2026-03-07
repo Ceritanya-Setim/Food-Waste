@@ -3,6 +3,7 @@ package models
 type BusinessCategory string
 
 const (
+	CategoryAsianFood  BusinessCategory = "asian_food"
 	CategoryCafe       BusinessCategory = "cafe"
 	CategoryRestaurant BusinessCategory = "restaurant"
 	CategoryHotel      BusinessCategory = "hotel"

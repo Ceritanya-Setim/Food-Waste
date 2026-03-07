@@ -1,6 +1,10 @@
 package database
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -8,9 +12,30 @@ import (
 var DB *gorm.DB
 
 func Connect() {
-	const conn = "host=localhost user=cihuy password=SE0425 dbname=foodapp port=5432 sslmode=disable"
 
-	db, err := gorm.Open(postgres.Open(conn), &gorm.Config{})
+	err := godotenv.Load()
+	if err != nil {
+		panic("Failed to load .env")
+	}
+
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	sslmode := os.Getenv("DB_SSLMODE")
+
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		host,
+		user,
+		password,
+		dbname,
+		port,
+		sslmode,
+	)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Connection failed")
 	}

@@ -13,7 +13,7 @@ const (
 type SurplusFood struct {
 	BaseModel
 	BusinessLocationID string           `gorm:"type:uuid; not null"`
-	BusinessLocation   BusinessLocation `gorm:"foregnKey:BusinessLocationID;reference:ID"`
+	BusinessLocation   BusinessLocation `gorm:"foreignKey:BusinessLocationID;references:ID"`
 	Title              string           `gorm:"type:varchar(255);not null"`
 	Description        string           `gorm:"type:text"`
 	OriginalPrice      int              `gorm:"not null"`

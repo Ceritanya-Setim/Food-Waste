@@ -4,13 +4,14 @@ services:
     container_name: foodapp-postgres
     restart: always
     environment:
-      POSTGRES_USER: cihuy
-      POSTGRES_PASSWORD: SE0425
-      POSTGRES_DB: foodapp
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./database/DB.sql:/docker-entrypoint-initdb.d/DB.sql
 
 volumes:
   postgres_data:

@@ -54,9 +54,9 @@ go run migrate.go seed
 
 ## 4. Access PostgreSQL Manually (Inside Container)
 
-To verify tables and data directly:
+To access PostgreSQL:
 ```bash
-To verify tables and data directly:
+sudo docker exec -it payment_postgres psql -U postgres -d payment_db
 ```
 
 You are now inside the PostgreSQL CLI.
