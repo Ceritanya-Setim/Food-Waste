@@ -38,7 +38,7 @@ export const ConsumerDashboard = () => {
             {/* Main Content */}
             <main className="explore-main">
                 <header className="hero-section">
-                    <h1>Halo, goji! 👋</h1>
+                    <h1>Halo! 👋</h1>
                     <p>Temukan makanan favorit dengan harga hemat</p>
                     
                     <div className="search-bar">
