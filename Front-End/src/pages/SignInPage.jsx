@@ -19,9 +19,9 @@ export const SignInPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Data sent : ", formData);
-        // Jika login berhasil, biasanya pindah ke dashboard
-        // navigate("/Dashboard"); 
+        console.log("Login data:", formData);
+        // Untuk demo, setelah login lanjut ke pemilihan peran.
+        navigate("/PickRole");
     };
 
     return (

@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SignInPage } from "./pages/SignInPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { PickRole } from "./pages/PickRole";
-import { MerchantDashboard } from "./pages/MerchantDashboard";
-import { ConsumerDashboard } from "./pages/ConsumerDashboard";
-import "./App.css"; 
+import ConsumerDashboard from "./pages/Consumer/DashboardConsumer";
+import ExploreConsumer from "./pages/Consumer/ExploreConsumer";
+import ImpactConsumer from "./pages/Consumer/ImpactConsumer";
+import { MerchantDashboard } from "./pages/Merchant/MerchantDashboard";
+import "./App.css";
 
 function App() {
   return (
@@ -14,9 +16,11 @@ function App() {
         <Route path="/SignInPage" element={<SignInPage />} />
         <Route path="/RegisterPage" element={<RegisterPage />} />
         <Route path="/PickRole" element={<PickRole />} />
-        
+
         {/* Halaman Dashboard sesuai Role */}
         <Route path="/ConsumerDashboard" element={<ConsumerDashboard />} />
+        <Route path="/ExploreConsumer" element={<ExploreConsumer />} />
+        <Route path="/ImpactConsumer" element={<ImpactConsumer />} />
         <Route path="/MerchantDashboard" element={<MerchantDashboard />} />
       </Routes>
     </BrowserRouter>

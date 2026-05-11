@@ -1,119 +1,107 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 export const RegisterPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-    const [formData, setFormData] = useState({
-        fullname: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    const [showPassword, setShowPassword] = useState(false);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleRegis = (e) => {
-        e.preventDefault();
-        if (formData.password != formData.confirmPassword) {
-            alert("Password dan konfirmasi password tidak cocok!");
-            return;
-        }
-        console.log("Register Data", formData);
-        navigate("/PickRole");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Password dan konfirmasi password harus sama.");
+      return;
     }
 
-    return (
-        <div className="register-page-container">
-            <nav className="navbar">
-                <h1 className="logo">FoodSave</h1>
-            </nav>
+    console.log("Registrasi berhasil:", formData);
+    navigate("/PickRole");
+  };
 
-            <div className="main-content">
-                {/* Bagian Gambar (Desktop) */}
-                <div className="img-left-side"></div>
+  return (
+    <div className="Register-Container">
+      <nav className="navbar">
+        <h1 className="logo">FoodSave</h1>
+      </nav>
 
-                {/* Bagian Form */}
-                <div className="form-right-side">
-                    <div className="form-wrapper">
-                        <header className="form-header">
-                            <h2>Daftar Akun Baru</h2>
-                            <p>Bergabung dengan FoodSave untuk mengurangi food waste</p>
-                        </header>
+      <div className="main-content register-page">
+        <div className="form-right-side">
+          <div className="form-container">
+            <header className="form-header">
+              <h2>Buat Akun Baru</h2>
+              <p>Daftar untuk memulai dan pilih peran Anda berikutnya.</p>
+            </header>
 
-                        <form className="register-form" onSubmit={handleRegis}>
-                            <div className="input-group">
-                                <label>Nama Lengkap</label>
-                                <input
-                                    name="fullname"
-                                    type="text"
-                                    placeholder="Nama Anda"
-                                    value={formData.fullname}
-                                    onChange={handleChange}
-                                />
-                            </div>
+            <form className="register-form" onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label>Nama Lengkap</label>
+                <input
+                  name="name"
+                  type="text"
+                  placeholder="Nama lengkap"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                            <div className="input-group">
-                                <label>Email</label>
-                                <input
-                                    name="email"
-                                    type="email"
-                                    placeholder="nama@email.com"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                />
-                            </div>
+              <div className="input-group">
+                <label>Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="name@gmail.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                            <div className="input-group">
-                                <label>Password</label>
-                                <div className="password-field">
-                                    <input
-                                        name="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="Minimal 8 karakter"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="eye-toggle"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                    >
-                                        {showPassword ? "🙈" : "👁️"}
-                                    </button>
-                                </div>
-                            </div>
+              <div className="input-group">
+                <label>Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                            <div className="input-group">
-                                <label>Konfirmasi Password</label>
-                                <input
-                                    name="confirmPassword"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Ulangi password"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                />
-                            </div>
+              <div className="input-group">
+                <label>Konfirmasi Password</label>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Konfirmasi password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                            <button type="submit" className="btn-register">Daftar</button>
-                            <p className="register-text">
-                                Sudah punya akun? <Link to="/SignInPage">Masuk di sini</Link>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            </div>
+              <button type="submit" className="btn-primary">Daftar</button>
 
-            <footer className="footer">
-                <p>Dengan melanjutkan, Anda setuju untuk menerima panggilan atau pesanan dari FoodSave dan afiliasinya.</p>
-            </footer>
+              <p className="signin-text">
+                Sudah punya akun? <Link to="/SignInPage">Masuk di sini</Link>
+              </p>
+            </form>
+          </div>
         </div>
-    );
+      </div>
+
+      <footer className="footer">
+        <p>Dengan melanjutkan, Anda setuju untuk menerima panggilan atau pesanan dari FoodSave dan afiliasinya.</p>
+      </footer>
+    </div>
+  );
 };

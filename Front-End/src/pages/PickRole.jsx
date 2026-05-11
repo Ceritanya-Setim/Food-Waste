@@ -8,7 +8,7 @@ export const PickRole = () => {
     const handleRoute = () => {
         if (!selected) return;
 
-        if (selected === 'restoran') {
+        if (selected === 'merchant') {
             navigate("/MerchantDashboard");
         } else {
             navigate("/ConsumerDashboard");
@@ -30,36 +30,36 @@ export const PickRole = () => {
                 </div>
 
                 <div className="role-grid">
-                    {/* Card Pembeli */}
+                    {/* Card Consumer */}
                     <div
-                        className={`option-card ${selected === 'pembeli' ? 'is-selected' : ''}`}
-                        onClick={() => setSelected('pembeli')}
+                        className={`option-card ${selected === 'consumer' ? 'is-selected' : ''}`}
+                        onClick={() => setSelected('consumer')}
                     >
                         <div className="role-image-container">
                             <img
                                 src="https://media.istockphoto.com/id/2000117676/photo/here-try-some-tacos-are-super-tasty.jpg?s=612x612&w=0&k=20&c=cPSqg040qMkg5uYiKUhqg7QJkwwNR9_ZYbnzlZ2-rF8="
-                                alt="Pembeli"
+                                alt="Consumer"
                             />
                         </div>
                         <div className="role-card-content">
-                            <h3>Pembeli</h3>
+                            <h3>Consumer</h3>
                             <p>Dapatkan makanan berkualitas dengan harga yang jauh lebih hemat.</p>
                         </div>
                     </div>
 
-                    {/* Card Restoran */}
+                    {/* Card Merchant */}
                     <div
-                        className={`option-card ${selected === 'restoran' ? 'is-selected' : ''}`}
-                        onClick={() => setSelected('restoran')}
+                        className={`option-card ${selected === 'merchant' ? 'is-selected' : ''}`}
+                        onClick={() => setSelected('merchant')}
                     >
                         <div className="role-image-container">
                             <img
                                 src="https://idebiz.id/wp-content/uploads/2023/09/Pelatihan-Chef-Kunci-Sukses-Kuliner.jpg"
-                                alt="Restoran"
+                                alt="Merchant"
                             />
                         </div>
                         <div className="role-card-content">
-                            <h3>Restoran</h3>
+                            <h3>Merchant</h3>
                             <p>Jual makanan surplus Anda untuk mengurangi kerugian operasional.</p>
                         </div>
                     </div>
