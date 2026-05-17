@@ -1,0 +1,216 @@
+.explore-page-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    background: transparent !important; 
+    background-color: transparent !important;
+    font-family: system-ui, -apple-system, sans-serif;
+    width: 100% !important;
+}
+
+.explore-container {
+    max-width: 1400px !important; 
+    width: 100% !important;
+    margin: 0 auto !important;    
+    padding: 32px 0 !important; 
+    background: transparent !important; 
+    background-color: transparent !important;
+    box-sizing: border-box !important;
+    flex: 1 !important;
+}
+
+.explore-section {
+    margin-bottom: 40px !important;
+}
+
+/* Header Judul bertumpuk ke bawah */
+.explore-section-header {
+    margin-bottom: 24px !important;
+    text-align: left !important;
+}
+
+.explore-section-header h2 {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 0 6px 0 !important;
+}
+
+.explore-section-header p {
+    font-size: 14px !important;
+    color: #64748b !important;
+    margin: 0 !important;
+}
+
+.insights-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+}
+
+.insight-card {
+    background-color: #ffffff !important; 
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.insight-card-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 16px !important;
+}
+
+.insight-icon-wrapper {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+}
+
+.icon-style-1 { background-color: #eff6ff !important; color: #2563eb !important; }
+.icon-style-2 { background-color: #f0fdf4 !important; color: #16a34a !important; }
+.icon-style-3 { background-color: #f5f3ff !important; color: #7c3aed !important; }
+.icon-style-4 { background-color: #fff7ed !important; color: #ea580c !important; }
+
+.insight-badge-mini {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    background-color: #f0fdf4 !important;
+    color: #16a34a !important;
+    padding: 4px 8px !important;
+    border-radius: 20px !important;
+}
+
+.insight-badge-mini.badge-top {
+    background-color: #f5f3ff !important;
+    color: #7c3aed !important;
+}
+
+.insight-content .insight-title {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 0 4px 0 !important;
+}
+
+.insight-content .insight-subtitle {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+}
+
+.insight-content .insight-desc {
+    font-size: 12px !important;
+    color: #64748b !important;
+    margin: 0 !important;
+}
+
+.trending-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+}
+
+.trending-card {
+    background-color: #ffffff !important; 
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.card-image-area {
+    position: relative !important;
+    height: 180px !important;
+    width: 100% !important;
+}
+
+.trending-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.demand-badge {
+    position: absolute !important;
+    top: 12px !important;
+    left: 12px !important;
+    background-color: #ea580c !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+}
+
+.category-tag {
+    position: absolute !important;
+    bottom: 12px !important;
+    left: 12px !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: #1e293b !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 4px 8px !important;
+    border-radius: 20px !important;
+}
+
+.card-info-area {
+    padding: 16px !important;
+}
+
+.item-name {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    margin: 0 0 12px 0 !important;
+}
+
+.item-meta-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 1px dashed #e2e8f0 !important;
+    padding-top: 12px !important;
+}
+
+.meta-col {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.meta-label {
+    font-size: 11px !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    margin-bottom: 2px !important;
+}
+
+.meta-value {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.text-dark { color: #0f172a !important; }
+.text-green { color: #16a34a !important; }
+
+/* RESPONSIVE TABLET & MOBILE */
+@media (max-width: 1024px) {
+    .insights-grid, .trending-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .insights-grid, .trending-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
