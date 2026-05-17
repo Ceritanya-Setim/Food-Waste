@@ -3,9 +3,25 @@ import NavbarConsumer from "../../components/ConsumerNavbar/NavbarConsumer";
 import Footer from "../../components/Footer";
 import { SearchIcon, StarIcon, MapPinIcon, BoxIcon, ClockIcon } from "../../components/Icons";
 import "./DashboardConsumer.css";
+import AsianFoodImg from "../../assets/Consumer/Dashboard/AsianFoodThumbnail.png";
+import BakeryImg from "../../assets/Consumer/Dashboard/BakeryThumbnail.png";
+import BuffetsImg from "../../assets/Consumer/Dashboard/BuffetsThumbnail.png";
+import FastFoodImg from "../../assets/Consumer/Dashboard/FastFoodThumbnail.png";
+import GourmetDinnerSet from "../../assets/Consumer/Dashboard/Promo/GourmetDinnerSet.png";
+import MargheritaPizza from "../../assets/Consumer/Dashboard/Promo/MargheritaLargePizza.png";
+import PastryMixBox from "../../assets/Consumer/Dashboard/Promo/PastryMixBox.png";
 
-const CategoryImage = ({ color, label }) => (
-  <div className="category-card" style={{ background: color }}>
+
+const CategoryImage = ({ img, label, color }) => (
+  <div 
+    className="category-card" 
+    style={{ 
+      backgroundColor: color, 
+      backgroundImage: `url(${img})`, 
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    }}
+  >
     <p className="category-card-label">{label}</p>
   </div>
 );
@@ -18,11 +34,11 @@ export default function DashboardPage() {
   const filters = ["Semua", "Promo Spesial", "Terdekat", "Baru", "Favorit"];
 
   const categories = [
-    { label: "Asian Food", color: "linear-gradient(135deg,#0f3f27,#196f4c)" },
-    { label: "Bakery", color: "linear-gradient(135deg,#4d2c1a,#8b5b39)" },
-    { label: "Cafe & Coffee", color: "linear-gradient(135deg,#1f2f45,#2f4f6b)" },
-    { label: "Restaurant", color: "linear-gradient(135deg,#16402e,#1f6b43)" },
-  ];
+  { label: "Asian Food", img: AsianFoodImg, color: "#0f3f27" },
+  { label: "Bakery", img: BakeryImg, color: "#7f1d1d" },
+  { label: "Fast Food", img: FastFoodImg, color: "#4a1d96" },
+  { label: "Buffets", img: BuffetsImg, color: "#15803d" }
+];
 
   const promos = [
     {
@@ -36,6 +52,7 @@ export default function DashboardPage() {
       stock: "5 porsi",
       time: "15 menit lagi",
       desc: "Set menu makan malam lengkap dengan pilihan hidangan utama dan rasa otentik.",
+      img: GourmetDinnerSet,
       color: "linear-gradient(135deg,#0f3f27,#196f4c)",
     },
     {
@@ -49,7 +66,9 @@ export default function DashboardPage() {
       stock: "2 loyang",
       time: "30 menit lagi",
       desc: "Pizza tipis renyah dengan saus tomat segar dan keju mozzarella berkualitas.",
+      img: MargheritaPizza,
       color: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
     },
     {
       name: "Pastry Mix Box",
@@ -62,6 +81,7 @@ export default function DashboardPage() {
       stock: "8 box",
       time: "Habis hari ini",
       desc: "Paket berisi 4 macam pastry manis yang baru dipanggang pagi tadi.",
+      img: PastryMixBox,
       color: "linear-gradient(135deg,#4a1d96,#6d28d9)",
     },
   ];
@@ -72,7 +92,7 @@ export default function DashboardPage() {
       <main className="dashboard-main">
         <section className="dashboard-hero">
           <div>
-            <h1 className="dashboard-hero-title">Halo, Demo Buyer! 👋</h1>
+            <h1 className="dashboard-hero-title">Halo, Elara</h1>
             <p className="dashboard-hero-subtitle">Temukan makanan berkualitas dengan harga hemat hari ini.</p>
           </div>
           <div className="dashboard-hero-badge">New</div>
@@ -129,6 +149,7 @@ export default function DashboardPage() {
             {promos.map((item) => (
               <article key={item.name} className="promo-card">
                 <div className="promo-media" style={{ background: item.color }}>
+                  <img src={item.img} alt={item.name} className="promo-image-file" />
                   <div className="promo-badge">{item.discount} OFF</div>
                   <div className="promo-rating">
                     <StarIcon filled /> {item.rating}

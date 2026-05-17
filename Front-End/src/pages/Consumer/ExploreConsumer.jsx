@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import { SearchIcon, FilterIcon, ChevronDownIcon } from "../../components/Icons";
 import "./ExploreConsumer.css";
 
+
 export default function ExplorePage() {
   const [activePage, setActivePage] = useState("explore");
   const [cartCount, setCartCount] = useState(0);
