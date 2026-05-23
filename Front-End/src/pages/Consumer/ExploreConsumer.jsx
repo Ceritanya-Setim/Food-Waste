@@ -1,8 +1,7 @@
 import { useState } from "react";
-import NavbarConsumer from "../../components/ConsumerNavbar/NavbarConsumer";
+import NavbarConsumer from "../../components/Consumer/ConsumerNavbar/NavbarConsumer";
 import Footer from "../../components/Footer";
 import { SearchIcon, FilterIcon, ChevronDownIcon } from "../../components/Icons";
-import "./ExploreConsumer.css";
 
 
 export default function ExplorePage() {
@@ -76,85 +75,63 @@ export default function ExplorePage() {
   ];
 
   return (
-    <div className="explore-page">
+    <div className="min-h-screen bg-slate-50">
       <NavbarConsumer activePage={activePage} setActivePage={setActivePage} cartCount={cartCount} />
-      <main className="explore-main">
-        <section className="explore-header">
-          <h1 className="explore-title">Simpan makanan, hemat uang</h1>
-          <p className="explore-subtitle">Temukan makanan lezat di sekitarmu dengan harga terjangkau.</p>
+      <main className="max-w-[1120px] mx-auto px-6 py-8">
+        <section className="mb-4">
+          <h1 className="text-4xl font-extrabold text-slate-900">Simpan makanan, hemat uang</h1>
+          <p className="text-slate-500 mt-2">Temukan makanan lezat di sekitarmu dengan harga terjangkau.</p>
         </section>
 
-        <section className="explore-search-panel">
-          <div className="explore-search">
-            <span className="explore-search-icon">
-              <SearchIcon />
-            </span>
-            <input
-              type="text"
-              placeholder="Cari makanan atau restoran..."
-              className="explore-search-input"
-            />
+        <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="relative flex-1">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SearchIcon /></div>
+            <input type="text" placeholder="Cari makanan atau restoran..." className="w-full rounded-full border border-gray-200 px-12 py-3 bg-white shadow-sm focus:outline-none focus:border-emerald-500" />
           </div>
-          <button className="explore-filter-button">
-            <FilterIcon /> Filter
-          </button>
+          <button className="px-4 py-3 rounded-full border border-gray-200 bg-white flex items-center gap-2"><FilterIcon /> Filter</button>
         </section>
 
-        <section className="explore-filters">
-          {[
-            ["KATEGORI", "Semua"],
-            ["TIPE HARGA", "Semua Harga"],
-            ["LOKASI", "Semua Lokasi"],
-          ].map(([label, value]) => (
-            <div key={label} className="dropdown-card">
-              <div className="dropdown-label">{label}</div>
-              <div className="dropdown-value">
-                <span>{value}</span>
-                <ChevronDownIcon />
-              </div>
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {[ ["KATEGORI", "Semua"], ["TIPE HARGA", "Semua Harga"], ["LOKASI", "Semua Lokasi"] ].map(([label, value]) => (
+            <div key={label} className="bg-white rounded-2xl border border-gray-100 p-4">
+              <div className="text-xs font-bold uppercase text-slate-400 mb-2">{label}</div>
+              <div className="flex items-center justify-between text-slate-900">{value} <ChevronDownIcon /></div>
             </div>
           ))}
         </section>
 
-        <section className="explore-sort-row">
+        <section className="flex flex-wrap gap-3 mb-6">
           {sorts.map((sort) => (
-            <button
-              key={sort}
-              type="button"
-              onClick={() => setActiveSort(sort)}
-              className={activeSort === sort ? "sort-pill active" : "sort-pill"}
-            >
+            <button key={sort} onClick={() => setActiveSort(sort)} className={`${activeSort === sort ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-slate-700'} px-4 py-2 rounded-full font-bold`}>
               {sort}
             </button>
           ))}
         </section>
 
-        <section className="item-grid">
+        <section className="grid gap-5 xl:grid-cols-4">
           {items.map((item) => (
-            <article key={item.name} className="item-card">
-              <div className="item-banner" style={{ background: item.color }}>
-                <span className={`item-tag ${item.tag === "GRATIS" ? "gratis" : "donasi"}`}>{item.tag}</span>
+            <article key={item.name} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+              <div className="min-h-[160px] relative" style={{ background: item.color }}>
+                <span className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${item.tag === 'GRATIS' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-white'}`}>{item.tag}</span>
               </div>
-              <div className="item-body">
-                <h3 className="item-name">{item.name}</h3>
-                <p className="item-subtitle">{item.store} · {item.dist}</p>
-                <p className="item-subtitle">Ambil: {item.pickup}</p>
-                <div className="item-meta">
+              <div className="p-4">
+                <h3 className="font-bold">{item.name}</h3>
+                <p className="text-sm text-slate-500">{item.store} · {item.dist}</p>
+                <p className="text-sm text-slate-500">Ambil: {item.pickup}</p>
+                <div className="flex items-end justify-between mt-4">
                   <div>
-                    <div className={`item-price ${item.price === "FREE" ? "free" : ""}`}>{item.price}</div>
-                    <div className="item-original">{item.original}</div>
+                    <div className={`${item.price === 'FREE' ? 'text-emerald-600 font-bold' : 'font-extrabold'}`}>{item.price}</div>
+                    <div className="text-xs text-slate-400 line-through">{item.original}</div>
                   </div>
-                  <button type="button" className="item-add-button" onClick={() => setCartCount((c) => c + 1)}>
-                    + Tambah
-                  </button>
+                  <button onClick={() => setCartCount((c) => c + 1)} className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold">+ Tambah</button>
                 </div>
               </div>
             </article>
           ))}
         </section>
 
-        <div className="map-button-wrapper">
-          <button className="map-button">🗺️ Lihat Peta</button>
+        <div className="flex justify-center mt-8">
+          <button className="px-6 py-3 rounded-full bg-slate-900 text-white font-bold">🗺️ Lihat Peta</button>
         </div>
       </main>
       <Footer />

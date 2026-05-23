@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import "./ProfileMerchant.css";
 
 export default function ProfileMerchant({ setActivePage }) { // 🟢 Tangkap prop di sini
   // State untuk Data Form
@@ -37,18 +36,17 @@ export default function ProfileMerchant({ setActivePage }) { // 🟢 Tangkap pro
   };
 
   return (
-    <div className="profile-container">
-      <div className="profile-header-section">
-        <h2>Profile Saya</h2>
-        <p>Kelola informasi profile Anda</p>
+    <div className="max-w-[800px] mx-auto py-8">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-1">Profile Saya</h2>
+        <p className="text-sm text-slate-500">Kelola informasi profile Anda</p>
       </div>
 
-      <div className="profile-card">
-        {/* EDIT FOTO PROFIL (KEMBALI ASLI) */}
-        <div className="profile-img-edit-section">
-          <div className="img-wrapper">
-            <img src={profileImg} alt="Profile" />
-            <button className="btn-edit-photo" onClick={() => fileInputRef.current.click()}>
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
+        <div className="flex justify-center mb-8">
+          <div className="relative w-24 h-24">
+            <img src={profileImg} alt="Profile" className="w-full h-full rounded-full object-cover border-4 border-slate-100" />
+            <button className="absolute bottom-0 right-0 bg-white border border-gray-100 w-8 h-8 rounded-full grid place-items-center shadow" onClick={() => fileInputRef.current.click()}>
               📷
             </button>
           </div>
@@ -61,75 +59,70 @@ export default function ProfileMerchant({ setActivePage }) { // 🟢 Tangkap pro
           />
         </div>
 
-        <form className="profile-form" onSubmit={handleSubmit}>
-          {/* INFORMASI PRIBADI */}
-          <div className="form-section">
-            <h3 className="section-title">👤 Informasi Pribadi</h3>
-            
-            <div className="input-group">
-              <label>Nama Lengkap</label>
-              <input type="text" name="namaLengkap" value={formData.namaLengkap} onChange={handleInputChange} />
+        <form onSubmit={handleSubmit}>
+          <div className="mb-8">
+            <h3 className="text-lg font-bold mb-5 text-slate-900">👤 Informasi Pribadi</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Nama Lengkap</label>
+              <input className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-slate-50 text-sm focus:outline-none focus:border-green-500 focus:bg-white transition" type="text" name="namaLengkap" value={formData.namaLengkap} onChange={handleInputChange} />
             </div>
 
-            <div className="input-group">
-              <label>Email</label>
-              <input type="email" value={formData.email} disabled className="input-disabled" />
-              <span className="input-hint">Email tidak dapat diubah</span>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Email</label>
+              <input className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-slate-100 text-sm text-slate-400 cursor-not-allowed" type="email" value={formData.email} disabled />
+              <span className="text-xs text-slate-400 mt-1 block">Email tidak dapat diubah</span>
             </div>
 
-            <div className="input-group">
-              <label>Nomor Telepon</label>
-              <div className="input-with-icon">
-                <span className="icon">📞</span>
-                <input type="text" name="noTelp" value={formData.noTelp} onChange={handleInputChange} />
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Nomor Telepon</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3 text-sm">📞</span>
+                <input className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 bg-slate-50 text-sm focus:outline-none focus:border-green-500 focus:bg-white transition" type="text" name="noTelp" value={formData.noTelp} onChange={handleInputChange} />
               </div>
             </div>
 
-            <div className="input-group">
-              <label>Alamat</label>
-              <div className="input-with-icon">
-                <span className="icon">📍</span>
-                <input type="text" name="alamat" value={formData.alamat} onChange={handleInputChange} />
-              </div>
-            </div>
-          </div>
-
-          {/* INFORMASI BISNIS */}
-          <div className="form-section">
-            <h3 className="section-title">🏪 Informasi Bisnis</h3>
-            
-            <div className="input-group">
-              <label>Nama Bisnis/Restoran</label>
-              <input type="text" name="namaBisnis" value={formData.namaBisnis} onChange={handleInputChange} />
-            </div>
-
-            <div className="input-group">
-              <label>Alamat Bisnis</label>
-              <div className="input-with-icon">
-                <span className="icon">📍</span>
-                <input type="text" name="alamatBisnis" value={formData.alamatBisnis} onChange={handleInputChange} />
-              </div>
-            </div>
-
-            <div className="input-group">
-              <label>Telepon Bisnis</label>
-              <div className="input-with-icon">
-                <span className="icon">📞</span>
-                <input type="text" name="telpBisnis" value={formData.telpBisnis} onChange={handleInputChange} />
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Alamat</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3 text-sm">📍</span>
+                <input className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 bg-slate-50 text-sm focus:outline-none focus:border-green-500 focus:bg-white transition" type="text" name="alamat" value={formData.alamat} onChange={handleInputChange} />
               </div>
             </div>
           </div>
 
-          {/* BUTTONS (HANYA MENGUBAH ACTION DI SINI) */}
-          <div className="profile-form-footer">
+          <div className="mb-8">
+            <h3 className="text-lg font-bold mb-5 text-slate-900">🏪 Informasi Bisnis</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Nama Bisnis/Restoran</label>
+              <input className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-slate-50 text-sm focus:outline-none focus:border-green-500 focus:bg-white transition" type="text" name="namaBisnis" value={formData.namaBisnis} onChange={handleInputChange} />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Alamat Bisnis</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3 text-sm">📍</span>
+                <input className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 bg-slate-50 text-sm focus:outline-none focus:border-green-500 focus:bg-white transition" type="text" name="alamatBisnis" value={formData.alamatBisnis} onChange={handleInputChange} />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-slate-600">Telepon Bisnis</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3 text-sm">📞</span>
+                <input className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 bg-slate-50 text-sm focus:outline-none focus:border-green-500 focus:bg-white transition" type="text" name="telpBisnis" value={formData.telpBisnis} onChange={handleInputChange} />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
             <button 
               type="button" 
-              className="btn-cancel"
+              className="px-6 py-2 rounded-lg border border-gray-200 bg-white font-semibold"
               onClick={() => setActivePage("dashboard")} // 🟢 Kembali ke dashboard
             >
               Batal
             </button>
-            <button type="submit" className="btn-save">💾 Simpan Perubahan</button>
+            <button type="submit" className="px-6 py-2 rounded-lg bg-slate-900 text-white font-semibold hover:opacity-90 transition">💾 Simpan Perubahan</button>
           </div>
         </form>
       </div>

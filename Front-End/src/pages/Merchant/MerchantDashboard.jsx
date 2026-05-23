@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import NavbarMerchant from "../../components/MerchantNavbar/NavbarMerchant";
+import NavbarMerchant from "../../components/Merchant/MerchantNavbar/NavbarMerchant";
 import { LeafIcon } from "../../components/Icons";
-import "./MerchantDashboard.css";
+import Footer from "../../components/Footer";
 import AddListingModal from "./AddListingModal";
 import ExploreMerchant from "./ExploreMerchant"; 
 import ProfileMerchant from "../../components/ProfileMerchant/ProfileMerchant"; 
@@ -78,149 +78,125 @@ export const MerchantDashboard = () => {
             case "dashboard":
             default:
                 return (
-                    <main className="biz-content">
+                    <main className="max-w-[1120px] mx-auto px-6 py-8">
                         {/* Hero Banner */}
-                        <header className="biz-hero">
-                            <div className="hero-text">
-                                <h1>Selamat Datang Kembali! 👋</h1>
-                                <p>Kelola bisnis Anda dan bantu kurangi food waste</p>
+                        <header className="relative rounded-2xl overflow-hidden p-8 mb-8 text-white bg-gradient-to-r from-emerald-500 to-emerald-400">
+                            <div className="relative z-10">
+                                <h1 className="text-2xl font-bold mb-2">Selamat Datang Kembali! 👋</h1>
+                                <p className="opacity-90">Kelola bisnis Anda dan bantu kurangi food waste</p>
                             </div>
-                            <div className="hero-image-overlay"></div>
+                            <div className="absolute inset-0 opacity-30 bg-cover bg-center" style={{ backgroundImage: `url('/src/assets/image/waste.jpeg')` }} />
                         </header>
 
                         {/* Stats Grid */}
-                        <section className="stats-grid">
+                        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
                             {stats.map((item, index) => (
-                                <div key={index} className="stat-card">
-                                    <div className="stat-header">
-                                        <span className="stat-label">{item.label}</span>
-                                        <span className={`stat-icon-bg ${item.color}`}>{item.icon}</span>
+                                <div key={index} className="bg-white p-5 rounded-xl shadow-sm">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-sm text-slate-500 font-medium">{item.label}</span>
+                                        <span className={`p-2 rounded-md ${item.color === 'light-green' ? 'bg-emerald-100 text-emerald-600' : item.color === 'blue' ? 'bg-sky-100 text-sky-600' : item.color === 'purple' ? 'bg-violet-100 text-violet-600' : 'bg-amber-100 text-amber-600'}`}>{item.icon}</span>
                                     </div>
-                                    <div className="stat-value">{item.value}</div>
-                                    <div className={`stat-sub ${item.color === 'green' || item.color === 'light-green' ? 'trend-up' : ''}`}>
-                                        {item.trend || item.sub}
-                                    </div>
+                                    <div className="text-xl font-bold">{item.value}</div>
+                                    <div className="text-xs text-slate-400 mt-2">{item.trend || item.sub}</div>
                                 </div>
                             ))}
                         </section>
 
                         {/* Secondary Stats */}
-                        <section className="secondary-stats">
-                            <div className="mini-card">
-                                <div className="mini-header">
-                                    <span className="mini-label">Conversion Rate</span>
-                                    <span className="mini-value text-green">0%</span>
+                        <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                            <div className="bg-white p-5 rounded-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-sm text-slate-500">Conversion Rate</span>
+                                    <span className="text-green-600 font-bold">0%</span>
                                 </div>
-                                <div className="progress-bar"><div className="progress" style={{width: '0%'}}></div></div>
+                                <div className="h-2 bg-slate-100 rounded mt-3"><div className="h-2 bg-green-500 rounded" style={{ width: '0%' }} /></div>
                             </div>
-                            
-                            <div className="mini-card">
-                                <div className="mini-header">
-                                    <span className="mini-label">Total Hemat Ditawarkan</span>
-                                    <span className="mini-value text-blue">{listings.length > 0 ? "125K" : "0K"}</span>
+                            <div className="bg-white p-5 rounded-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-sm text-slate-500">Total Hemat Ditawarkan</span>
+                                    <span className="text-sky-600 font-bold">{listings.length > 0 ? "125K" : "0K"}</span>
                                 </div>
-                                <p>Membantu pembeli hemat lebih banyak</p>
+                                <p className="text-sm">Membantu pembeli hemat lebih banyak</p>
                             </div>
-                            
-                            <div className="mini-card">
-                                <div className="mini-header">
-                                    <span className="mini-label">Impact Score</span>
-                                    <span className="mini-value text-purple">{listings.length > 0 ? "5" : "0"}</span>
+                            <div className="bg-white p-5 rounded-xl">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-sm text-slate-500">Impact Score</span>
+                                    <span className="text-violet-600 font-bold">{listings.length > 0 ? "5" : "0"}</span>
                                 </div>
-                                <p>Kontribusi pengurangan food waste</p>
+                                <p className="text-sm">Kontribusi pengurangan food waste</p>
                             </div>
                         </section>
 
                         {/* Status Row */}
-                        <div className="status-row">
-                            <div className="status-item green-bg">✅ Tersedia: <strong>{listings.filter(i => i.status === "Tersedia").length}</strong></div>
-                            <div className="status-item red-bg">❌ Expired: <strong>0</strong></div>
-                            <div className="status-item blue-bg">📦 Total Listings: <strong>{listings.length}</strong></div>
+                        <div className="flex gap-4 mb-6">
+                            <div className="flex-1 bg-emerald-50 border border-emerald-100 rounded-lg p-3">✅ Tersedia: <strong>{listings.filter(i => i.status === "Tersedia").length}</strong></div>
+                            <div className="flex-1 bg-red-50 border border-red-100 rounded-lg p-3">❌ Expired: <strong>0</strong></div>
+                            <div className="flex-1 bg-sky-50 border border-sky-100 rounded-lg p-3">📦 Total Listings: <strong>{listings.length}</strong></div>
                         </div>
 
                         {/* Listings Section */}
-                        <section className="listings-section">
-                            <div className="section-header">
-                                <div className="header-text-group">
-                                    <h2>Kelola Listings</h2>
-                                    <p>Daftar semua makanan yang Anda tawarkan</p>
+                        <section>
+                            <div className="relative mb-4">
+                                <div>
+                                    <h2 className="text-2xl font-bold">Kelola Listings</h2>
+                                    <p className="text-sm text-slate-500">Daftar semua makanan yang Anda tawarkan</p>
                                 </div>
-                                
-                                {/* 🟢 Ganti onClick menjadi handleAddNewClick */}
-                                <button className="btn-add-first" onClick={handleAddNewClick}>
-                                    + Tambah Listing
-                                </button>
+                                <button onClick={handleAddNewClick} className="absolute right-0 top-0 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold">+ Tambah Listing</button>
                             </div>
 
                             {listings.length === 0 ? (
-                                <div className="empty-listing-box">
-                                    <div className="empty-biz-icon">🏪</div>
-                                    <h3>Belum Ada Listing</h3>
-                                    <p>Mulai tambahkan makanan surplus untuk dijual dengan harga diskon</p>
-                                    
-                                    {/* 🟢 Ganti onClick menjadi handleAddNewClick */}
-                                    <button className="btn-add-first" onClick={handleAddNewClick}>
-                                        + Tambah Listing
-                                    </button>
+                                <div className="text-center border-2 border-dashed border-gray-200 rounded-xl p-12">
+                                    <div className="text-4xl opacity-60 mb-4">🏪</div>
+                                    <h3 className="text-lg font-bold mb-2">Belum Ada Listing</h3>
+                                    <p className="text-slate-500 mb-4">Mulai tambahkan makanan surplus untuk dijual dengan harga diskon</p>
+                                    <button onClick={handleAddNewClick} className="bg-emerald-600 text-white px-4 py-2 rounded-lg">+ Tambah Listing</button>
                                 </div>
                             ) : (
-                                <div className="listings-table-container">
-                                    <table className="listings-table">
-                                        <thead>
+                                <div className="bg-white rounded-xl shadow overflow-hidden border border-gray-100 mt-4">
+                                    <table className="w-full text-left text-sm">
+                                        <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
                                             <tr>
-                                                <th>MAKANAN</th>
-                                                <th>HARGA</th>
-                                                <th>STOK</th>
-                                                <th>STATUS</th>
-                                                <th>PICKUP</th>
-                                                <th>AKSI</th>
+                                                <th className="px-6 py-3">MAKANAN</th>
+                                                <th className="px-6 py-3">HARGA</th>
+                                                <th className="px-6 py-3">STOK</th>
+                                                <th className="px-6 py-3">STATUS</th>
+                                                <th className="px-6 py-3">PICKUP</th>
+                                                <th className="px-6 py-3 text-center">AKSI</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {listings.map((item) => (
-                                                <tr key={item.id}>
-                                                    <td className="td-makanan">
-                                                        <div className="product-img-wrapper">
-                                                            <img 
-                                                                src={item.foto} 
-                                                                alt={item.nama} 
-                                                                className="product-img"
-                                                                onError={(e) => {
-                                                                    e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150";
-                                                                }}
-                                                            />
+                                                <tr key={item.id} className="border-t border-gray-100">
+                                                    <td className="px-6 py-4 flex items-center gap-4">
+                                                        <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
+                                                            <img src={item.foto} alt={item.nama} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150"; }} />
                                                         </div>
-                                                        <div className="makanan-info">
-                                                            <span className="makanan-title">{item.nama}</span>
-                                                            <span className="makanan-desc">{item.deskripsi}</span>
+                                                        <div>
+                                                            <div className="font-semibold text-slate-900">{item.nama}</div>
+                                                            <div className="text-xs text-slate-500">{item.deskripsi}</div>
                                                         </div>
                                                     </td>
 
-                                                    <td>
-                                                        <div className="harga-wrapper">
-                                                            <span className="harga-diskon">Rp {item.hargaDiskon}</span>
-                                                            <span className="harga-normal">Rp {item.hargaNormal}</span>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-semibold">Rp {item.hargaDiskon}</span>
+                                                            <span className="text-xs text-slate-400 line-through">Rp {item.hargaNormal}</span>
                                                         </div>
                                                     </td>
 
-                                                    <td>{item.stok}</td>
+                                                    <td className="px-6 py-4">{item.stok}</td>
 
-                                                    <td>
-                                                        <span className="status-badge">🟢 {item.status}</span>
+                                                    <td className="px-6 py-4">
+                                                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-sm font-medium">🟢 {item.status}</span>
                                                     </td>
 
-                                                    <td>{item.pickup}</td>
+                                                    <td className="px-6 py-4">{item.pickup}</td>
 
-                                                    <td className="td-aksi">                                                      
-                                                        <button className="action-btn" onClick={() => handleEditClick(item)}>📝</button>
-                                                        
-                                                        <button 
-                                                            className="action-btn delete-btn" 
-                                                            onClick={() => handleDeleteListing(item.id)}
-                                                            style={{ color: 'red' }}
-                                                        >
-                                                            ❌
-                                                        </button>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <div className="inline-flex items-center justify-center gap-2">
+                                                            <button className="p-2 rounded-md hover:bg-slate-50" onClick={() => handleEditClick(item)}>📝</button>
+                                                            <button className="p-2 rounded-md hover:bg-red-50 text-red-500" onClick={() => handleDeleteListing(item.id)}>❌</button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))}
@@ -231,21 +207,18 @@ export const MerchantDashboard = () => {
                         </section>
 
                         {/* Platform Status Footer Section */}
-                        <section className="platform-status-box">
-                            <div className="status-col">
-                                <div className="status-header-inline">
-                                    <span className="dot green"></span>
-                                    <p className="label">PLATFORM STATUS</p>
-                                </div>
-                                <p className="val">All Systems Operational</p>
+                        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl mt-6">
+                            <div className="text-center">
+                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Platform Status</div>
+                                <div className="font-bold">All Systems Operational</div>
                             </div>
-                            <div className="status-col">
-                                <div className="status-header-inline"><p className="label">TOTAL PARTNERS</p></div>
-                                <p className="val">2,450+ Restoran</p>
+                            <div className="text-center">
+                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Partners</div>
+                                <div className="font-bold">2,450+ Restoran</div>
                             </div>
-                            <div className="status-col">
-                                <div className="status-header-inline"><p className="label">FOOD SAVED</p></div>
-                                <p className="val">45,000+ Porsi</p>
+                            <div className="text-center">
+                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Food Saved</div>
+                                <div className="font-bold">45,000+ Porsi</div>
                             </div>
                         </section>
                     </main>
@@ -259,18 +232,7 @@ export const MerchantDashboard = () => {
 
             {renderContent()}
 
-            {/* FOOTER */}
-            <footer className="biz-footer">
-                <div className="footer-grid">
-                    <div className="footer-info">
-                        <div className="footer-brand"><div className="brand-logo"><LeafIcon /></div><span className="brand-text">FoodSave Business</span></div>
-                        <p className="footer-desc">Platform manajemen bisnis untuk restoran yang peduli lingkungan</p>
-                    </div>
-                    <div className="footer-col"><h4>Resources</h4><ul><li>Panduan Memulai</li><li>Best Practices</li><li>API Documentation</li></ul></div>
-                    <div className="footer-col"><h4>Support</h4><ul><li>Help Center</li><li>Contact Support</li><li>Partner Success</li></ul></div>
-                    <div className="footer-col"><h4>Legal</h4><ul><li>Terms of Service</li><li>Privacy Policy</li><li>Cookie Policy</li></ul></div>
-                </div>
-            </footer>
+            <Footer />
 
             <AddListingModal 
                 isOpen={isModalOpen} 

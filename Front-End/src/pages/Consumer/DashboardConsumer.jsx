@@ -1,8 +1,7 @@
 import { useState } from "react";
-import NavbarConsumer from "../../components/ConsumerNavbar/NavbarConsumer";
+import NavbarConsumer from "../../components/Consumer/ConsumerNavbar/NavbarConsumer";
 import Footer from "../../components/Footer";
 import { SearchIcon, StarIcon, MapPinIcon, BoxIcon, ClockIcon } from "../../components/Icons";
-import "./DashboardConsumer.css";
 import AsianFoodImg from "../../assets/Consumer/Dashboard/AsianFoodThumbnail.png";
 import BakeryImg from "../../assets/Consumer/Dashboard/BakeryThumbnail.png";
 import BuffetsImg from "../../assets/Consumer/Dashboard/BuffetsThumbnail.png";
@@ -10,19 +9,13 @@ import FastFoodImg from "../../assets/Consumer/Dashboard/FastFoodThumbnail.png";
 import GourmetDinnerSet from "../../assets/Consumer/Dashboard/Promo/GourmetDinnerSet.png";
 import MargheritaPizza from "../../assets/Consumer/Dashboard/Promo/MargheritaLargePizza.png";
 import PastryMixBox from "../../assets/Consumer/Dashboard/Promo/PastryMixBox.png";
-
+import ProfileConsumer from "../../components/Consumer/ProfileConsumer/ProfileConsumer";
+import CartFlow from "../../components/Consumer/ConsumerCart/ConsumerCart";
 
 const CategoryImage = ({ img, label, color }) => (
-  <div 
-    className="category-card" 
-    style={{ 
-      backgroundColor: color, 
-      backgroundImage: `url(${img})`, 
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    }}
-  >
-    <p className="category-card-label">{label}</p>
+  <div className="relative rounded-2xl overflow-hidden min-h-[160px] shadow-lg" style={{ backgroundImage: `url(${img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="absolute inset-0 bg-black/20" />
+    <p className="absolute left-4 bottom-4 text-white text-lg font-bold">{label}</p>
   </div>
 );
 
@@ -87,107 +80,94 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="dashboard-page">
+    <div className="min-h-screen bg-slate-50">
       <NavbarConsumer activePage={activePage} setActivePage={setActivePage} cartCount={cartCount} />
-      <main className="dashboard-main">
-        <section className="dashboard-hero">
-          <div>
-            <h1 className="dashboard-hero-title">Halo, Elara</h1>
-            <p className="dashboard-hero-subtitle">Temukan makanan berkualitas dengan harga hemat hari ini.</p>
-          </div>
-          <div className="dashboard-hero-badge">New</div>
-        </section>
-
-        <div className="dashboard-search">
-          <div className="dashboard-search-icon">
-            <SearchIcon />
-          </div>
-          <input
-            type="text"
-            placeholder="Cari makanan lezat..."
-            className="dashboard-search-input"
-          />
-        </div>
-
-        <div className="dashboard-filter-row">
-          {filters.map((filter) => (
-            <button
-              key={filter}
-              type="button"
-              onClick={() => setActiveFilter(filter)}
-              className={`filter-pill ${activeFilter === filter ? "active" : ""}`}
-            >
-              {filter}
-            </button>
-          ))}
-        </div>
-
-        <section className="dashboard-section">
-          <div className="section-heading">
+      {activePage === "dashboard" ? (
+        <main className="max-w-[1120px] mx-auto px-6 py-8">
+          <section className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="section-heading-title">Jelajahi Kategori</h2>
-              <p className="section-heading-text">Cari makanan favorit dengan cepat.</p>
+              <h1 className="text-4xl font-extrabold text-slate-900">Halo, Elara</h1>
+              <p className="text-slate-500">Temukan makanan berkualitas dengan harga hemat hari ini.</p>
             </div>
-            <button className="section-action">Lihat Semua</button>
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 font-bold uppercase text-xs">New</div>
+          </section>
+
+          <div className="relative mb-4 max-w-[720px]">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><SearchIcon /></div>
+            <input type="text" placeholder="Cari makanan lezat..." className="w-full border border-gray-200 rounded-full px-12 py-3 shadow-sm bg-white focus:outline-none focus:border-emerald-500" />
           </div>
-          <div className="category-grid">
-            {categories.map((category) => (
-              <CategoryImage key={category.label} {...category} />
+
+          <div className="flex flex-wrap gap-3 mb-6">
+            {filters.map((filter) => (
+              <button key={filter} type="button" onClick={() => setActiveFilter(filter)} className={`px-4 py-2 rounded-full font-semibold ${activeFilter === filter ? 'bg-emerald-600 text-white shadow-lg' : 'bg-white border border-gray-200 text-slate-700'}`}>
+                {filter}
+              </button>
             ))}
           </div>
-        </section>
 
-        <section className="dashboard-section">
-          <div className="section-heading">
-            <div>
-              <h2 className="section-heading-title">Promo Spesial Hari Ini</h2>
-              <p className="section-heading-text">Jangan lewatkan penawaran terbaik hari ini.</p>
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold">Jelajahi Kategori</h2>
+                <p className="text-sm text-slate-500">Cari makanan favorit dengan cepat.</p>
+              </div>
+              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">Lihat Semua</button>
             </div>
-            <button className="section-action">Lihat Semua</button>
-          </div>
-          <div className="dashboard-promo-grid">
-            {promos.map((item) => (
-              <article key={item.name} className="promo-card">
-                <div className="promo-media" style={{ background: item.color }}>
-                  <img src={item.img} alt={item.name} className="promo-image-file" />
-                  <div className="promo-badge">{item.discount} OFF</div>
-                  <div className="promo-rating">
-                    <StarIcon filled /> {item.rating}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              {categories.map((category) => (
+                <CategoryImage key={category.label} {...category} />
+              ))}
+            </div>
+          </section>
+
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold">Promo Spesial Hari Ini</h2>
+                <p className="text-sm text-slate-500">Jangan lewatkan penawaran terbaik hari ini.</p>
+              </div>
+              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">Lihat Semua</button>
+            </div>
+            <div className="grid gap-5 xl:grid-cols-3">
+              {promos.map((item) => (
+                <article key={item.name} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                  <div className="relative min-h-[220px]" style={{ background: item.color }}>
+                    <img src={item.img} alt={item.name} className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                    <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full font-bold">{item.discount} OFF</div>
+                    <div className="absolute bottom-4 right-4 bg-black/80 text-white px-3 py-1 rounded-full text-sm"> <StarIcon filled /> {item.rating}</div>
                   </div>
-                </div>
-                <div className="promo-content">
-                  <div className="promo-header">
-                    <div>
-                      <h3 className="promo-name">{item.name}</h3>
-                      <p className="promo-description">{item.desc}</p>
-                    </div>
-                    <span className="promo-dist">{item.dist}</span>
-                  </div>
-                  <div className="promo-footer">
-                    <div className="promo-price-row">
+                  <div className="p-6">
+                    <div className="flex justify-between mb-4">
                       <div>
-                        <div className="promo-price">{item.price}</div>
-                        <div className="promo-original">{item.original}</div>
+                        <h3 className="font-bold text-lg">{item.name}</h3>
+                        <p className="text-sm text-slate-500">{item.desc}</p>
                       </div>
-                      <button type="button" className="promo-button" onClick={() => setCartCount((c) => c + 1)}>
-                        Pesan Sekarang
-                      </button>
+                      <div className="text-sm text-slate-500">{item.dist}</div>
                     </div>
-                    <div className="promo-meta">
-                      <span>
-                        <BoxIcon /> {item.stock}
-                      </span>
-                      <span>
-                        <ClockIcon /> {item.time}
-                      </span>
+                    <div className="grid gap-3">
+                      <div className="flex items-baseline justify-between">
+                        <div>
+                          <div className="text-2xl font-extrabold text-emerald-600">{item.price}</div>
+                          <div className="text-sm text-slate-400 line-through">{item.original}</div>
+                        </div>
+                        <button type="button" onClick={() => setCartCount((c) => c + 1)} className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold">Pesan Sekarang</button>
+                      </div>
+                      <div className="grid grid-cols-2 text-sm text-slate-500 gap-2">
+                        <span className="flex items-center gap-2"><BoxIcon /> {item.stock}</span>
+                        <span className="flex items-center gap-2 justify-end"><ClockIcon /> {item.time}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </main>
+                </article>
+              ))}
+            </div>
+          </section>
+        </main>
+      ) : activePage === "cart" ? (
+        <CartFlow />
+      ) : activePage === "profile" ? (
+        <ProfileConsumer />
+      ) : null}
       <Footer />
     </div>
   );

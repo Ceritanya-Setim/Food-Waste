@@ -1,5 +1,4 @@
 import React from "react";
-import "./ExploreMerchant.css";
 
 export default function ExploreMerchant() {
   // Data Dummy untuk Market Insights 
@@ -54,36 +53,34 @@ export default function ExploreMerchant() {
     },
   ];
 
-  return (
-    <div className="explore-page-wrapper">
-      <div className="explore-container">
+    return (
+    <div className="min-h-screen">
+      <div className="max-w-[1400px] mx-auto px-6 py-8">
         
         {/* 📊 BAGIAN 1: MARKET INSIGHTS */}
-        <section className="explore-section">
+        <section className="mb-10">
           {/* Diubah jadi struktur block vertikal agar deskripsi pas di bawah judul */}
           <div className="explore-section-header">
             <h2>Market Insights</h2>
             <p>Analisis pasar dan kompetitor untuk mengoptimalkan bisnis Anda</p>
           </div>
           
-          <div className="insights-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {insightsData.map((item) => (
-              <div key={item.id} className="insight-card">
-                <div className="insight-card-header">
-                  <div className={`insight-icon-wrapper icon-style-${item.id}`}>
-                    <span className="insight-icon">{item.icon}</span>
+              <div key={item.id} className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+                <div className="flex items-start justify-between mb-3">
+                  <div className={`w-10 h-10 rounded-lg grid place-items-center ${item.id === 1 ? 'bg-sky-100 text-sky-600' : item.id === 2 ? 'bg-emerald-100 text-emerald-600' : item.id === 3 ? 'bg-violet-100 text-violet-600' : 'bg-amber-100 text-amber-600'}`}>
+                    {item.icon}
                   </div>
                   {item.badge && (
-                    <span className={`insight-badge-mini ${item.id === 3 ? 'badge-top' : ''}`}>
-                      {item.badge}
-                    </span>
+                    <span className={`text-xs font-semibold ${item.id === 3 ? 'bg-violet-100 text-violet-600' : 'bg-emerald-100 text-emerald-600'} px-3 py-1 rounded-full`}>{item.badge}</span>
                   )}
                 </div>
-                
-                <div className="insight-content">
-                  <h3 className="insight-title">{item.title}</h3>
-                  <span className="insight-subtitle">{item.subtitle}</span>
-                  <p className="insight-desc">{item.desc}</p>
+
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">{item.title}</h3>
+                  <span className="text-sm font-semibold text-slate-600">{item.subtitle}</span>
+                  <p className="text-sm text-slate-500 mt-2">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -98,30 +95,25 @@ export default function ExploreMerchant() {
             <p>Makanan yang paling banyak dicari pembeli</p>
           </div>
 
-          <div className="trending-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {trendingItems.map((item) => (
-              <div key={item.id} className="trending-card">
-                <div className="card-image-area">
-                  <img src={item.image} alt={item.name} className="trending-img" />
-                  
-                  <span className={`demand-badge ${item.demandClass}`}>
-                    🔥 {item.demand}
-                  </span>
-
-                  {/* Badges tren persentase ditiadakan dari sini */}
-                  <span className="category-tag">{item.category}</span>
+              <div key={item.id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+                <div className="relative h-44 w-full">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <span className="absolute top-3 left-3 bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded">🔥 {item.demand}</span>
+                  <span className="absolute bottom-3 left-3 bg-white/90 text-sm font-semibold px-2 py-1 rounded">{item.category}</span>
                 </div>
 
-                <div className="card-info-area">
-                  <h3 className="item-name">{item.name}</h3>
-                  <div className="item-meta-row">
-                    <div className="meta-col">
-                      <span className="meta-label">Avg Price</span>
-                      <span className="meta-value text-dark">{item.avgPrice}</span>
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-900 mb-3">{item.name}</h3>
+                  <div className="flex items-center justify-between border-t pt-3 text-sm text-slate-600">
+                    <div>
+                      <div className="text-xs uppercase text-slate-400">Avg Price</div>
+                      <div className="font-bold">{item.avgPrice}</div>
                     </div>
-                    <div className="meta-col text-right">
-                      <span className="meta-label">Avg Discount</span>
-                      <span className="meta-value text-green">{item.avgDiscount}</span>
+                    <div className="text-right">
+                      <div className="text-xs uppercase text-slate-400">Avg Discount</div>
+                      <div className="font-bold text-emerald-600">{item.avgDiscount}</div>
                     </div>
                   </div>
                 </div>
