@@ -11,10 +11,15 @@ import (
 )
 
 func GetUserProfile(c *gin.Context) {
-	id := c.Param("id")
+
+	userID := c.MustGet("user_id").(string)
 
 	var user models.User
-	if err := database.DB.Where("id=?", id).First(&user).Error; err != nil {
+
+	if err := database.DB.
+		Where("id = ?", userID).
+		First(&user).Error; err != nil {
+
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "User not found",
 		})
@@ -34,16 +39,18 @@ func GetUserProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"data": response,
 	})
-
 }
 
 func UpdateUserProfile(c *gin.Context) {
-	id := c.Param("id")
+
+	userID := c.MustGet("user_id").(string)
+
 	var user models.User
 
 	if err := database.DB.
-		Where("id=?", id).
+		Where("id = ?", userID).
 		First(&user).Error; err != nil {
+
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "User not found",
 		})
@@ -53,20 +60,74 @@ func UpdateUserProfile(c *gin.Context) {
 	var input dto.EditProfileRequest
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	if input.Password != "" {
-		hash, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
-		input.Password = string(hash)
+	updates := map[string]interface{}{}
+
+	if input.FullName != "" {
+		updates["full_name"] = input.FullName
 	}
 
-	database.DB.Model(&user).Updates(input)
+	if input.PhoneNumber != "" {
+		updates["phone_number"] = input.PhoneNumber
+	}
 
-	editResponse := dto.UserProfileResponse{
+	if input.ProfileImageURL != "" {
+		updates["profile_image_url"] = input.ProfileImageURL
+	}
+
+	if input.Password != "" {
+
+		hash, err := bcrypt.GenerateFromPassword(
+			[]byte(input.Password),
+			bcrypt.DefaultCost,
+		)
+
+		if err != nil {
+
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Failed to hash password",
+			})
+			return
+		}
+
+		updates["password_hash"] = string(hash)
+	}
+
+	if len(updates) == 0 {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "No data to update",
+		})
+		return
+	}
+
+	if err := database.DB.
+		Model(&user).
+		Updates(updates).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update profile",
+		})
+		return
+	}
+
+	if err := database.DB.
+		Where("id = ?", userID).
+		First(&user).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch updated user",
+		})
+		return
+	}
+
+	response := dto.UserProfileResponse{
 		FullName:        user.FullName,
 		Email:           user.Email,
 		PhoneNumber:     user.PhoneNumber,
@@ -77,6 +138,7 @@ func UpdateUserProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": editResponse,
+		"message": "Profile updated successfully",
+		"data":    response,
 	})
 }

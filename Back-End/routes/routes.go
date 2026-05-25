@@ -2,31 +2,39 @@ package routes
 
 import (
 	"backend/controllers"
+	"backend/middlewares"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(r *gin.Engine) {
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
-	user := r.Group("users")
+
+	auth := r.Group("/auth")
 	{
-		user.GET("/view-profile/:id", controllers.GetUserProfile)
-		user.PUT("/edit-profile/:id", controllers.UpdateUserProfile)
+		auth.POST("/register", controllers.Register)
+		auth.POST("/login", controllers.Login)
 	}
 
-	auth := r.Group("auth")
+	surplusFood := r.Group("/surplus-food")
 	{
-		auth.POST("register", controllers.Register)
-		auth.POST("login", controllers.Login)
+		surplusFood.GET("/", controllers.GetSurplusFood)
 	}
 
-	menu := r.Group("surplus-food")
+	protected := r.Group("/")
+	protected.Use(middlewares.AuthMiddleware())
 	{
-		menu.GET("/", controllers.GetSurplusFood)
+		user := protected.Group("/users")
+		{
+			user.GET("/me", controllers.GetUserProfile)
+			user.PUT("/me", controllers.UpdateUserProfile)
+		}
+
 	}
 }

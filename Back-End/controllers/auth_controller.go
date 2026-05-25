@@ -4,6 +4,7 @@ import (
 	"backend/database"
 	"backend/dto"
 	"backend/models"
+	"backend/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -75,7 +76,19 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	role := user.Role
+	token, err := utils.GenerateJWT(user.ID, string(role))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to generate token",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"mesage": "Login success",
+		"role":   role,
+		"token":  token,
 	})
 }
