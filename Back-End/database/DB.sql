@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 32Ce7f1jhaGmYj4HP4fm6hlfWPIRzFFr1ZoQrGsgJh3m6RlnCaZYtpK0CvAr9l6
+\restrict WqZqsuSDDfgIi2rvx4TCW5npOgUxkzU1f825MuYZ8HoaseWuacZ0d383FX2PEFQ
 
 -- Dumped from database version 16.12 (Debian 16.12-1.pgdg13+1)
 -- Dumped by pg_dump version 16.12 (Debian 16.12-1.pgdg13+1)
@@ -161,8 +161,8 @@ ALTER TABLE public.payments OWNER TO cihuy;
 CREATE TABLE public.reviews (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     order_id uuid NOT NULL,
+    surplus_food_id uuid NOT NULL,
     user_id uuid NOT NULL,
-    business_id uuid NOT NULL,
     rating integer NOT NULL,
     comment text,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -249,11 +249,11 @@ de25f5c8-46b8-4de2-b4f2-d5b9ff6e5947	82eb463b-d4f8-429b-aa31-40ef4f29ed39	Jl. Ha
 --
 
 COPY public.businesses (id, owner_id, business_name, description, category, logo_url, is_verified, created_at, updated_at, deleted_at) FROM stdin;
-9fcc7230-e45f-4491-b747-dabe1cf7a1a3	c5dcb69b-bf2b-4bba-a29f-f35a703d7e43	Andi's Coffee	Cozy coffee shop with a modern vibe	Cafe	https://example.com/logo1.png	t	2026-03-07 14:22:32.122433	2026-03-07 14:22:32.122433	\N
-0421025f-c8b3-4ca3-b7f9-fc1d40798b95	38b1024e-c9d2-4e02-a004-b9ad6c53bda2	Budi Bakery	Freshly baked bread and pastries	Other	https://example.com/logo2.png	f	2026-03-07 14:22:32.126135	2026-03-07 14:22:32.126135	\N
-1a168029-a9ea-439d-9447-21f1b4784ae1	62e87872-9c31-42f3-8bcb-28839910d4e9	Citra Restaurant	Authentic local cuisine with modern touch	Restaurant	https://example.com/logo3.png	t	2026-03-07 14:22:32.12809	2026-03-07 14:22:32.12809	\N
-548d9075-6288-4b8f-9a51-45f439920876	fbe4077e-8446-48aa-8e75-441c2c9fa0d9	Dewa Hotel	Comfortable stay with great service	Hotel	https://example.com/logo4.png	t	2026-03-07 14:22:32.129904	2026-03-07 14:22:32.129904	\N
-82eb463b-d4f8-429b-aa31-40ef4f29ed39	3d1dc838-b1ab-4360-b2cc-dcc7e424ac56	Eka's Eatery	Casual dining with tasty local dishes	Other	https://example.com/logo5.png	f	2026-03-07 14:22:32.131852	2026-03-07 14:22:32.131852	\N
+9fcc7230-e45f-4491-b747-dabe1cf7a1a3	c5dcb69b-bf2b-4bba-a29f-f35a703d7e43	Andi's Coffee	Cozy coffee shop with a modern vibe	fast-food	https://example.com/logo1.png	t	2026-03-07 14:22:32.122433	2026-03-07 14:22:32.122433	\N
+0421025f-c8b3-4ca3-b7f9-fc1d40798b95	38b1024e-c9d2-4e02-a004-b9ad6c53bda2	Budi Bakery	Freshly baked bread and pastries	bakery	https://example.com/logo2.png	f	2026-03-07 14:22:32.126135	2026-03-07 14:22:32.126135	\N
+1a168029-a9ea-439d-9447-21f1b4784ae1	62e87872-9c31-42f3-8bcb-28839910d4e9	Citra Restaurant	Authentic local cuisine with modern touch	buffets	https://example.com/logo3.png	t	2026-03-07 14:22:32.12809	2026-03-07 14:22:32.12809	\N
+548d9075-6288-4b8f-9a51-45f439920876	fbe4077e-8446-48aa-8e75-441c2c9fa0d9	Dewa Hotel	Comfortable stay with great service	asian-food	https://example.com/logo4.png	t	2026-03-07 14:22:32.129904	2026-03-07 14:22:32.129904	\N
+82eb463b-d4f8-429b-aa31-40ef4f29ed39	3d1dc838-b1ab-4360-b2cc-dcc7e424ac56	Eka's Eatery	Casual dining with tasty local dishes	buffets	https://example.com/logo5.png	f	2026-03-07 14:22:32.131852	2026-03-07 14:22:32.131852	\N
 \.
 
 
@@ -313,8 +313,12 @@ deddb699-e911-4e5e-927f-8e8175ca5dea	adb020a3-0e52-48c8-9854-e557b878ea2f	gopay	
 -- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: cihuy
 --
 
-COPY public.reviews (id, order_id, user_id, business_id, rating, comment, created_at, updated_at, deleted_at) FROM stdin;
-3995fe20-8103-44cd-aa47-f7400ea8055c	60b48ce8-94cd-4bb6-be9b-18a0797d2972	62e87872-9c31-42f3-8bcb-28839910d4e9	1a168029-a9ea-439d-9447-21f1b4784ae1	5	Makanannya enak banget!	2026-03-07 14:22:32.201493	2026-03-07 14:22:32.201493	\N
+COPY public.reviews (id, order_id, surplus_food_id, user_id, rating, comment, created_at, updated_at, deleted_at) FROM stdin;
+3995fe20-8103-44cd-aa47-f7400ea8055c	60b48ce8-94cd-4bb6-be9b-18a0797d2972	17572007-4b29-4a05-9391-17d243ac3440	62e87872-9c31-42f3-8bcb-28839910d4e9	5	Makanannya enak banget!	2026-03-07 14:22:32.201493	2026-03-07 14:22:32.201493	\N
+9520acdf-e4df-45e0-89c0-53deb8882f79	8e08b4c7-2147-4887-9651-3681760eec4e	536a0dd4-fa98-4eb5-8415-0240ab83c404	38b1024e-c9d2-4e02-a004-b9ad6c53bda2	5	Fresh and delicious	2026-05-25 03:37:42.532294	2026-05-25 03:37:42.532294	\N
+8acdb425-ff71-447e-a1f9-cc37813d7806	60b48ce8-94cd-4bb6-be9b-18a0797d2972	62e546bc-6d68-4fe1-90af-e91e71aad525	62e87872-9c31-42f3-8bcb-28839910d4e9	4	Worth the discounted price	2026-05-25 03:37:42.532294	2026-05-25 03:37:42.532294	\N
+18f3bc0b-89cb-41c2-bf87-73fbd2e36e0d	adb020a3-0e52-48c8-9854-e557b878ea2f	3dabc633-55d3-42c6-b002-f6bac1081687	fbe4077e-8446-48aa-8e75-441c2c9fa0d9	5	Pickup was easy and food tasted great	2026-05-25 03:37:42.532294	2026-05-25 03:37:42.532294	\N
+6a47ef86-e083-4e81-b765-258f38e894f4	e50f6bb3-c074-45af-94b3-b84d840b4e83	90d1c0fb-fd7f-463a-bc0a-46be06444998	3d1dc838-b1ab-4360-b2cc-dcc7e424ac56	3	Portion was okay but still good	2026-05-25 03:37:42.532294	2026-05-25 03:37:42.532294	\N
 \.
 
 
@@ -514,19 +518,19 @@ ALTER TABLE ONLY public.payments
 
 
 --
--- Name: reviews fk_review_business; Type: FK CONSTRAINT; Schema: public; Owner: cihuy
---
-
-ALTER TABLE ONLY public.reviews
-    ADD CONSTRAINT fk_review_business FOREIGN KEY (business_id) REFERENCES public.businesses(id) ON DELETE CASCADE;
-
-
---
 -- Name: reviews fk_review_order; Type: FK CONSTRAINT; Schema: public; Owner: cihuy
 --
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT fk_review_order FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE;
+
+
+--
+-- Name: reviews fk_review_surplus_food; Type: FK CONSTRAINT; Schema: public; Owner: cihuy
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT fk_review_surplus_food FOREIGN KEY (surplus_food_id) REFERENCES public.surplus_foods(id) ON DELETE CASCADE;
 
 
 --
@@ -549,5 +553,5 @@ ALTER TABLE ONLY public.surplus_foods
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 32Ce7f1jhaGmYj4HP4fm6hlfWPIRzFFr1ZoQrGsgJh3m6RlnCaZYtpK0CvAr9l6
+\unrestrict WqZqsuSDDfgIi2rvx4TCW5npOgUxkzU1f825MuYZ8HoaseWuacZ0d383FX2PEFQ
 
