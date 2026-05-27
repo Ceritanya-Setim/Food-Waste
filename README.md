@@ -25,7 +25,7 @@ With this app, food is not wasted and can provide economic, social, and environm
 
 ## Setup
 ```bash
-https://github.com/EllaUktolseja/Software-Engineering.git
+https://github.com/Ceritanya-Setim/Food-Waste
 ```
 
 ### For More Detail Setup
