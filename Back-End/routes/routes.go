@@ -39,6 +39,7 @@ func SetupRoutes(r *gin.Engine) {
 		orders := protected.Group("/orders")
 		{
 			orders.POST("/", controllers.CreateOrder)
+			orders.GET("/history", controllers.GetOrderHistory)
 		}
 
 	}

@@ -179,3 +179,151 @@ func CreateOrder(c *gin.Context) {
 		"data":    response,
 	})
 }
+
+func GetOrderHistory(c *gin.Context) {
+
+	userID := c.MustGet("user_id").(string)
+
+	var req dto.OrderHistoryRequest
+
+	if err := c.ShouldBindQuery(&req); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	validStatus := map[string]bool{
+		"all":       true,
+		"completed": true,
+		"cancelled": true,
+	}
+
+	if req.Status != "" && !validStatus[req.Status] {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid status filter",
+		})
+		return
+	}
+
+	var totalOrders int64
+
+	if err := database.DB.
+		Model(&models.Order{}).
+		Where("user_id = ?", userID).
+		Count(&totalOrders).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to count total orders",
+		})
+		return
+	}
+
+	var completedOrders int64
+
+	if err := database.DB.
+		Model(&models.Order{}).
+		Where("user_id = ?", userID).
+		Where("status = ?", models.OrderCompleted).
+		Count(&completedOrders).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to count completed orders",
+		})
+		return
+	}
+
+	type SpendingResult struct {
+		Total int
+	}
+
+	var spending SpendingResult
+
+	if err := database.DB.
+		Model(&models.Order{}).
+		Select("COALESCE(SUM(total_price), 0) as total").
+		Where("user_id = ?", userID).
+		Where("status = ?", models.OrderPaid).
+		Scan(&spending).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to calculate spending",
+		})
+		return
+	}
+
+	type OrderResult struct {
+		OrderID      string
+		BusinessName string
+		Status       string
+		OrderDate    time.Time
+		TotalPrice   int
+	}
+
+	var results []OrderResult
+
+	query := database.DB.
+		Table("orders").
+		Select(`
+			orders.id as order_id,
+			businesses.business_name,
+			orders.status,
+			orders.order_time as order_date,
+			orders.total_price
+		`).
+		Joins(`
+			JOIN business_locations
+			ON business_locations.id = orders.business_location_id
+		`).
+		Joins(`
+			JOIN businesses
+			ON businesses.id = business_locations.business_id
+		`).
+		Where("orders.user_id = ?", userID)
+
+	if req.Status != "" && req.Status != "all" {
+
+		query = query.Where(
+			"orders.status = ?",
+			req.Status,
+		)
+	}
+
+	if err := query.
+		Order("orders.order_time DESC").
+		Scan(&results).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch order history",
+		})
+		return
+	}
+
+	orders := make([]dto.OrderHistoryItem, 0, len(results))
+
+	for _, order := range results {
+
+		orders = append(orders, dto.OrderHistoryItem{
+			OrderID:      order.OrderID,
+			BusinessName: order.BusinessName,
+			Status:       order.Status,
+			OrderDate:    order.OrderDate,
+			TotalPrice:   order.TotalPrice,
+		})
+	}
+
+	response := dto.OrderHistoryResponse{
+		Summary: dto.OrderHistorySummary{
+			TotalOrders:     int(totalOrders),
+			CompletedOrders: int(completedOrders),
+			TotalSpending:   spending.Total,
+		},
+		Orders: orders,
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": response,
+	})
+}
