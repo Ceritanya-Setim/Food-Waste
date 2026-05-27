@@ -36,5 +36,10 @@ func SetupRoutes(r *gin.Engine) {
 			user.PUT("/me", controllers.UpdateUserProfile)
 		}
 
+		orders := protected.Group("/orders")
+		{
+			orders.POST("/", controllers.CreateOrder)
+		}
+
 	}
 }
