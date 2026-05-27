@@ -30,17 +30,24 @@ func SetupRoutes(r *gin.Engine) {
 	protected := r.Group("/")
 	protected.Use(middlewares.AuthMiddleware())
 	{
-		user := protected.Group("/users")
+		customer := protected.Group("/customer")
+		customer.Use(middlewares.CustomerOnly())
 		{
-			user.GET("/me", controllers.GetUserProfile)
-			user.PUT("/me", controllers.UpdateUserProfile)
+			customer.GET("/me", controllers.GetCustomerProfile)
+			customer.PUT("/me", controllers.UpdateCustomerProfile)
+
+			orders := customer.Group("/order")
+			{
+				orders.POST("/", controllers.CreateOrder)
+				orders.GET("/history", controllers.GetOrderHistory)
+			}
 		}
 
-		orders := protected.Group("/orders")
+		merchant := protected.Group("/merchant")
+		merchant.Use(middlewares.MerchantOnly())
 		{
-			orders.POST("/", controllers.CreateOrder)
-			orders.GET("/history", controllers.GetOrderHistory)
+			merchant.GET("/me", controllers.GetMerchantProfile)
+			merchant.PUT("/me", controllers.UpdateMerchantProfile)
 		}
-
 	}
 }

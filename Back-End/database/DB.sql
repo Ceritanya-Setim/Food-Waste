@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict TG4St8CKL2HAD0ULSISR5hwaOEmIIFni4NQdeI351PHAJ0JVCxqFGeIdYbI07wk
+\restrict MWmz7cL7UEBi2RXGOSKeLOExCgZgNZv6HcC3DdVa3yeV68nlpfz6WwUZeSoJwje
 
 -- Dumped from database version 16.12 (Debian 16.12-1.pgdg13+1)
 -- Dumped by pg_dump version 16.12 (Debian 16.12-1.pgdg13+1)
@@ -174,6 +174,18 @@ CREATE TABLE public.reviews (
 ALTER TABLE public.reviews OWNER TO cihuy;
 
 --
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: cihuy
+--
+
+CREATE TABLE public.schema_migrations (
+    version bigint NOT NULL,
+    dirty boolean NOT NULL
+);
+
+
+ALTER TABLE public.schema_migrations OWNER TO cihuy;
+
+--
 -- Name: surplus_foods; Type: TABLE; Schema: public; Owner: cihuy
 --
 
@@ -268,7 +280,6 @@ COPY public.order_items (id, order_id, surplus_food_id, quantity, price_per_item
 32ba3e03-ede4-4799-bd9c-9d71e83dde33	60b48ce8-94cd-4bb6-be9b-18a0797d2972	62e546bc-6d68-4fe1-90af-e91e71aad525	2	15000	30000	2026-03-07 14:22:32.189926	2026-03-07 14:22:32.189926	\N
 747e6f6a-f1ca-4057-a0b7-4eb71566203a	adb020a3-0e52-48c8-9854-e557b878ea2f	3dabc633-55d3-42c6-b002-f6bac1081687	2	15000	30000	2026-03-07 14:22:32.189926	2026-03-07 14:22:32.189926	\N
 ca6934cd-dc78-47c5-93e8-1283ac86751f	e50f6bb3-c074-45af-94b3-b84d840b4e83	90d1c0fb-fd7f-463a-bc0a-46be06444998	2	15000	30000	2026-03-07 14:22:32.189926	2026-03-07 14:22:32.189926	\N
-3bc2fb68-5ef7-43e6-a198-ee8c54960e56	8e5dd783-e02a-4b48-a26e-5507377d7b83	17572007-4b29-4a05-9391-17d243ac3440	2	10000	20000	2026-05-27 14:43:35.201009	2026-05-27 14:43:35.201009	\N
 \.
 
 
@@ -282,7 +293,6 @@ COPY public.orders (id, user_id, business_location_id, total_price, status, pick
 60b48ce8-94cd-4bb6-be9b-18a0797d2972	62e87872-9c31-42f3-8bcb-28839910d4e9	9fa914ed-b715-408c-9d26-cea9d503ec4b	12000	completed	fc0e7860-187b-408c-813d-0f7c4fb758e0	2026-03-07 09:22:32.175243	2026-03-07 12:22:32.175243	2026-03-07 14:22:32.182084	2026-03-07 14:22:32.182084	\N
 adb020a3-0e52-48c8-9854-e557b878ea2f	fbe4077e-8446-48aa-8e75-441c2c9fa0d9	1bb574ae-e29c-42e8-bae3-f33d6179936b	10000	cancelled	882e56f3-fd25-4e64-affe-d4dc2270a5a2	2026-03-07 11:22:32.175243	2026-03-07 15:22:32.175243	2026-03-07 14:22:32.184146	2026-03-07 14:22:32.184146	\N
 e50f6bb3-c074-45af-94b3-b84d840b4e83	3d1dc838-b1ab-4360-b2cc-dcc7e424ac56	de25f5c8-46b8-4de2-b4f2-d5b9ff6e5947	20000	expired	821f2923-2b5a-4beb-a099-b8e1bd5dc513	2026-03-07 04:22:32.175243	2026-03-07 08:22:32.175243	2026-03-07 14:22:32.186193	2026-03-07 14:22:32.186193	\N
-8e5dd783-e02a-4b48-a26e-5507377d7b83	c5dcb69b-bf2b-4bba-a29f-f35a703d7e43	3e7dd2ab-f9b0-4d90-a830-684df5b2f274	20000	pending	PICKUP-482884	2026-05-27 14:43:35.195307	2026-03-07 19:22:32.148579	2026-05-27 14:43:35.195567	2026-05-27 14:43:35.195567	\N
 \.
 
 
@@ -313,15 +323,24 @@ COPY public.reviews (id, order_id, surplus_food_id, user_id, rating, comment, cr
 
 
 --
+-- Data for Name: schema_migrations; Type: TABLE DATA; Schema: public; Owner: cihuy
+--
+
+COPY public.schema_migrations (version, dirty) FROM stdin;
+20260221182322	f
+\.
+
+
+--
 -- Data for Name: surplus_foods; Type: TABLE DATA; Schema: public; Owner: cihuy
 --
 
 COPY public.surplus_foods (id, business_location_id, title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) FROM stdin;
-536a0dd4-fa98-4eb5-8415-0240ab83c404	dbb69039-637b-4d7f-98e4-ed0198164a1d	Buffet Hotel Surplus	Makanan buffet sisa layak konsumsi	50000	10000	10	10	2026-03-07 16:22:32.148587	2026-03-07 19:22:32.148591	2026-09-13 16:22:32.148574	active	2026-03-07 14:22:32.152986	2026-03-07 14:22:32.152986	\N
-62e546bc-6d68-4fe1-90af-e91e71aad525	9fa914ed-b715-408c-9d26-cea9d503ec4b	Nasi Box Restoran	Nasi ayam + sayur	50000	10000	10	10	2026-03-07 16:22:32.148598	2026-03-07 19:22:32.148602	2026-09-13 16:22:32.148574	active	2026-03-07 14:22:32.155437	2026-03-07 14:22:32.155437	\N
-3dabc633-55d3-42c6-b002-f6bac1081687	1bb574ae-e29c-42e8-bae3-f33d6179936b	Paket Kopi & Pastry	1 kopi + 1 pastry random	50000	10000	10	10	2026-03-07 16:22:32.148608	2026-03-07 19:22:32.148611	2026-09-13 16:22:32.148574	active	2026-03-07 14:22:32.157885	2026-03-07 14:22:32.157885	\N
-90d1c0fb-fd7f-463a-bc0a-46be06444998	de25f5c8-46b8-4de2-b4f2-d5b9ff6e5947	Dessert Box Surprise	Dessert mix 3 item	50000	10000	10	10	2026-03-07 16:22:32.148618	2026-03-07 19:22:32.148622	2026-09-13 16:22:32.148574	active	2026-03-07 14:22:32.159891	2026-03-07 14:22:32.159891	\N
-17572007-4b29-4a05-9391-17d243ac3440	3e7dd2ab-f9b0-4d90-a830-684df5b2f274	Paket Roti Sisa Hari Ini	Berisi 5 roti campur (manis & asin)	50000	10000	10	8	2026-03-07 16:22:32.148574	2026-03-07 19:22:32.148579	2026-09-13 16:22:32.148574	active	2026-03-07 14:22:32.149232	2026-05-27 14:43:35.19335	\N
+17572007-4b29-4a05-9391-17d243ac3440	3e7dd2ab-f9b0-4d90-a830-684df5b2f274	Paket Roti Sisa Hari Ini	Berisi 5 roti campur (manis & asin)	50000	10000	10	10	2026-03-07 16:22:32.148574	2026-03-07 19:22:32.148579	2026-09-13 00:00:00	active	2026-03-07 14:22:32.149232	2026-03-07 14:22:32.149232	\N
+536a0dd4-fa98-4eb5-8415-0240ab83c404	dbb69039-637b-4d7f-98e4-ed0198164a1d	Buffet Hotel Surplus	Makanan buffet sisa layak konsumsi	50000	10000	10	10	2026-03-07 16:22:32.148587	2026-03-07 19:22:32.148591	2026-09-13 00:00:00	active	2026-03-07 14:22:32.152986	2026-03-07 14:22:32.152986	\N
+62e546bc-6d68-4fe1-90af-e91e71aad525	9fa914ed-b715-408c-9d26-cea9d503ec4b	Nasi Box Restoran	Nasi ayam + sayur	50000	10000	10	10	2026-03-07 16:22:32.148598	2026-03-07 19:22:32.148602	2026-09-13 00:00:00	active	2026-03-07 14:22:32.155437	2026-03-07 14:22:32.155437	\N
+3dabc633-55d3-42c6-b002-f6bac1081687	1bb574ae-e29c-42e8-bae3-f33d6179936b	Paket Kopi & Pastry	1 kopi + 1 pastry random	50000	10000	10	10	2026-03-07 16:22:32.148608	2026-03-07 19:22:32.148611	2026-09-13 00:00:00	active	2026-03-07 14:22:32.157885	2026-03-07 14:22:32.157885	\N
+90d1c0fb-fd7f-463a-bc0a-46be06444998	de25f5c8-46b8-4de2-b4f2-d5b9ff6e5947	Dessert Box Surprise	Dessert mix 3 item	50000	10000	10	10	2026-03-07 16:22:32.148618	2026-03-07 19:22:32.148622	2026-09-13 00:00:00	active	2026-03-07 14:22:32.159891	2026-03-07 14:22:32.159891	\N
 \.
 
 
@@ -330,11 +349,12 @@ COPY public.surplus_foods (id, business_location_id, title, description, origina
 --
 
 COPY public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) FROM stdin;
-c5dcb69b-bf2b-4bba-a29f-f35a703d7e43	Andi Pratama	andi@example.com	081234567890	$2a$10$EDT9FVMzcogKYkyDYQlV2O3uAmAkOa4coGF/COalSulNu674w1zee	customer		t	2026-03-07 14:22:32.107379	2026-03-07 14:22:32.107379	\N
 38b1024e-c9d2-4e02-a004-b9ad6c53bda2	Budi Santoso	budi@example.com	081234567891	$2a$10$ked/3avpdrwMmClgOQzGUOgDVRqvGT3nRyEBanPlFObBe2WS6spwG	customer		f	2026-03-07 14:22:32.114247	2026-03-07 14:22:32.114247	\N
 62e87872-9c31-42f3-8bcb-28839910d4e9	Citra Lestari	citra@example.com	081234567892	$2a$10$CCGz88IO7UPDytuQn4cVDec8Z7D.j8u32Zr28.IXklCQEh9.ICXf.	merchant		t	2026-03-07 14:22:32.116165	2026-03-07 14:22:32.116165	\N
 fbe4077e-8446-48aa-8e75-441c2c9fa0d9	Dewa Saputra	dewa@example.com	081234567893	$2a$10$Iiq2zt1I5dyV8byA9NazPuCoHT1FECfBdP1GWEsJacSNQ1NeQnqNe	merchant		t	2026-03-07 14:22:32.11773	2026-03-07 14:22:32.11773	\N
 3d1dc838-b1ab-4360-b2cc-dcc7e424ac56	Eka Wijaya	eka@example.com	081234567894	$2a$10$z/pO/dg2CiHJCsnWntIy7ef0Hb/kPuURUpfgUXEj/Pc/mdTiQMItW	customer		f	2026-03-07 14:22:32.119222	2026-03-07 14:22:32.119222	\N
+b48e37fe-9682-4a03-87c0-bc78adb9dbf9	orgil	orgil@gmail.com	123412341234	$2a$10$WQ1Qw9RB75VmQ9rJgMW6SOt11e8YQg2Iqx8d1aW1zSq5C6eeYtsre	customer		f	2026-05-27 16:39:02.855661	2026-05-27 16:39:02.855661	\N
+c5dcb69b-bf2b-4bba-a29f-f35a703d7e43	andi	andi@example.com	081234567890	$2a$10$EDT9FVMzcogKYkyDYQlV2O3uAmAkOa4coGF/COalSulNu674w1zee	customer		t	2026-03-07 14:22:32.107379	2026-05-27 16:41:26.96963	\N
 \.
 
 
@@ -400,6 +420,14 @@ ALTER TABLE ONLY public.payments
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: cihuy
+--
+
+ALTER TABLE ONLY public.schema_migrations
+    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
 
 --
@@ -526,5 +554,5 @@ ALTER TABLE ONLY public.surplus_foods
 -- PostgreSQL database dump complete
 --
 
-\unrestrict TG4St8CKL2HAD0ULSISR5hwaOEmIIFni4NQdeI351PHAJ0JVCxqFGeIdYbI07wk
+\unrestrict MWmz7cL7UEBi2RXGOSKeLOExCgZgNZv6HcC3DdVa3yeV68nlpfz6WwUZeSoJwje
 

@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetUserProfile(c *gin.Context) {
+func GetCustomerProfile(c *gin.Context) {
 
 	userID := c.MustGet("user_id").(string)
 
@@ -26,7 +26,7 @@ func GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	response := dto.UserProfileResponse{
+	response := dto.CustomerProfileResponse{
 		FullName:        user.FullName,
 		Email:           user.Email,
 		PhoneNumber:     user.PhoneNumber,
@@ -41,7 +41,7 @@ func GetUserProfile(c *gin.Context) {
 	})
 }
 
-func UpdateUserProfile(c *gin.Context) {
+func UpdateCustomerProfile(c *gin.Context) {
 
 	userID := c.MustGet("user_id").(string)
 
@@ -127,7 +127,7 @@ func UpdateUserProfile(c *gin.Context) {
 		return
 	}
 
-	response := dto.UserProfileResponse{
+	response := dto.CustomerProfileResponse{
 		FullName:        user.FullName,
 		Email:           user.Email,
 		PhoneNumber:     user.PhoneNumber,
