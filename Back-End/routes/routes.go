@@ -34,6 +34,7 @@ func SetupRoutes(r *gin.Engine) {
 			customer.GET("/me", controllers.GetCustomerProfile)
 			customer.PUT("/me", controllers.UpdateCustomerProfile)
 
+			customer.GET("/impact", controllers.GetImpactController)
 			orders := customer.Group("/order")
 			{
 				orders.POST("/", controllers.CreateOrder)
