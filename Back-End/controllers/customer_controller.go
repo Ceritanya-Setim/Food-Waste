@@ -1,144 +1,73 @@
 package controllers
 
 import (
-	"backend/database"
 	"backend/dto"
-	"backend/models"
+	"backend/services"
+	"backend/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func GetCustomerProfile(c *gin.Context) {
 
 	userID := c.MustGet("user_id").(string)
 
-	var user models.User
+	response, err := services.GetCustomerProfileService(userID)
 
-	if err := database.DB.
-		Where("id = ?", userID).
-		First(&user).Error; err != nil {
+	if err != nil {
 
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "User not found",
-		})
+		utils.ErrorResponse(
+			c,
+			http.StatusNotFound,
+			err.Error(),
+		)
 		return
 	}
 
-	response := dto.CustomerProfileResponse{
-		FullName:        user.FullName,
-		Email:           user.Email,
-		PhoneNumber:     user.PhoneNumber,
-		Role:            string(user.Role),
-		ProfileImageURL: user.ProfileImageURL,
-		RegisteredSince: user.CreatedAt.Format("2006-01-02"),
-		LastUpdated:     user.UpdatedAt.Format("2006-01-02"),
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"data": response,
-	})
+	utils.SuccessResponse(
+		c,
+		http.StatusOK,
+		"Customer profile fetched successfully",
+		response,
+	)
 }
 
 func UpdateCustomerProfile(c *gin.Context) {
 
 	userID := c.MustGet("user_id").(string)
 
-	var user models.User
+	var req dto.EditProfileRequest
 
-	if err := database.DB.
-		Where("id = ?", userID).
-		First(&user).Error; err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "User not found",
-		})
-		return
-	}
-
-	var input dto.EditProfileRequest
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	updates := map[string]interface{}{}
-
-	if input.FullName != "" {
-		updates["full_name"] = input.FullName
-	}
-
-	if input.PhoneNumber != "" {
-		updates["phone_number"] = input.PhoneNumber
-	}
-
-	if input.ProfileImageURL != "" {
-		updates["profile_image_url"] = input.ProfileImageURL
-	}
-
-	if input.Password != "" {
-
-		hash, err := bcrypt.GenerateFromPassword(
-			[]byte(input.Password),
-			bcrypt.DefaultCost,
+		utils.ErrorResponse(
+			c,
+			http.StatusBadRequest,
+			err.Error(),
 		)
-
-		if err != nil {
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to hash password",
-			})
-			return
-		}
-
-		updates["password_hash"] = string(hash)
-	}
-
-	if len(updates) == 0 {
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "No data to update",
-		})
 		return
 	}
 
-	if err := database.DB.
-		Model(&user).
-		Updates(updates).Error; err != nil {
+	response, err := services.UpdateCustomerProfileService(
+		userID,
+		req,
+	)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to update profile",
-		})
+	if err != nil {
+
+		utils.ErrorResponse(
+			c,
+			http.StatusBadRequest,
+			err.Error(),
+		)
 		return
 	}
 
-	if err := database.DB.
-		Where("id = ?", userID).
-		First(&user).Error; err != nil {
-
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to fetch updated user",
-		})
-		return
-	}
-
-	response := dto.CustomerProfileResponse{
-		FullName:        user.FullName,
-		Email:           user.Email,
-		PhoneNumber:     user.PhoneNumber,
-		Role:            string(user.Role),
-		ProfileImageURL: user.ProfileImageURL,
-		RegisteredSince: user.CreatedAt.Format("2006-01-02"),
-		LastUpdated:     user.UpdatedAt.Format("2006-01-02"),
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Profile updated successfully",
-		"data":    response,
-	})
+	utils.SuccessResponse(
+		c,
+		http.StatusOK,
+		"Customer profile updated successfully",
+		response,
+	)
 }
