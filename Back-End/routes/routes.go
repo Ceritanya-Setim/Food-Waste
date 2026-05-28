@@ -46,6 +46,7 @@ func SetupRoutes(r *gin.Engine) {
 		merchant := protected.Group("/merchant")
 		merchant.Use(middlewares.MerchantOnly())
 		{
+			merchant.GET("/", controllers.GetMerchantDashboard)
 			merchant.GET("/me", controllers.GetMerchantProfile)
 			merchant.PUT("/me", controllers.UpdateMerchantProfile)
 		}
