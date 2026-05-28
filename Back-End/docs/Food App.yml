@@ -1,0 +1,358 @@
+opencollection: 1.0.0
+info:
+  name: Food App
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ''
+      port: ''
+      auth:
+        username: ''
+        password: ''
+      bypassProxy: ''
+items:
+  - info:
+      name: Customer Create Order
+      type: http
+      seq: 6
+    http:
+      method: POST
+      url: http://localhost:5000/customer/order
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk
+      body:
+        type: json
+        data: |-
+          {
+            "business_location_id": "3e7dd2ab-f9b0-4d90-a830-684df5b2f274",
+            "items": [
+              {
+                "surplus_food_id": "17572007-4b29-4a05-9391-17d243ac3440",
+                "quantity": 2
+              }
+            ]
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Customer Edit Profile
+      type: http
+      seq: 5
+    http:
+      method: PUT
+      url: http://localhost:5000/customer/me
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk
+      body:
+        type: json
+        data: |-
+          {
+              "full_name": "andi"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Customer Get Order History
+      type: http
+      seq: 7
+    http:
+      method: GET
+      url: http://localhost:5000/customer/order/history?status=all
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk
+      params:
+        - name: status
+          value: all
+          type: query
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Customer View Profile
+      type: http
+      seq: 4
+    http:
+      method: GET
+      url: http://localhost:5000/customer/me
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODYzNDYsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.Hxm8SWpQpkPBkMKgetQsh8I3BwI5hHWID7YiNmNyxbo
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Get Surplus Foods
+      type: http
+      seq: 9
+    http:
+      method: GET
+      url: http://localhost:5000/surplus-food?filter=closest&lat=-6.219799064039631&lon=106.99983013194068
+      params:
+        - name: filter
+          value: closest
+          type: query
+        - name: lat
+          value: '-6.219799064039631'
+          type: query
+        - name: lon
+          value: '106.99983013194068'
+          type: query
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Login
+      type: http
+      seq: 3
+    http:
+      method: POST
+      url: http://localhost:5000/auth/login
+      body:
+        type: json
+        data: |-
+          {
+              "email": "citra@example.com",
+              "password": "password123"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant Update Profile
+      type: http
+      seq: 12
+    http:
+      method: PUT
+      url: http://localhost:5000/merchant/me
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODgyODQsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.tm7f_QiI5XZhRZUFT5ASE3bLKE0_ZsoZui-AB2qOWcw
+      body:
+        type: json
+        data: |-
+          {
+            "full_name": "Citra"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant View Profile
+      type: http
+      seq: 11
+    http:
+      method: GET
+      url: http://localhost:5000/merchant/me
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODgyODQsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.tm7f_QiI5XZhRZUFT5ASE3bLKE0_ZsoZui-AB2qOWcw
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Register
+      type: http
+      seq: 2
+    http:
+      method: POST
+      url: http://localhost:5000/auth/register
+      body:
+        type: json
+        data: |-
+          {
+              "full_name": "geri",
+              "email": "geri@gmail.com",
+              "phone_number": "123412341234",
+              "role": "merchant",
+              "password": "password123"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Test
+      type: http
+      seq: 1
+    http:
+      method: GET
+      url: http://localhost:5000/ping
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant View Dashboard
+      type: http
+      seq: 13
+    http:
+      method: GET
+      url: http://localhost:5000/merchant
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMjk1NTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.TEyGQKcjfiTRIKShaHvYLGckJJqMaEsob1yrsRGv_5Q
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant Create Surplus Food
+      type: http
+      seq: 14
+    http:
+      method: POST
+      url: http://localhost:5000/merchant/surplus-food
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg
+      body:
+        type: json
+        data: |-
+          {
+            "business_location_id": "9fa914ed-b715-408c-9d26-cea9d503ec4b",
+            "title": "Roti Croissant Coklat",
+            "description": "Croissant fresh sisa hari ini masih layak konsumsi",
+            "original_price": 45000,
+            "discount_price": 20000,
+            "quantity_available": 10,
+            "pickup_start_time": "2026-05-28T18:00:00Z",
+            "pickup_end_time": "2026-05-28T21:00:00Z",
+            "expiry_time": "2026-05-29T00:00:00Z"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant View Detail Surplus Food
+      type: http
+      seq: 16
+    http:
+      method: GET
+      url: http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg
+      body:
+        type: json
+        data: ''
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant Update Surplus Food
+      type: http
+      seq: 18
+    http:
+      method: PUT
+      url: http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg
+      body:
+        type: json
+        data: |-
+          {
+            "title": "Roti Croissant Stroberi"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Merchant Delete Surplus Food
+      type: http
+      seq: 20
+    http:
+      method: DELETE
+      url: http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Get Explore
+      type: http
+      seq: 10
+    http:
+      method: GET
+      url: http://localhost:5000/explore
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Customer Get Impact
+      type: http
+      seq: 8
+    http:
+      method: GET
+      url: http://localhost:5000/customer/impact
+      headers:
+        - name: Authorization
+          value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODYzNDYsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.Hxm8SWpQpkPBkMKgetQsh8I3BwI5hHWID7YiNmNyxbo
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-05-28T12:48:41.734Z'
+    exportedUsing: Bruno

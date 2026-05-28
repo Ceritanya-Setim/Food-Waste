@@ -1,0 +1,595 @@
+{
+  "info": {
+    "name": "Food App",
+    "description": null,
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Test",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/ping",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "ping"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/auth/register",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"full_name\": \"geri\",\n    \"email\": \"geri@gmail.com\",\n    \"phone_number\": \"123412341234\",\n    \"role\": \"merchant\",\n    \"password\": \"password123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"citra@example.com\",\n    \"password\": \"password123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Customer View Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODYzNDYsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.Hxm8SWpQpkPBkMKgetQsh8I3BwI5hHWID7YiNmNyxbo",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/customer/me",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "customer",
+            "me"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Customer Edit Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/customer/me",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "customer",
+            "me"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"full_name\": \"andi\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Customer Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/customer/order",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "customer",
+            "order"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"business_location_id\": \"3e7dd2ab-f9b0-4d90-a830-684df5b2f274\",\n  \"items\": [\n    {\n      \"surplus_food_id\": \"17572007-4b29-4a05-9391-17d243ac3440\",\n      \"quantity\": 2\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Customer Get Order History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/customer/order/history?status=all",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "customer",
+            "order",
+            "history"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "all"
+            }
+          ],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Customer Get Impact",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODYzNDYsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.Hxm8SWpQpkPBkMKgetQsh8I3BwI5hHWID7YiNmNyxbo",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/customer/impact",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "customer",
+            "impact"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Get Surplus Foods",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/surplus-food?filter=closest&lat=-6.219799064039631&lon=106.99983013194068",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "surplus-food"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "closest"
+            },
+            {
+              "key": "lat",
+              "value": "-6.219799064039631"
+            },
+            {
+              "key": "lon",
+              "value": "106.99983013194068"
+            }
+          ],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Get Explore",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/explore",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "explore"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Merchant View Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODgyODQsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.tm7f_QiI5XZhRZUFT5ASE3bLKE0_ZsoZui-AB2qOWcw",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/me",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "me"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Merchant Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODgyODQsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.tm7f_QiI5XZhRZUFT5ASE3bLKE0_ZsoZui-AB2qOWcw",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/me",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "me"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"Citra\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Merchant View Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMjk1NTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.TEyGQKcjfiTRIKShaHvYLGckJJqMaEsob1yrsRGv_5Q",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Merchant Create Surplus Food",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/surplus-food",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "surplus-food"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"business_location_id\": \"9fa914ed-b715-408c-9d26-cea9d503ec4b\",\n  \"title\": \"Roti Croissant Coklat\",\n  \"description\": \"Croissant fresh sisa hari ini masih layak konsumsi\",\n  \"original_price\": 45000,\n  \"discount_price\": 20000,\n  \"quantity_available\": 10,\n  \"pickup_start_time\": \"2026-05-28T18:00:00Z\",\n  \"pickup_end_time\": \"2026-05-28T21:00:00Z\",\n  \"expiry_time\": \"2026-05-29T00:00:00Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Merchant View Detail Surplus Food",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "surplus-food",
+            "a7241915-16f7-46fd-af3f-41a1204ecbee"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Merchant Update Surplus Food",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "surplus-food",
+            "a7241915-16f7-46fd-af3f-41a1204ecbee"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Roti Croissant Stroberi\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Merchant Delete Surplus Food",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "surplus-food",
+            "a7241915-16f7-46fd-af3f-41a1204ecbee"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    }
+  ],
+  "variable": []
+}
