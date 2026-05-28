@@ -22,10 +22,8 @@ func SetupRoutes(r *gin.Engine) {
 		auth.POST("/login", controllers.Login)
 	}
 
-	surplusFood := r.Group("/surplus-food")
-	{
-		surplusFood.GET("/", controllers.GetSurplusFood)
-	}
+	r.GET("/surplus-food", controllers.GetSurplusFood)
+	r.GET("/explore", controllers.GetExplore)
 
 	protected := r.Group("/")
 	protected.Use(middlewares.AuthMiddleware())
@@ -49,6 +47,11 @@ func SetupRoutes(r *gin.Engine) {
 			merchant.GET("/", controllers.GetMerchantDashboard)
 			merchant.GET("/me", controllers.GetMerchantProfile)
 			merchant.PUT("/me", controllers.UpdateMerchantProfile)
+
+			merchant.POST("/surplus-food", controllers.CreateMerchantSurplusFood)
+			merchant.GET("/surplus-food/:id", controllers.GetMerchantFoodDetail)
+			merchant.PUT("/surplus-food/:id", controllers.UpdateMerchantFood)
+			merchant.DELETE("/surplus-food/:id", controllers.DeleteMerchantFood)
 		}
 	}
 }

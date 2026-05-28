@@ -1,28 +1,29 @@
-package services
+package utils
 
 import (
 	"backend/database"
 	"backend/dto"
 	"backend/models"
-	"errors"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
-func GetSurplusFoods(
+func BuildSurplusFoodQuery(
 	req dto.SurplusFoodRequest,
-) ([]dto.SurplusFoodResponse, error) {
-
-	var surplusFoods []models.SurplusFood
+) *gorm.DB {
 
 	query := database.DB.
 		Model(&models.SurplusFood{}).
 		Joins(`
 			JOIN business_locations
-			ON business_locations.id = surplus_foods.business_location_id
+			ON business_locations.id =
+			surplus_foods.business_location_id
 		`).
 		Joins(`
 			JOIN businesses
-			ON businesses.id = business_locations.business_id
+			ON businesses.id =
+			business_locations.business_id
 		`).
 		Preload("BusinessLocation").
 		Preload("BusinessLocation.Business")
@@ -68,8 +69,10 @@ func GetSurplusFoods(
 	case "special-promo":
 
 		query = query.Order(`
-			(surplus_foods.original_price -
-			surplus_foods.discount_price) DESC
+			(
+				surplus_foods.original_price -
+				surplus_foods.discount_price
+			) DESC
 		`)
 
 	case "newest":
@@ -83,12 +86,17 @@ func GetSurplusFoods(
 		query = query.
 			Joins(`
 				LEFT JOIN reviews
-				ON reviews.surplus_food_id = surplus_foods.id
+				ON reviews.surplus_food_id =
+				surplus_foods.id
 			`).
 			Select("surplus_foods.*").
 			Group("surplus_foods.id").
 			Order(`
-				COALESCE(AVG(reviews.rating), 0) DESC,
+				COALESCE(
+					AVG(reviews.rating),
+					0
+				) DESC,
+
 				COUNT(reviews.id) DESC
 			`)
 
@@ -102,6 +110,7 @@ func GetSurplusFoods(
 						business_locations.latitude - %f,
 						2
 					) +
+
 					POWER(
 						business_locations.longitude - %f,
 						2
@@ -114,38 +123,5 @@ func GetSurplusFoods(
 		}
 	}
 
-	if err := query.Find(&surplusFoods).Error; err != nil {
-
-		return nil,
-			errors.New("failed to fetch surplus foods")
-	}
-
-	response := make(
-		[]dto.SurplusFoodResponse,
-		0,
-		len(surplusFoods),
-	)
-
-	for _, food := range surplusFoods {
-
-		response = append(response, dto.SurplusFoodResponse{
-			Title:         food.Title,
-			Description:   food.Description,
-			OriginalPrice: food.OriginalPrice,
-			DiscountPrice: food.DiscountPrice,
-			PickupEndTime: food.PickupEndTime,
-			ExpiryTime:    food.ExpiryTime,
-			Status:        string(food.Status),
-			BusinessName: food.
-				BusinessLocation.
-				Business.
-				BusinessName,
-			Category: string(
-				food.BusinessLocation.Business.Category,
-			),
-			City: food.BusinessLocation.City,
-		})
-	}
-
-	return response, nil
+	return query
 }
