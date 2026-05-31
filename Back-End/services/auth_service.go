@@ -26,6 +26,8 @@ func RegisterUser(req dto.RegisterRequest) error {
 		return errors.New("failed to hash password")
 	}
 
+	tx := database.DB.Begin()
+
 	user := models.User{
 		FullName:     req.FullName,
 		Email:        req.Email,
@@ -35,9 +37,51 @@ func RegisterUser(req dto.RegisterRequest) error {
 		IsVerified:   false,
 	}
 
-	if err := database.DB.Create(&user).Error; err != nil {
-
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
 		return errors.New("failed to register user")
+	}
+
+	if user.Role == models.RoleMerchant {
+
+		business := models.Business{
+			OwnerID:      user.ID,
+			BusinessName: "Untitled Business",
+			Description:  "",
+			Category:     models.CategoryOther,
+			LogoURL:      "",
+			IsVerified:   false,
+		}
+
+		if err := tx.Create(&business).Error; err != nil {
+
+			tx.Rollback()
+			return errors.New("failed to create business")
+		}
+
+		location := models.BusinessLocation{
+			BusinessID:  business.ID,
+			Address:     "-",
+			City:        "-",
+			Province:    "-",
+			PostalCode:  "",
+			Latitude:    0,
+			Longitude:   0,
+			OpeningTime: "00:00:00",
+			ClosingTime: "00:00:00",
+		}
+
+		if err := tx.Create(&location).Error; err != nil {
+
+			tx.Rollback()
+			return errors.New("failed to create business location")
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+
+		tx.Rollback()
+		return errors.New("failed to complete registration")
 	}
 
 	return nil
