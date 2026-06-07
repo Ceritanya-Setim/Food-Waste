@@ -61,54 +61,24 @@ const BottomCard = ({ icon, title, subtitle, danger = false, onClick }) => (
 
 export default function ProfileConsumer() {
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
   const [form, setForm] = useState({
-    nama: "",
-    email: "",
-    telepon: "",
+    nama: "Demo User",
+    email: "demo@example.com",
+    telepon: "08123456789",
+    alamat: "Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta",
   });
   const [saved, setSaved] = useState(false);
   const [showSecurity, setShowSecurity] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [securitySaved, setSecuritySaved] = useState(false);
   const [securityError, setSecurityError] = useState("");
-  const [pageError, setPageError] = useState("");
-  const [loading, setLoading] = useState(true);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-  const [originalProfile, setOriginalProfile] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setLoading(true);
-        setPageError("");
-        const response = await axiosInstance.get("/customer/me");
-        const data = response.data.data;
-        const profileData = {
-          nama: data.FullName || "",
-          email: data.Email || "",
-          telepon: data.PhoneNumber || "",
-        };
-        setForm(profileData);
-        setOriginalProfile(profileData);
-      } catch (error) {
-        const responseError = error?.response?.data?.message;
-        setPageError(responseError || "Gagal mengambil data profil. Silakan login ulang.");
-        if (error?.response?.status === 401 || error?.response?.status === 403) {
-          logout();
-          navigate("/");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, [logout, navigate]);
+  const EXISTING_PASSWORD = "password123";
 
   const handleChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
@@ -148,11 +118,16 @@ export default function ProfileConsumer() {
   const handleSecurityChange = (field) => (e) =>
     setPasswordForm({ ...passwordForm, [field]: e.target.value });
 
-  const handleSaveSecurity = async () => {
+  const handleSaveSecurity = () => {
     setSecurityError("");
 
     if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
       setSecurityError("Semua field kata sandi harus diisi.");
+      return;
+    }
+
+    if (passwordForm.currentPassword !== EXISTING_PASSWORD) {
+      setSecurityError("Kata sandi saat ini tidak sesuai.");
       return;
     }
 
@@ -161,23 +136,9 @@ export default function ProfileConsumer() {
       return;
     }
 
-    try {
-      await axiosInstance.post("/auth/login", {
-        email: form.email,
-        password: passwordForm.currentPassword,
-      });
-
-      await axiosInstance.put("/customer/me", {
-        password: passwordForm.newPassword,
-      });
-
-      setSecuritySaved(true);
-      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-      setTimeout(() => setSecuritySaved(false), 2000);
-    } catch (error) {
-      const responseError = error?.response?.data?.message;
-      setSecurityError(responseError || "Gagal memperbarui kata sandi. Pastikan kata sandi lama benar.");
-    }
+    setSecuritySaved(true);
+    setTimeout(() => setSecuritySaved(false), 2000);
+    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
   };
 
   const handleLogout = () => {
@@ -186,21 +147,12 @@ export default function ProfileConsumer() {
 
   const confirmLogout = () => {
     setShowLogoutConfirm(false);
-    logout();
     navigate("/");
   };
 
   const cancelLogout = () => {
     setShowLogoutConfirm(false);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 px-4 py-10 flex items-center justify-center">
-        <div className="text-gray-700 text-lg">Memuat profil...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10">

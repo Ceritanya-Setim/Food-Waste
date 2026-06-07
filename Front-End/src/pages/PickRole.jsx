@@ -42,37 +42,12 @@ export const PickRole = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
 
-  const doRegister = async (role) => {
-    const raw = sessionStorage.getItem("pendingRegister");
-
-    // Tidak ada data pending — user buka PickRole langsung tanpa register
-    if (!raw) {
-      navigate(role === "merchant" ? "/MerchantDashboard" : "/ExploreConsumer");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    try {
-      const pending = JSON.parse(raw);
-
-      // 1. Register ke BE dengan role yang dipilih
-      await authAPI.register({ ...pending, role });
-
-      // 2. Auto login setelah register berhasil
-      const loginRes = await authAPI.login(pending.email, pending.password);
-      const { token, role: userRole } = loginRes.data;
-      saveAuth(token, userRole);
-
-      // 3. Bersihkan data sementara
-      sessionStorage.removeItem("pendingRegister");
-
-      // 4. Redirect sesuai role
-      navigate(userRole === "merchant" ? "/MerchantDashboard" : "/ExploreConsumer");
-    } catch (err) {
-      setError(err.message || "Registrasi gagal, coba lagi.");
-    } finally {
-      setLoading(false);
+  const handleRoute = () => {
+    if (!selected) return;
+    if (selected === "merchant") {
+      navigate("/MerchantDashboard");
+    } else {
+      navigate("/DashboardConsumer");
     }
   };
 
@@ -140,8 +115,15 @@ export const PickRole = () => {
                   </li>
                 ))}
               </ul>
-              <button onClick={(e) => { e.stopPropagation(); setSelected("consumer"); }}
-                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition ${selected === "consumer" ? "bg-green-50 border-green-500 text-green-700" : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"}`}>
+
+              <button
+                onClick={() => { setSelected('consumer'); localStorage.setItem('userRole', 'consumer'); }}
+                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition
+                  ${selected === "consumer"
+                    ? "bg-green-50 border-green-500 text-green-700"
+                    : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"
+                  }`}
+              >
                 Pilih sebagai Pembeli
               </button>
             </div>

@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarConsumer from "../../components/Consumer/ConsumerNavbar/NavbarConsumer";
 import Footer from "../../components/Footer";
-import { SearchIcon, StarIcon, MapPinIcon, BoxIcon, ClockIcon,} from "../../components/Icons";
+import {
+  SearchIcon,
+  StarIcon,
+  MapPinIcon,
+  BoxIcon,
+  ClockIcon,
+} from "../../components/Icons";
 import AsianFoodImg from "../../assets/Consumer/Dashboard/AsianFoodThumbnail.png";
 import BakeryImg from "../../assets/Consumer/Dashboard/BakeryThumbnail.png";
 import BuffetsImg from "../../assets/Consumer/Dashboard/BuffetsThumbnail.png";
@@ -13,10 +19,9 @@ import PastryMixBox from "../../assets/Consumer/Dashboard/Promo/PastryMixBox.png
 import ProfileConsumer from "../../components/Consumer/ProfileConsumer/ProfileConsumer";
 import CartFlow from "../../components/Consumer/ConsumerCart/ConsumerCart";
 
-const CategoryImage = ({ img, label, color, onClick, isActive }) => (
+const CategoryImage = ({ img, label, color }) => (
   <div
-    onClick={onClick}
-    className={`relative rounded-2xl overflow-hidden min-h-[160px] shadow-lg ${isActive ? 'ring-2 ring-green-500' : ''}`}
+    className="relative rounded-2xl overflow-hidden min-h-[160px] shadow-lg"
     style={{
       backgroundImage: `url(${img})`,
       backgroundColor: color,
@@ -39,11 +44,11 @@ export default function DashboardPage() {
   const filters = ["Semua", "Terdekat", "Populer"];
   const categories = [
     { label: "Makanan Berat", img: AsianFoodImg, color: "#0f3f27" },
-    { label: "Roti & Kue", img: BakeryImg, color: "#7f1d1d" },
-    { label: "Camilan", img: FastFoodImg, color: "#4a1d96" },
+    { label: "Camilan", img: BakeryImg, color: "#7f1d1d" },
+    { label: "Pencuci Mulut", img: FastFoodImg, color: "#4a1d96" },
     { label: "Minuman", img: BuffetsImg, color: "#15803d" },
   ];
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
+
   const promos = [
     {
       id: "gourmet-dinner-set",
@@ -127,6 +132,9 @@ export default function DashboardPage() {
                 Temukan makanan berkualitas dengan harga hemat hari ini.
               </p>
             </div>
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 font-bold uppercase text-xs">
+              New
+            </div>
           </section>
 
           <div className="relative mb-4 max-w-[720px]">
@@ -161,6 +169,9 @@ export default function DashboardPage() {
                   Cari makanan favorit dengan cepat.
                 </p>
               </div>
+              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">
+                Lihat Semua
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
               {categories.map((category) => (
