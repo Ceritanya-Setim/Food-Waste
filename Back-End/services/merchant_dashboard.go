@@ -258,6 +258,7 @@ func getMerchantFoods(
 		foodResponses = append(
 			foodResponses,
 			dto.MerchantFoodItem{
+				ID:                food.ID,
 				Name:              food.Title,
 				Description:       shortDescription,
 				OriginalPrice:     food.OriginalPrice,

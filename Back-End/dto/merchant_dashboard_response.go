@@ -3,6 +3,7 @@ package dto
 import "time"
 
 type MerchantFoodItem struct {
+	ID                string    `json:"id"`
 	Name              string    `json:"name"`
 	Description       string    `json:"description"`
 	OriginalPrice     int       `json:"original_price"`
