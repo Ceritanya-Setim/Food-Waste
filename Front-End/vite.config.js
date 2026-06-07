@@ -5,7 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: true, // <-- Tambahin ini biar ngewhitelist semua host dari tunnel
     proxy: {
       '/auth': {
         target: 'http://localhost:5000',

@@ -42,30 +42,44 @@ function ConsumerProfilePage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/Food-Waste" element={<LandingPage />} />
-        {/* Authentication Routes  */}
-        <Route path="/LoginPage" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/RegisterPage" element={<Register />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/PickRole" element={<PickRole />} />
-        {/* Customer Routes  */}
-        <Route path="/DashboardConsumer" element={<DashboardPage />} />
-        <Route path="/CartConsumer" element={<ConsumerCartPage />} />
-        <Route path="/ProfileConsumer" element={<ConsumerProfilePage />} />
-        <Route path="/ExploreConsumer" element={<ExploreConsumer />} />
-        <Route path="/ImpactConsumer" element={<ImpactConsumer />} />
-        <Route path="/food-detail/:id" element={<ConsumerFoodDetail />} />
-        <Route path="/order-review/:orderId" element={<ReviewOrderPage />} />
+    // 👇 2. Bungkus aplikasi dengan AuthProvider
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* ── PUBLIC ROUTES (Bisa diakses siapa saja) ── */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/Food-Waste" element={<LandingPage />} />
+          
+          {/* Authentication Routes  */}
+          <Route path="/LoginPage" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/RegisterPage" element={<Register />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Merchant Routes  */}
-        <Route path="/ExploreMerchant" element={<ExploreMerchant />} />
-        <Route path="/MerchantDashboard" element={<MerchantDashboard />} />
-      </Routes>
-    </BrowserRouter>
+          {/* ── PROTECTED ROUTES (Harus punya token/login) ── */}
+          {/* 👇 3. Bungkus route rahasia dengan ProtectedRoute */}
+
+          {/* Role selection must be available before login */}
+          <Route path="/PickRole" element={<PickRole />} />
+
+          <Route element={<ProtectedRoute />}>
+            {/* Customer Routes  */}
+            <Route path="/DashboardConsumer" element={<DashboardPage />} />
+            <Route path="/CartConsumer" element={<ConsumerCartPage />} />
+            <Route path="/ProfileConsumer" element={<ConsumerProfilePage />} />
+            <Route path="/ExploreConsumer" element={<ExploreConsumer />} />
+            <Route path="/ImpactConsumer" element={<ImpactConsumer />} />
+            <Route path="/food-detail/:id" element={<ConsumerFoodDetail />} />
+            <Route path="/order-review/:orderId" element={<ReviewOrderPage />} />
+
+            {/* Merchant Routes  */}
+            <Route path="/ExploreMerchant" element={<ExploreMerchant />} />
+            <Route path="/MerchantDashboard" element={<MerchantDashboard />} />
+          </Route>
+
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

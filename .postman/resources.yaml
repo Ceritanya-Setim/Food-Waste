@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: 433b796a-d48b-4149-8bc9-d60e00dec3b1
+
+localResources:
+  collections:
+    - ..\Back-End\docs\Food App.json

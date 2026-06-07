@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI, saveAuth } from "../services/api";
+import { AuthContext } from "../AuthContext";
+import axiosInstance from "../api/axiosInstance";
 
 // ── ICONS ──────────────────────────────────────────────
 const CheckIcon = () => (
@@ -39,15 +40,50 @@ export const PickRole = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
+  const { login } = useContext(AuthContext);
 
-  const handleRoute = () => {
+  const handleRoute = async () => {
     if (!selected) return;
-    if (selected === "merchant") {
-      navigate("/MerchantDashboard");
-    } else {
-      navigate("/DashboardConsumer");
+    setErrorMsg("");
+
+    const pendingRegister = localStorage.getItem("pendingRegister");
+    if (!pendingRegister) {
+      localStorage.setItem("userRole", selected);
+      navigate("/login");
+      return;
+    }
+
+    const payload = JSON.parse(pendingRegister);
+    payload.role = selected;
+
+    try {
+      setLoading(true);
+      await axiosInstance.post("/auth/register", payload);
+
+      const loginResponse = await axiosInstance.post("/auth/login", {
+        email: payload.email,
+        password: payload.password,
+      });
+
+      const token = loginResponse.data?.data?.token;
+      if (token) {
+        login(token);
+      }
+
+      localStorage.removeItem("pendingRegister");
+      localStorage.setItem("userRole", selected);
+
+      if (selected === "customer") {
+        navigate("/ProfileConsumer");
+      } else {
+        navigate("/MerchantDashboard");
+      }
+    } catch (error) {
+      console.error("Register error:", error);
+      const message = error?.response?.data?.error || error?.response?.data?.message || error?.message || "Registrasi gagal. Silakan coba lagi.";
+      setErrorMsg(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,8 +132,16 @@ export const PickRole = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-7 w-full max-w-3xl mb-12">
 
           {/* ── Card Pembeli ── */}
-          <div onClick={() => setSelected("consumer")}
-            className={`bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 border-2 shadow-sm hover:shadow-xl hover:-translate-y-0.5 ${selected === "consumer" ? "border-green-500 shadow-green-100" : "border-transparent"}`}>
+          <div
+            onClick={() => setSelected("customer")}
+            className={`bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-200
+              border-2 shadow-sm hover:shadow-xl hover:-translate-y-0.5
+              ${selected === "customer"
+                ? "border-green-500 shadow-green-100"
+                : "border-transparent"
+              }`}
+          >
+            {/* Gambar */}
             <div className="relative h-56 overflow-hidden">
               <img src="https://media.istockphoto.com/id/2000117676/photo/here-try-some-tacos-are-super-tasty.jpg?s=612x612&w=0&k=20&c=cPSqg040qMkg5uYiKUhqg7QJkwwNR9_ZYbnzlZ2-rF8=" alt="Pembeli" className="w-full h-full object-cover" />
               <div className="absolute top-3.5 right-3.5 w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md text-gray-600">
@@ -117,9 +161,9 @@ export const PickRole = () => {
               </ul>
 
               <button
-                onClick={() => { setSelected('consumer'); localStorage.setItem('userRole', 'consumer'); }}
+                onClick={() => setSelected('customer')}
                 className={`w-full py-3.5 rounded-xl text-sm font-bold border transition
-                  ${selected === "consumer"
+                  ${selected === "customer"
                     ? "bg-green-50 border-green-500 text-green-700"
                     : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"
                   }`}
@@ -149,8 +193,15 @@ export const PickRole = () => {
                   </li>
                 ))}
               </ul>
-              <button onClick={(e) => { e.stopPropagation(); setSelected("merchant"); }}
-                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition ${selected === "merchant" ? "bg-green-50 border-green-500 text-green-700" : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"}`}>
+
+              <button
+                onClick={() => setSelected('merchant')}
+                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition
+                  ${selected === "merchant"
+                    ? "bg-green-50 border-green-500 text-green-700"
+                    : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"
+                  }`}
+              >
                 Pilih sebagai Restaurant
               </button>
             </div>
@@ -158,9 +209,23 @@ export const PickRole = () => {
 
         </div>
 
-        <button onClick={handleRoute} disabled={!selected || loading}
-          className={`flex items-center gap-2 px-14 py-4 rounded-xl text-base font-bold transition-all duration-200 ${selected && !loading ? "bg-green-500 text-white shadow-lg shadow-green-200 hover:bg-green-600 hover:-translate-y-0.5" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
-          {loading ? "Memproses..." : <>Lanjutkan <span>→</span></>}
+        {errorMsg && (
+          <div className="mb-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            {errorMsg}
+          </div>
+        )}
+
+        {/* Tombol Lanjutkan */}
+        <button
+          onClick={handleRoute}
+          disabled={!selected || loading}
+          className={`flex items-center gap-2 px-14 py-4 rounded-xl text-base font-bold transition-all duration-200
+            ${selected && !loading
+              ? "bg-green-500 text-white shadow-lg shadow-green-200 hover:bg-green-600 hover:-translate-y-0.5"
+              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
+        >
+          {loading ? "Memproses..." : "Lanjutkan"} <span>→</span>
         </button>
       </div>
 
