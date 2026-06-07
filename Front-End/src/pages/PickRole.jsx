@@ -47,7 +47,7 @@ export const PickRole = () => {
     if (selected === "merchant") {
       navigate("/MerchantDashboard");
     } else {
-      navigate("/ConsumerDashboard");
+      navigate("/DashboardConsumer");
     }
   };
 
@@ -155,7 +155,7 @@ export const PickRole = () => {
               </ul>
 
               <button
-                onClick={() => { setSelected('consumer'); localStorage.setItem('userRole', 'consumer'); navigate('/ExploreConsumer'); }}
+                onClick={() => { setSelected('consumer'); localStorage.setItem('userRole', 'consumer'); }}
                 className={`w-full py-3.5 rounded-xl text-sm font-bold border transition
                   ${selected === "consumer"
                     ? "bg-green-50 border-green-500 text-green-700"

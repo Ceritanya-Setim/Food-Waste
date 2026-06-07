@@ -50,6 +50,37 @@ export const SearchIcon = () => (
   </svg>
 );
 
+export const WalletIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="2" y="7" width="20" height="12" rx="2" />
+    <path d="M2 11h20" />
+    <circle cx="17" cy="13" r="1" />
+  </svg>
+);
+
+export const ShopBagIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M6 7h12l-1 12H7L6 7z" />
+    <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+  </svg>
+);
+
+export const MoneyIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="2" y="6" width="20" height="12" rx="2" />
+    <path d="M7 12h10" />
+    <path d="M12 9v6" />
+  </svg>
+);
+
+export const UsersIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M17 21v-2a4 4 0 0 0-8 0v2" />
+    <circle cx="9" cy="7" r="4" />
+    <circle cx="17" cy="7" r="4" />
+  </svg>
+);
+
 export const TreeIcon = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
     <path d="M17 14h-2.5l2.5-3h-2l3-4h-2l3-4H9l3 4H10l3 4H11l2.5 3H11v6h6v-6z"/>

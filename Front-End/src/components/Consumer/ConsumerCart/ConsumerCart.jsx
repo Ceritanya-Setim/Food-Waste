@@ -1,7 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (n) => "Rp " + n.toLocaleString("id-ID");
+const REVIEW_STORAGE_KEY = "foodsave_food_reviews";
+const PENDING_ORDER_REVIEW_KEY = "foodsave_pending_order_reviews";
+
+const savePendingOrderForReview = (orderId, items) => {
+  const stored = JSON.parse(localStorage.getItem(PENDING_ORDER_REVIEW_KEY) || "{}");
+  stored[orderId] = {
+    orderId,
+    items: items.map((item) => ({ foodId: item.foodId || item.id, name: item.name })),
+  };
+  localStorage.setItem(PENDING_ORDER_REVIEW_KEY, JSON.stringify(stored));
+};
 
 const StatusBadge = ({ status }) => {
   const map = {
@@ -20,27 +32,29 @@ const StatusBadge = ({ status }) => {
 const INITIAL_CART = [
   {
     id: 1,
-    name: "Roti Gandum Utuh",
-    resto: "Toko Roti Sari",
-    tag: "DONASI",
-    price: 15000,
-    originalPrice: null,
+    foodId: "pizza-slice-mix",
+    name: "Pizza Slice Mix (6 pcs)",
+    resto: "Pizza Hut",
+    tag: "DISKON",
+    price: 20000,
+    originalPrice: 85000,
     qty: 1,
-    img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80",
-    time: "08:00–10:00",
-    location: "Kebayoran",
+    img: "https://images.unsplash.com/photo-1548365328-6d04ec1c6924?q=80&w=200",
+    time: "19:00–21:00",
+    location: "Jakarta Pusat",
   },
   {
     id: 2,
-    name: "Paket Sayur Organik",
-    resto: "Farm Fresh Market",
+    foodId: "burger-fries-pack",
+    name: "Burger & Fries Pack",
+    resto: "Burger King",
     tag: null,
     price: 45000,
     originalPrice: 60000,
     qty: 2,
-    img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&q=80",
-    time: "14:00–16:00",
-    location: "Sudirman",
+    img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=200",
+    time: "20:00–22:00",
+    location: "Jakarta Selatan",
   },
 ];
 
@@ -380,18 +394,52 @@ function CartPage({ cart, setCart, onCheckout }) {
 
 // ─── Page: Checkout ───────────────────────────────────────────────────────────
 function CheckoutPage({ cart, onBack }) {
+  const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState("GoPay");
   const [selectedDonation, setSelectedDonation] = useState(10000);
   const [customDonation, setCustomDonation] = useState("");
   const [paid, setPaid] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const donationAmt = customDonation ? parseInt(customDonation.replace(/\D/g, "")) || 0 : selectedDonation;
   const subtotal = cart.reduce((s, it) => s + it.price * it.qty, 0);
   const totalBayar = subtotal + donationAmt;
+  const userId = "user_123"; // Contoh: ganti dengan ID user yang login
+  const [orderId, setOrderId] = useState(null); 
   const savings = cart.reduce((s, it) => {
     const orig = it.originalPrice ?? it.price * 2;
     return s + (orig - it.price) * it.qty;
   }, 0);
+
+  const handlePayment = async () => {
+  setLoading(true);
+  try {
+    // Kurung tutup harus di sini, setelah objek konfigurasi
+    const response = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        user_id: userId,
+        items: cart
+      })
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      const newOrderId = result.order_id || `FS-${Date.now()}`;
+      setOrderId(newOrderId);
+      savePendingOrderForReview(newOrderId, cart);
+      setPaid(true);
+    } else {
+      alert("Gagal memproses pembayaran: " + (result.message || "Terjadi kesalahan"));
+    }
+  } catch (error) {
+    console.error("Pembayaran gagal:", error);
+    alert("Terjadi kesalahan koneksi saat memproses pembayaran.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (paid) {
     return (
@@ -399,6 +447,7 @@ function CheckoutPage({ cart, onBack }) {
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm px-10 py-12 max-w-sm w-full text-center space-y-4">
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-4xl">✅</div>
           <h2 className="text-2xl font-extrabold text-gray-900">Pembayaran Berhasil!</h2>
+          <p className="text-sm text--500">ID Pesanan Anda: <strong>{orderId}</strong></p>
           <p className="text-sm text-gray-500">Pesanan kamu sedang diproses. Terima kasih sudah menyelamatkan makanan! 🌱</p>
           {savings > 0 && (
             <div className="bg-emerald-50 rounded-xl px-4 py-3">
@@ -406,9 +455,17 @@ function CheckoutPage({ cart, onBack }) {
               <p className="text-xs text-emerald-600 mt-0.5">Dan membantu mengurangi food waste</p>
             </div>
           )}
-          <button onClick={onBack} className="w-full py-3 rounded-xl text-sm font-bold bg-gray-900 text-white hover:bg-gray-700 transition">
-            Kembali ke Keranjang
-          </button>
+          <div className="space-y-3 w-full">
+            <button
+              onClick={() => orderId && navigate(`/order-review/${orderId}`)}
+              className="w-full py-3 rounded-xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition"
+            >
+              Tinggalkan Ulasan Pesanan
+            </button>
+            <button onClick={onBack} className="w-full py-3 rounded-xl text-sm font-bold bg-gray-900 text-white hover:bg-gray-700 transition">
+              Kembali ke Keranjang
+            </button>
+          </div>
         </div>
         <p className="text-xs text-gray-400">© 2024 FoodSave. Menyelamatkan makanan, membantu sesama.</p>
       </div>
@@ -420,11 +477,13 @@ function CheckoutPage({ cart, onBack }) {
       <div className="max-w-4xl mx-auto space-y-6">
 
         <div className="flex items-center gap-3">
-          <button onClick={onBack} className="w-9 h-9 rounded-xl border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition">
-            <svg className="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+          <button
+          onClick={handlePayment}
+          disabled={loading}
+          className="w-full py-3 rounded-xl text-sm font-bold bg-gray-900 text-white hover:bg-gray-700 transition active:scale-95 disabled:opacity-50"
+        >
+          {loading ? "Memproses..." : `Bayar ${fmt(totalBayar)}`}
+        </button>
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Checkout</h1>
             <p className="text-gray-500 text-sm">Review & bayar pesanan</p>
@@ -545,7 +604,7 @@ function CheckoutPage({ cart, onBack }) {
               )}
 
               <button
-                onClick={() => setPaid(true)}
+                onClick={handlePayment}
                 className="w-full py-3 rounded-xl text-sm font-bold bg-gray-900 text-white hover:bg-gray-700 transition active:scale-95"
               >
                 Bayar {fmt(totalBayar)}

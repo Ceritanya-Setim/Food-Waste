@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Avatar = () => (
   <div className="relative w-20 h-20 flex-shrink-0">
@@ -56,7 +57,8 @@ const BottomCard = ({ icon, title, subtitle, danger = false, onClick }) => (
 
 
 export default function ProfileConsumer() {
-    const [form, setForm] = useState({
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
     nama: "Demo User",
     email: "demo@example.com",
     telepon: "08123456789",
@@ -64,6 +66,17 @@ export default function ProfileConsumer() {
   });
 
   const [saved, setSaved] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [securitySaved, setSecuritySaved] = useState(false);
+  const [securityError, setSecurityError] = useState("");
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const EXISTING_PASSWORD = "password123";
 
   const handleChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
@@ -79,6 +92,45 @@ export default function ProfileConsumer() {
       telepon: "08123456789",
       alamat: "Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta",
     });
+  };
+
+  const handleSecurityChange = (field) => (e) =>
+    setPasswordForm({ ...passwordForm, [field]: e.target.value });
+
+  const handleSaveSecurity = () => {
+    setSecurityError("");
+
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      setSecurityError("Semua field kata sandi harus diisi.");
+      return;
+    }
+
+    if (passwordForm.currentPassword !== EXISTING_PASSWORD) {
+      setSecurityError("Kata sandi saat ini tidak sesuai.");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setSecurityError("Kata sandi baru dan konfirmasi tidak cocok.");
+      return;
+    }
+
+    setSecuritySaved(true);
+    setTimeout(() => setSecuritySaved(false), 2000);
+    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  };
+
+  const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
+    navigate("/");
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   return (
@@ -148,27 +200,6 @@ export default function ProfileConsumer() {
                 }
               />
             </div>
-
-            {/* Alamat full width */}
-            <div className="mt-4 flex flex-col gap-1.5">
-              <label htmlFor="alamat" className="text-sm font-medium text-gray-700">Alamat</label>
-              <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-400">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </span>
-                <textarea
-                  id="alamat"
-                  rows={3}
-                  value={form.alamat}
-                  onChange={handleChange("alamat")}
-                  placeholder="Masukkan alamat lengkap"
-                  className="w-full border border-gray-200 rounded-xl bg-white text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition py-2.5 pr-3 pl-9 resize-none"
-                />
-              </div>
-            </div>
           </div>
 
           {/* Action Buttons */}
@@ -193,7 +224,7 @@ export default function ProfileConsumer() {
         </div>
 
         {/* Bottom Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <BottomCard
             title="Keamanan"
             subtitle="Ubah kata sandi"
@@ -202,15 +233,7 @@ export default function ProfileConsumer() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             }
-          />
-          <BottomCard
-            title="Metode Pembayaran"
-            subtitle="Kelola kartu & e-wallet"
-            icon={
-              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-              </svg>
-            }
+            onClick={() => setShowSecurity(true)}
           />
           <BottomCard
             danger
@@ -221,8 +244,74 @@ export default function ProfileConsumer() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
             }
+            onClick={handleLogout}
           />
         </div>
+        {showSecurity && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Pengaturan Keamanan</h2>
+                <p className="text-sm text-gray-500">Ubah kata sandi akun Anda untuk menjaga keamanan.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSecurity(false)}
+                className="text-sm text-gray-500 hover:text-gray-900 transition"
+              >
+                Tutup
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <InputField
+                label="Kata Sandi Saat Ini"
+                id="currentPassword"
+                type="password"
+                value={passwordForm.currentPassword}
+                onChange={handleSecurityChange("currentPassword")}
+                placeholder="Masukkan kata sandi lama"
+              />
+              <InputField
+                label="Kata Sandi Baru"
+                id="newPassword"
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={handleSecurityChange("newPassword")}
+                placeholder="Masukkan kata sandi baru"
+              />
+              <InputField
+                label="Konfirmasi Kata Sandi"
+                id="confirmPassword"
+                type="password"
+                value={passwordForm.confirmPassword}
+                onChange={handleSecurityChange("confirmPassword")}
+                placeholder="Ulangi kata sandi baru"
+                className="sm:col-span-2"
+              />
+            </div>
+            {securityError && (
+              <div className="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-700">
+                {securityError}
+              </div>
+            )}
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowSecurity(false)}
+                className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveSecurity}
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${securitySaved ? "bg-green-600 text-white scale-95" : "bg-gray-900 text-white hover:bg-gray-700"}`}
+              >
+                {securitySaved ? "✓ Tersimpan" : "Simpan Keamanan"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="text-center pt-2 pb-6">
@@ -234,6 +323,30 @@ export default function ProfileConsumer() {
           </div>
         </div>
 
+        {showLogoutConfirm && (
+          <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 px-4">
+            <div className="w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-2xl p-6">
+              <h3 className="text-xl font-bold text-gray-900">Yakin ingin keluar?</h3>
+              <p className="text-sm text-gray-500 mt-2">Aksi ini akan membawa Anda kembali ke landing page.</p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={cancelLogout}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmLogout}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-red-600 text-sm font-semibold text-white hover:bg-red-700 transition"
+                >
+                  Keluar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

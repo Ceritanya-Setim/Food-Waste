@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NavbarConsumer from "../../components/Consumer/ConsumerNavbar/NavbarConsumer";
 import Footer from "../../components/Footer";
-import { SearchIcon, StarIcon, MapPinIcon, BoxIcon, ClockIcon } from "../../components/Icons";
+import {
+  SearchIcon,
+  StarIcon,
+  MapPinIcon,
+  BoxIcon,
+  ClockIcon,
+} from "../../components/Icons";
 import AsianFoodImg from "../../assets/Consumer/Dashboard/AsianFoodThumbnail.png";
 import BakeryImg from "../../assets/Consumer/Dashboard/BakeryThumbnail.png";
 import BuffetsImg from "../../assets/Consumer/Dashboard/BuffetsThumbnail.png";
@@ -13,13 +20,24 @@ import ProfileConsumer from "../../components/Consumer/ProfileConsumer/ProfileCo
 import CartFlow from "../../components/Consumer/ConsumerCart/ConsumerCart";
 
 const CategoryImage = ({ img, label, color }) => (
-  <div className="relative rounded-2xl overflow-hidden min-h-[160px] shadow-lg" style={{ backgroundImage: `url(${img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+  <div
+    className="relative rounded-2xl overflow-hidden min-h-[160px] shadow-lg"
+    style={{
+      backgroundImage: `url(${img})`,
+      backgroundColor: color,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+  >
     <div className="absolute inset-0 bg-black/20" />
-    <p className="absolute left-4 bottom-4 text-white text-lg font-bold">{label}</p>
+    <p className="absolute left-4 bottom-4 text-white text-lg font-bold">
+      {label}
+    </p>
   </div>
 );
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const [activePage, setActivePage] = useState("dashboard");
   const [cartCount, setCartCount] = useState(0);
   const [activeFilter, setActiveFilter] = useState("Semua");
@@ -27,14 +45,15 @@ export default function DashboardPage() {
   const filters = ["Semua", "Promo Spesial", "Terdekat", "Baru", "Favorit"];
 
   const categories = [
-  { label: "Asian Food", img: AsianFoodImg, color: "#0f3f27" },
-  { label: "Bakery", img: BakeryImg, color: "#7f1d1d" },
-  { label: "Fast Food", img: FastFoodImg, color: "#4a1d96" },
-  { label: "Buffets", img: BuffetsImg, color: "#15803d" }
-];
+    { label: "Makanan Berat", img: AsianFoodImg, color: "#0f3f27" },
+    { label: "Camilan", img: BakeryImg, color: "#7f1d1d" },
+    { label: "Pencuci Mulut", img: FastFoodImg, color: "#4a1d96" },
+    { label: "Minuman", img: BuffetsImg, color: "#15803d" },
+  ];
 
   const promos = [
     {
+      id: "gourmet-dinner-set",
       name: "Gourmet Dinner Set",
       price: "Rp 20.000",
       original: "Rp 45.000",
@@ -49,6 +68,7 @@ export default function DashboardPage() {
       color: "linear-gradient(135deg,#0f3f27,#196f4c)",
     },
     {
+      id: "margherita-large-pizza",
       name: "Margherita Large Pizza",
       price: "Rp 48.000",
       original: "Rp 80.000",
@@ -61,9 +81,9 @@ export default function DashboardPage() {
       desc: "Pizza tipis renyah dengan saus tomat segar dan keju mozzarella berkualitas.",
       img: MargheritaPizza,
       color: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
-
     },
     {
+      id: "pastry-mix-box",
       name: "Pastry Mix Box",
       price: "Rp 35.000",
       original: "Rp 50.000",
@@ -81,25 +101,46 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <NavbarConsumer activePage={activePage} setActivePage={setActivePage} cartCount={cartCount} />
+      <NavbarConsumer
+        activePage={activePage}
+        setActivePage={setActivePage}
+        cartCount={cartCount}
+      />
       {activePage === "dashboard" ? (
         <main className="max-w-[1120px] mx-auto px-6 py-8">
           <section className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-4xl font-extrabold text-slate-900">Halo, Elara</h1>
-              <p className="text-slate-500">Temukan makanan berkualitas dengan harga hemat hari ini.</p>
+              <h1 className="text-4xl font-extrabold text-slate-900">
+                Halo, Elara
+              </h1>
+              <p className="text-slate-500">
+                Temukan makanan berkualitas dengan harga hemat hari ini.
+              </p>
             </div>
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 font-bold uppercase text-xs">New</div>
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 font-bold uppercase text-xs">
+              New
+            </div>
           </section>
 
           <div className="relative mb-4 max-w-[720px]">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><SearchIcon /></div>
-            <input type="text" placeholder="Cari makanan lezat..." className="w-full border border-gray-200 rounded-full px-12 py-3 shadow-sm bg-white focus:outline-none focus:border-emerald-500" />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <SearchIcon />
+            </div>
+            <input
+              type="text"
+              placeholder="Cari makanan lezat..."
+              className="w-full border border-gray-200 rounded-full px-12 py-3 shadow-sm bg-white focus:outline-none focus:border-emerald-500"
+            />
           </div>
 
           <div className="flex flex-wrap gap-3 mb-6">
             {filters.map((filter) => (
-              <button key={filter} type="button" onClick={() => setActiveFilter(filter)} className={`px-4 py-2 rounded-full font-semibold ${activeFilter === filter ? 'bg-emerald-600 text-white shadow-lg' : 'bg-white border border-gray-200 text-slate-700'}`}>
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                className={`px-4 py-2 rounded-full font-semibold ${activeFilter === filter ? "bg-emerald-600 text-white shadow-lg" : "bg-white border border-gray-200 text-slate-700"}`}
+              >
                 {filter}
               </button>
             ))}
@@ -109,9 +150,13 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-bold">Jelajahi Kategori</h2>
-                <p className="text-sm text-slate-500">Cari makanan favorit dengan cepat.</p>
+                <p className="text-sm text-slate-500">
+                  Cari makanan favorit dengan cepat.
+                </p>
               </div>
-              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">Lihat Semua</button>
+              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">
+                Lihat Semua
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
               {categories.map((category) => (
@@ -124,17 +169,37 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-bold">Promo Spesial Hari Ini</h2>
-                <p className="text-sm text-slate-500">Jangan lewatkan penawaran terbaik hari ini.</p>
+                <p className="text-sm text-slate-500">
+                  Jangan lewatkan penawaran terbaik hari ini.
+                </p>
               </div>
-              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">Lihat Semua</button>
+              <button className="px-3 py-2 rounded-full border border-gray-200 text-emerald-600 font-bold">
+                Lihat Semua
+              </button>
             </div>
             <div className="grid gap-5 xl:grid-cols-3">
               {promos.map((item) => (
-                <article key={item.name} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-                  <div className="relative min-h-[220px]" style={{ background: item.color }}>
-                    <img src={item.img} alt={item.name} className="absolute inset-0 w-full h-full object-cover opacity-80" />
-                    <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full font-bold">{item.discount} OFF</div>
-                    <div className="absolute bottom-4 right-4 bg-black/80 text-white px-3 py-1 rounded-full text-sm"> <StarIcon filled /> {item.rating}</div>
+                <article
+                  key={item.name}
+                  onClick={() => navigate(`/food-detail/${item.id}`)}
+                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm cursor-pointer transition hover:shadow-md"
+                >
+                  <div
+                    className="relative min-h-[220px]"
+                    style={{ background: item.color }}
+                  >
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80"
+                    />
+                    <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full font-bold">
+                      {item.discount} OFF
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-black/80 text-white px-3 py-1 rounded-full text-sm">
+                      {" "}
+                      <StarIcon filled /> {item.rating}
+                    </div>
                   </div>
                   <div className="p-6">
                     <div className="flex justify-between mb-4">
@@ -145,16 +210,35 @@ export default function DashboardPage() {
                       <div className="text-sm text-slate-500">{item.dist}</div>
                     </div>
                     <div className="grid gap-3">
-                      <div className="flex items-baseline justify-between">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <div className="text-2xl font-extrabold text-emerald-600">{item.price}</div>
-                          <div className="text-sm text-slate-400 line-through">{item.original}</div>
+                          <div className="text-2xl font-extrabold text-emerald-600">
+                            {item.price}
+                          </div>
+                          <div className="text-sm text-slate-400 line-through">
+                            {item.original}
+                          </div>
                         </div>
-                        <button type="button" onClick={() => setCartCount((c) => c + 1)} className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold">Pesan Sekarang</button>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCartCount((c) => c + 1);
+                            }}
+                            className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold"
+                          >
+                            Pesan Sekarang
+                          </button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 text-sm text-slate-500 gap-2">
-                        <span className="flex items-center gap-2"><BoxIcon /> {item.stock}</span>
-                        <span className="flex items-center gap-2 justify-end"><ClockIcon /> {item.time}</span>
+                        <span className="flex items-center gap-2">
+                          <BoxIcon /> {item.stock}
+                        </span>
+                        <span className="flex items-center gap-2 justify-end">
+                          <ClockIcon /> {item.time}
+                        </span>
                       </div>
                     </div>
                   </div>
