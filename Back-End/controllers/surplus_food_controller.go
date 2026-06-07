@@ -5,8 +5,10 @@ import (
 	"backend/services"
 	"backend/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetSurplusFood(c *gin.Context) {
@@ -174,5 +176,45 @@ func DeleteMerchantFood(c *gin.Context) {
 		http.StatusOK,
 		"Food deleted successfully",
 		nil,
+	)
+}
+
+func GetFoodDetailController(c *gin.Context) {
+	foodID := c.Param("id")
+
+	userLatStr := c.Query("lat")
+	userLonStr := c.Query("lon")
+
+	var userLat, userLon float64
+	if userLatStr != "" && userLonStr != "" {
+		userLat, _ = strconv.ParseFloat(userLatStr, 64)
+		userLon, _ = strconv.ParseFloat(userLonStr, 64)
+	}
+
+	result, err := services.GetFoodDetailService(foodID, userLat, userLon)
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			utils.ErrorResponse(
+				c,
+				http.StatusNotFound,
+				"Food item not found",
+			)
+			return
+		}
+
+		utils.ErrorResponse(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
+		return
+	}
+
+	utils.SuccessResponse(
+		c,
+		http.StatusOK,
+		"success fetch data",
+		result,
 	)
 }

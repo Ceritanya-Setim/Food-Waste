@@ -62,3 +62,12 @@ func FindBusinessLocationByID(
 
 	return location, err
 }
+
+func GetFoodWithLocation(foodID string) (models.SurplusFood, error) {
+	var food models.SurplusFood
+	err := database.DB.Preload("BusinessLocation").
+		Preload("BusinessLocation.Business").
+		Where("id = ?", foodID).
+		First(&food).Error
+	return food, err
+}
