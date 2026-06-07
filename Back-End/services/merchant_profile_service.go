@@ -5,6 +5,7 @@ import (
 	"backend/repositories"
 	"backend/utils"
 	"errors"
+	"mime/multipart"
 )
 
 func GetMerchantProfileService(
@@ -26,9 +27,10 @@ func GetMerchantProfileService(
 	}
 
 	return dto.MerchantProfileResponse{
-		FullName:    user.FullName,
-		Email:       user.Email,
-		PhoneNumber: user.PhoneNumber,
+		FullName:        user.FullName,
+		Email:           user.Email,
+		PhoneNumber:     user.PhoneNumber,
+		ProfileImageURL: user.ProfileImageURL,
 
 		BusinessName: business.BusinessName,
 		Description:  business.Description,
@@ -48,6 +50,7 @@ func GetMerchantProfileService(
 func UpdateMerchantProfileService(
 	userID string,
 	req dto.UpdateMerchantProfileRequest,
+	file *multipart.FileHeader,
 ) (
 	dto.MerchantProfileResponse,
 	error,
@@ -64,8 +67,16 @@ func UpdateMerchantProfileService(
 			err
 	}
 
-	// CHECK EMAIL
+	if file != nil {
+		imageURL, err := utils.SaveImage(file, "profile")
+		if err != nil {
+			return dto.MerchantProfileResponse{},
+				err
+		}
+		req.ProfileImageURL = imageURL
+	}
 
+	// CHECK EMAIL
 	if req.Email != "" &&
 		req.Email != user.Email {
 
@@ -90,8 +101,12 @@ func UpdateMerchantProfileService(
 	}
 
 	// USER UPDATE
-
 	userUpdates := map[string]interface{}{}
+
+	if req.ProfileImageURL != "" {
+		userUpdates["profile_image_url"] =
+			req.ProfileImageURL
+	}
 
 	if req.FullName != "" {
 		userUpdates["full_name"] =
@@ -109,7 +124,6 @@ func UpdateMerchantProfileService(
 	}
 
 	if req.Password != "" {
-
 		hash, err :=
 			utils.HashPassword(
 				req.Password,
@@ -122,7 +136,6 @@ func UpdateMerchantProfileService(
 					"failed to hash password",
 				)
 		}
-
 		userUpdates["password_hash"] =
 			hash
 	}

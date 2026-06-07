@@ -136,12 +136,7 @@ func CreateOrder(
 			tx.Rollback()
 
 			return dto.OrderResponse{},
-				errors.New(
-					fmt.Sprintf(
-						"%s is not available",
-						food.Title,
-					),
-				)
+				fmt.Errorf("%s is not available", food.Title)
 		}
 
 		if food.ExpiryTime.Before(
@@ -151,12 +146,7 @@ func CreateOrder(
 			tx.Rollback()
 
 			return dto.OrderResponse{},
-				errors.New(
-					fmt.Sprintf(
-						"%s already expired",
-						food.Title,
-					),
-				)
+				fmt.Errorf("%s already expired", food.Title)
 		}
 
 		if food.QuantityRemaining <
@@ -165,12 +155,7 @@ func CreateOrder(
 			tx.Rollback()
 
 			return dto.OrderResponse{},
-				errors.New(
-					fmt.Sprintf(
-						"not enough stock for %s",
-						food.Title,
-					),
-				)
+				fmt.Errorf("not enough stock for %s", food.Title)
 		}
 
 		subtotal :=

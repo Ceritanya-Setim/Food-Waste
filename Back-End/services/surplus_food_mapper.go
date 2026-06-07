@@ -10,6 +10,8 @@ func mapSurplusFoodResponse(
 ) dto.SurplusFoodResponse {
 
 	return dto.SurplusFoodResponse{
+		ID:            food.ID,
+		ImageURL:      food.ImageURL,
 		Title:         food.Title,
 		Description:   food.Description,
 		OriginalPrice: food.OriginalPrice,
@@ -40,6 +42,7 @@ func mapSurplusFoodDetail(
 
 	return dto.SurplusFoodDetailResponse{
 		ID:                 food.ID,
+		ImageURL:           food.ImageURL,
 		Title:              food.Title,
 		Description:        food.Description,
 		OriginalPrice:      food.OriginalPrice,

@@ -3,6 +3,8 @@ package dto
 import "time"
 
 type SurplusFoodResponse struct {
+	ID            string    `json:"id"`
+	ImageURL      string    `json:"image-url"`
 	Title         string    `json:"title"`
 	Description   string    `json:"description"`
 	OriginalPrice int       `json:"original_price"`

@@ -14,6 +14,7 @@ type SurplusFood struct {
 	BaseModel
 	BusinessLocationID string           `gorm:"type:uuid; not null"`
 	BusinessLocation   BusinessLocation `gorm:"foreignKey:BusinessLocationID;references:ID"`
+	ImageURL           string           `gorm:"type:text; not null"`
 	Title              string           `gorm:"type:varchar(255);not null"`
 	Description        string           `gorm:"type:text"`
 	OriginalPrice      int              `gorm:"not null"`

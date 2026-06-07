@@ -39,21 +39,15 @@ func UpdateCustomerProfile(c *gin.Context) {
 
 	var req dto.EditProfileRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 
-		utils.ErrorResponse(
-			c,
-			http.StatusBadRequest,
-			err.Error(),
-		)
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	response, err := services.UpdateCustomerProfileService(
-		userID,
-		req,
-	)
+	file, _ := c.FormFile("profile_image")
 
+	response, err := services.UpdateCustomerProfileService(userID, req, file)
 	if err != nil {
 
 		utils.ErrorResponse(

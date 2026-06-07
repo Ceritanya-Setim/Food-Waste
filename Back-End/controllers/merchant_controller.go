@@ -29,17 +29,15 @@ func UpdateMerchantProfile(c *gin.Context) {
 	userID := c.MustGet("user_id").(string)
 	var req dto.UpdateMerchantProfileRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		utils.ErrorResponse(
 			c, http.StatusInternalServerError, err.Error(),
 		)
 		return
 	}
 
-	response, err := services.UpdateMerchantProfileService(
-		userID,
-		req,
-	)
+	file, _ := c.FormFile("profile_image")
+	response, err := services.UpdateMerchantProfileService(userID, req, file)
 
 	if err != nil {
 		utils.ErrorResponse(

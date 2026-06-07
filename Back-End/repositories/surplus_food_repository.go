@@ -131,7 +131,6 @@ func FindSurplusFoods(
 func CreateSurplusFood(
 	food *models.SurplusFood,
 ) error {
-
 	return database.DB.
 		Create(food).
 		Error

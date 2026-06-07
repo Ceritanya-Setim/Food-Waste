@@ -1,9 +1,10 @@
 package dto
 
 type MerchantProfileResponse struct {
-	FullName    string `json:"full_name"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phone_number"`
+	FullName        string `json:"full_name"`
+	Email           string `json:"email"`
+	PhoneNumber     string `json:"phone_number"`
+	ProfileImageURL string `json:"profile_image_url"`
 
 	BusinessName string `json:"business_name"`
 	Description  string `json:"description"`

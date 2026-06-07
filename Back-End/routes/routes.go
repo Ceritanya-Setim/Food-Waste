@@ -16,6 +16,11 @@ func SetupRoutes(r *gin.Engine) {
 		})
 	})
 
+	r.Static(
+		"/storage",
+		"./storage",
+	)
+
 	auth := r.Group("/auth")
 	{
 		auth.POST("/register", controllers.Register)

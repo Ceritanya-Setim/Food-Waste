@@ -6,11 +6,13 @@ import (
 	"backend/repositories"
 	"backend/utils"
 	"errors"
+	"mime/multipart"
 )
 
 func CreateMerchantSurplusFood(
 	userID string,
 	req dto.CreateSurplusFoodRequest,
+	file *multipart.FileHeader,
 ) (
 	dto.SurplusFoodDetailResponse,
 	error,
@@ -22,15 +24,22 @@ func CreateMerchantSurplusFood(
 		)
 
 	if err != nil {
-
 		return dto.SurplusFoodDetailResponse{},
 			errors.New(
 				"business location not found",
 			)
 	}
 
-	if location.Business.OwnerID != userID {
+	if file != nil {
+		imageURL, err := utils.SaveImage(file, "food")
+		if err != nil {
+			return dto.SurplusFoodDetailResponse{},
+				err
+		}
+		req.ImageURL = imageURL
+	}
 
+	if location.Business.OwnerID != userID {
 		return dto.SurplusFoodDetailResponse{},
 			errors.New(
 				"unauthorized access",
@@ -48,6 +57,7 @@ func CreateMerchantSurplusFood(
 
 	food := models.SurplusFood{
 		BusinessLocationID: req.BusinessLocationID,
+		ImageURL:           req.ImageURL,
 		Title:              req.Title,
 		Description:        req.Description,
 		OriginalPrice:      req.OriginalPrice,
@@ -65,21 +75,18 @@ func CreateMerchantSurplusFood(
 			food.ExpiryTime,
 		)
 
-	err =
-		repositories.CreateSurplusFood(
-			&food,
-		)
+	err = repositories.CreateSurplusFood(
+		&food,
+	)
 
 	if err != nil {
-
 		return dto.SurplusFoodDetailResponse{},
 			errors.New(
 				"failed to create food",
 			)
 	}
 
-	return mapSurplusFoodDetail(food),
-		nil
+	return mapSurplusFoodDetail(food), nil
 }
 
 func GetMerchantSurplusFoodDetail(
@@ -90,11 +97,7 @@ func GetMerchantSurplusFoodDetail(
 	error,
 ) {
 
-	food, err :=
-		repositories.FindMerchantFoodByID(
-			userID,
-			foodID,
-		)
+	food, err := repositories.FindMerchantFoodByID(userID, foodID)
 
 	if err != nil {
 
