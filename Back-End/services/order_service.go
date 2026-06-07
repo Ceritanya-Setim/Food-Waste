@@ -1,21 +1,95 @@
 package services
 
 import (
-	"backend/database"
 	"backend/dto"
 	"backend/models"
+	"backend/repositories"
 	"errors"
 	"fmt"
 	"math/rand"
 	"time"
 )
 
+func GetOrderHistory(
+	userID string,
+	req dto.OrderHistoryRequest,
+) (
+	dto.OrderHistoryResponse,
+	error,
+) {
+
+	validStatus := map[string]bool{
+		"all":       true,
+		"completed": true,
+		"cancelled": true,
+	}
+
+	if req.Status != "" &&
+		!validStatus[req.Status] {
+
+		return dto.OrderHistoryResponse{},
+			errors.New(
+				"invalid status filter",
+			)
+	}
+
+	stats, err :=
+		repositories.GetOrderHistoryStats(
+			userID,
+		)
+
+	if err != nil {
+		return dto.OrderHistoryResponse{},
+			err
+	}
+
+	rows, err :=
+		repositories.GetOrderHistoryRows(
+			userID,
+			req.Status,
+		)
+
+	if err != nil {
+		return dto.OrderHistoryResponse{},
+			err
+	}
+
+	orders := make(
+		[]dto.OrderHistoryItem,
+		0,
+		len(rows),
+	)
+
+	for _, row := range rows {
+
+		orders = append(
+			orders,
+			dto.OrderHistoryItem{
+				OrderID:      row.OrderID,
+				BusinessName: row.BusinessName,
+				Status:       row.Status,
+				OrderDate:    row.OrderDate,
+				TotalPrice:   row.TotalPrice,
+			},
+		)
+	}
+
+	return dto.OrderHistoryResponse{
+		Summary: dto.OrderHistorySummary{
+			TotalOrders:     stats.TotalOrders,
+			CompletedOrders: stats.CompletedOrders,
+			TotalSpending:   stats.TotalSpending,
+		},
+		Orders: orders,
+	}, nil
+}
+
 func CreateOrder(
 	userID string,
 	req dto.OrderRequest,
 ) (dto.OrderResponse, error) {
 
-	tx := database.DB.Begin()
+	tx := repositories.BeginTransaction()
 
 	totalPrice := 0
 	totalItems := 0
@@ -26,28 +100,35 @@ func CreateOrder(
 
 	for _, item := range req.Items {
 
-		var food models.SurplusFood
+		food, err := repositories.
+			FindSurplusFoodByID(
+				tx,
+				item.SurplusFoodID,
+			)
 
-		if err := tx.
-			Where("id = ?", item.SurplusFoodID).
-			First(&food).Error; err != nil {
+		if err != nil {
 
 			tx.Rollback()
 
 			return dto.OrderResponse{},
-				errors.New("surplus food not found")
+				errors.New(
+					"surplus food not found",
+				)
 		}
 
 		if pickupTime.IsZero() {
 			pickupTime = food.PickupEndTime
 		}
 
-		if food.BusinessLocationID != req.BusinessLocationID {
+		if food.BusinessLocationID !=
+			req.BusinessLocationID {
 
 			tx.Rollback()
 
 			return dto.OrderResponse{},
-				errors.New("all foods must come from same business location")
+				errors.New(
+					"all foods must come from same business location",
+				)
 		}
 
 		if food.Status != models.StatusActive {
@@ -56,21 +137,30 @@ func CreateOrder(
 
 			return dto.OrderResponse{},
 				errors.New(
-					fmt.Sprintf("%s is not available", food.Title),
+					fmt.Sprintf(
+						"%s is not available",
+						food.Title,
+					),
 				)
 		}
 
-		if food.ExpiryTime.Before(time.Now()) {
+		if food.ExpiryTime.Before(
+			time.Now(),
+		) {
 
 			tx.Rollback()
 
 			return dto.OrderResponse{},
 				errors.New(
-					fmt.Sprintf("%s already expired", food.Title),
+					fmt.Sprintf(
+						"%s already expired",
+						food.Title,
+					),
 				)
 		}
 
-		if food.QuantityRemaining < item.Quantity {
+		if food.QuantityRemaining <
+			item.Quantity {
 
 			tx.Rollback()
 
@@ -83,30 +173,43 @@ func CreateOrder(
 				)
 		}
 
-		subtotal := food.DiscountPrice * item.Quantity
+		subtotal :=
+			food.DiscountPrice *
+				item.Quantity
 
 		totalPrice += subtotal
 		totalItems += item.Quantity
 
-		orderItems = append(orderItems, models.OrderItem{
-			SurplusFoodID: food.ID,
-			Quantity:      item.Quantity,
-			PricePerItem:  food.DiscountPrice,
-			Subtotal:      subtotal,
-		})
+		orderItems = append(
+			orderItems,
+			models.OrderItem{
+				SurplusFoodID: food.ID,
+				Quantity:      item.Quantity,
+				PricePerItem:  food.DiscountPrice,
+				Subtotal:      subtotal,
+			},
+		)
 
-		food.QuantityRemaining -= item.Quantity
+		food.QuantityRemaining -=
+			item.Quantity
 
 		if food.QuantityRemaining == 0 {
-			food.Status = models.StatusSoldOut
+
+			food.Status =
+				models.StatusSoldOut
 		}
 
-		if err := tx.Save(&food).Error; err != nil {
+		if err := repositories.
+			UpdateSurplusFood(
+				&food,
+			); err != nil {
 
 			tx.Rollback()
 
 			return dto.OrderResponse{},
-				errors.New("failed to update stock")
+				errors.New(
+					"failed to update stock",
+				)
 		}
 	}
 
@@ -125,163 +228,53 @@ func CreateOrder(
 		PickupTime:         pickupTime,
 	}
 
-	if err := tx.Create(&order).Error; err != nil {
+	if err := repositories.
+		CreateOrder(
+			tx,
+			&order,
+		); err != nil {
 
 		tx.Rollback()
 
 		return dto.OrderResponse{},
-			errors.New("failed to create order")
+			errors.New(
+				"failed to create order",
+			)
 	}
 
 	for i := range orderItems {
-
 		orderItems[i].OrderID = order.ID
-
-		if err := tx.Create(&orderItems[i]).Error; err != nil {
-
-			tx.Rollback()
-
-			return dto.OrderResponse{},
-				errors.New("failed to create order items")
-		}
 	}
 
-	tx.Commit()
+	if err := repositories.
+		CreateOrderItems(
+			tx,
+			&orderItems,
+		); err != nil {
 
-	response := dto.OrderResponse{
+		tx.Rollback()
+
+		return dto.OrderResponse{},
+			errors.New(
+				"failed to create order items",
+			)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+
+		tx.Rollback()
+
+		return dto.OrderResponse{},
+			errors.New(
+				"failed to commit transaction",
+			)
+	}
+
+	return dto.OrderResponse{
 		OrderID:    order.ID,
 		PickupCode: order.PickupCode,
 		TotalPrice: order.TotalPrice,
 		Status:     string(order.Status),
 		TotalItems: totalItems,
-	}
-
-	return response, nil
-}
-
-func GetOrderHistory(
-	userID string,
-	req dto.OrderHistoryRequest,
-) (dto.OrderHistoryResponse, error) {
-
-	validStatus := map[string]bool{
-		"all":       true,
-		"completed": true,
-		"cancelled": true,
-	}
-
-	if req.Status != "" && !validStatus[req.Status] {
-
-		return dto.OrderHistoryResponse{},
-			errors.New("invalid status filter")
-	}
-
-	var totalOrders int64
-
-	if err := database.DB.
-		Model(&models.Order{}).
-		Where("user_id = ?", userID).
-		Count(&totalOrders).Error; err != nil {
-
-		return dto.OrderHistoryResponse{},
-			errors.New("failed to count total orders")
-	}
-
-	var completedOrders int64
-
-	if err := database.DB.
-		Model(&models.Order{}).
-		Where("user_id = ?", userID).
-		Where("status = ?", models.OrderCompleted).
-		Count(&completedOrders).Error; err != nil {
-
-		return dto.OrderHistoryResponse{},
-			errors.New("failed to count completed orders")
-	}
-
-	type SpendingResult struct {
-		Total int
-	}
-
-	var spending SpendingResult
-
-	if err := database.DB.
-		Model(&models.Order{}).
-		Select("COALESCE(SUM(total_price), 0) as total").
-		Where("user_id = ?", userID).
-		Where("status = ?", models.OrderPaid).
-		Scan(&spending).Error; err != nil {
-
-		return dto.OrderHistoryResponse{},
-			errors.New("failed to calculate spending")
-	}
-
-	type OrderResult struct {
-		OrderID      string
-		BusinessName string
-		Status       string
-		OrderDate    time.Time
-		TotalPrice   int
-	}
-
-	var results []OrderResult
-
-	query := database.DB.
-		Table("orders").
-		Select(`
-			orders.id as order_id,
-			businesses.business_name,
-			orders.status,
-			orders.order_time as order_date,
-			orders.total_price
-		`).
-		Joins(`
-			JOIN business_locations
-			ON business_locations.id = orders.business_location_id
-		`).
-		Joins(`
-			JOIN businesses
-			ON businesses.id = business_locations.business_id
-		`).
-		Where("orders.user_id = ?", userID)
-
-	if req.Status != "" && req.Status != "all" {
-
-		query = query.Where(
-			"orders.status = ?",
-			req.Status,
-		)
-	}
-
-	if err := query.
-		Order("orders.order_time DESC").
-		Scan(&results).Error; err != nil {
-
-		return dto.OrderHistoryResponse{},
-			errors.New("failed to fetch order history")
-	}
-
-	orders := make([]dto.OrderHistoryItem, 0, len(results))
-
-	for _, order := range results {
-
-		orders = append(orders, dto.OrderHistoryItem{
-			OrderID:      order.OrderID,
-			BusinessName: order.BusinessName,
-			Status:       order.Status,
-			OrderDate:    order.OrderDate,
-			TotalPrice:   order.TotalPrice,
-		})
-	}
-
-	response := dto.OrderHistoryResponse{
-		Summary: dto.OrderHistorySummary{
-			TotalOrders:     int(totalOrders),
-			CompletedOrders: int(completedOrders),
-			TotalSpending:   spending.Total,
-		},
-		Orders: orders,
-	}
-
-	return response, nil
+	}, nil
 }

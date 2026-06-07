@@ -4,26 +4,34 @@ import (
 	"backend/database"
 	"backend/dto"
 	"backend/models"
+	"backend/repositories"
 	"backend/utils"
 	"errors"
 )
 
-func RegisterUser(req dto.RegisterRequest) error {
+func RegisterUser(
+	req dto.RegisterRequest,
+) error {
 
-	var existingUser models.User
+	_, err := repositories.FindUserByEmail(
+		req.Email,
+	)
 
-	if err := database.DB.
-		Where("email = ?", req.Email).
-		First(&existingUser).
-		Error; err == nil {
-
-		return errors.New("email already registered")
+	if err == nil {
+		return errors.New(
+			"email already registered",
+		)
 	}
 
-	hashedPassword, err := utils.HashPassword(req.PasswordHash)
+	hashedPassword, err :=
+		utils.HashPassword(
+			req.PasswordHash,
+		)
 
 	if err != nil {
-		return errors.New("failed to hash password")
+		return errors.New(
+			"failed to hash password",
+		)
 	}
 
 	tx := database.DB.Begin()
@@ -37,9 +45,15 @@ func RegisterUser(req dto.RegisterRequest) error {
 		IsVerified:   false,
 	}
 
-	if err := tx.Create(&user).Error; err != nil {
+	if err := repositories.CreateUser(
+		tx,
+		&user,
+	); err != nil {
+
 		tx.Rollback()
-		return errors.New("failed to register user")
+		return errors.New(
+			"failed to register user",
+		)
 	}
 
 	if user.Role == models.RoleMerchant {
@@ -53,10 +67,15 @@ func RegisterUser(req dto.RegisterRequest) error {
 			IsVerified:   false,
 		}
 
-		if err := tx.Create(&business).Error; err != nil {
+		if err := repositories.CreateBusiness(
+			tx,
+			&business,
+		); err != nil {
 
 			tx.Rollback()
-			return errors.New("failed to create business")
+			return errors.New(
+				"failed to create business",
+			)
 		}
 
 		location := models.BusinessLocation{
@@ -71,17 +90,26 @@ func RegisterUser(req dto.RegisterRequest) error {
 			ClosingTime: "00:00:00",
 		}
 
-		if err := tx.Create(&location).Error; err != nil {
+		if err := repositories.
+			CreateBusinessLocation(
+				tx,
+				&location,
+			); err != nil {
 
 			tx.Rollback()
-			return errors.New("failed to create business location")
+			return errors.New(
+				"failed to create business location",
+			)
 		}
 	}
 
 	if err := tx.Commit().Error; err != nil {
 
 		tx.Rollback()
-		return errors.New("failed to complete registration")
+
+		return errors.New(
+			"failed to complete registration",
+		)
 	}
 
 	return nil
@@ -91,14 +119,17 @@ func LoginUser(
 	req dto.LoginRequest,
 ) (dto.LoginResponse, error) {
 
-	var user models.User
+	user, err := repositories.
+		FindUserByEmail(
+			req.Email,
+		)
 
-	if err := database.DB.
-		Where("email = ?", req.Email).
-		First(&user).Error; err != nil {
+	if err != nil {
 
 		return dto.LoginResponse{},
-			errors.New("invalid email or password")
+			errors.New(
+				"invalid email or password",
+			)
 	}
 
 	if err := utils.ComparePassword(
@@ -107,7 +138,9 @@ func LoginUser(
 	); err != nil {
 
 		return dto.LoginResponse{},
-			errors.New("invalid email or password")
+			errors.New(
+				"invalid email or password",
+			)
 	}
 
 	token, err := utils.GenerateJWT(
@@ -118,13 +151,13 @@ func LoginUser(
 	if err != nil {
 
 		return dto.LoginResponse{},
-			errors.New("failed to generate token")
+			errors.New(
+				"failed to generate token",
+			)
 	}
 
-	response := dto.LoginResponse{
+	return dto.LoginResponse{
 		Role:  string(user.Role),
 		Token: token,
-	}
-
-	return response, nil
+	}, nil
 }

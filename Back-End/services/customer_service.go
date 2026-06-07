@@ -1,9 +1,8 @@
 package services
 
 import (
-	"backend/database"
 	"backend/dto"
-	"backend/models"
+	"backend/repositories"
 	"backend/utils"
 	"errors"
 )
@@ -12,17 +11,16 @@ func GetCustomerProfileService(
 	userID string,
 ) (dto.CustomerProfileResponse, error) {
 
-	var user models.User
+	user, err := repositories.
+		FindUserByID(userID)
 
-	if err := database.DB.
-		Where("id = ?", userID).
-		First(&user).Error; err != nil {
+	if err != nil {
 
 		return dto.CustomerProfileResponse{},
 			errors.New("user not found")
 	}
 
-	response := dto.CustomerProfileResponse{
+	return dto.CustomerProfileResponse{
 		FullName:        user.FullName,
 		Email:           user.Email,
 		PhoneNumber:     user.PhoneNumber,
@@ -30,9 +28,7 @@ func GetCustomerProfileService(
 		ProfileImageURL: user.ProfileImageURL,
 		RegisteredSince: user.CreatedAt.Format("2006-01-02"),
 		LastUpdated:     user.UpdatedAt.Format("2006-01-02"),
-	}
-
-	return response, nil
+	}, nil
 }
 
 func UpdateCustomerProfileService(
@@ -40,11 +36,10 @@ func UpdateCustomerProfileService(
 	req dto.EditProfileRequest,
 ) (dto.CustomerProfileResponse, error) {
 
-	var user models.User
+	user, err := repositories.
+		FindUserByID(userID)
 
-	if err := database.DB.
-		Where("id = ?", userID).
-		First(&user).Error; err != nil {
+	if err != nil {
 
 		return dto.CustomerProfileResponse{},
 			errors.New("user not found")
@@ -66,12 +61,16 @@ func UpdateCustomerProfileService(
 
 	if req.Password != "" {
 
-		hash, err := utils.HashPassword(req.Password)
+		hash, err := utils.HashPassword(
+			req.Password,
+		)
 
 		if err != nil {
 
 			return dto.CustomerProfileResponse{},
-				errors.New("failed to hash password")
+				errors.New(
+					"failed to hash password",
+				)
 		}
 
 		updates["password_hash"] = hash
@@ -80,16 +79,23 @@ func UpdateCustomerProfileService(
 	if len(updates) == 0 {
 
 		return dto.CustomerProfileResponse{},
-			errors.New("no data to update")
+			errors.New(
+				"no data to update",
+			)
 	}
 
-	if err := database.DB.
-		Model(&user).
-		Updates(updates).Error; err != nil {
+	if err := repositories.UpdateUser(
+		&user,
+		updates,
+	); err != nil {
 
 		return dto.CustomerProfileResponse{},
-			errors.New("failed to update profile")
+			errors.New(
+				"failed to update profile",
+			)
 	}
 
-	return GetCustomerProfileService(userID)
+	return GetCustomerProfileService(
+		userID,
+	)
 }
