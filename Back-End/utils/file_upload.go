@@ -86,7 +86,7 @@ func SaveImage(
 		return "", err
 	}
 
-	return "/storage/" + location + "/" +
+	return "http://localhost:5000/storage/" + location + "/" +
 			filename,
 		nil
 }
