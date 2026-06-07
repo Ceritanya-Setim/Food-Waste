@@ -1,9 +1,9 @@
 package services
 
 import (
-	"backend/database"
 	"backend/dto"
 	"backend/models"
+	"backend/repositories"
 	"backend/utils"
 	"errors"
 )
@@ -11,26 +11,34 @@ import (
 func CreateMerchantSurplusFood(
 	userID string,
 	req dto.CreateSurplusFoodRequest,
-) (dto.SurplusFoodDetailResponse, error) {
+) (
+	dto.SurplusFoodDetailResponse,
+	error,
+) {
 
-	var location models.BusinessLocation
+	location, err :=
+		repositories.FindBusinessLocationByID(
+			req.BusinessLocationID,
+		)
 
-	if err := database.DB.
-		Preload("Business").
-		Where("id = ?", req.BusinessLocationID).
-		First(&location).Error; err != nil {
+	if err != nil {
 
 		return dto.SurplusFoodDetailResponse{},
-			errors.New("business location not found")
+			errors.New(
+				"business location not found",
+			)
 	}
 
 	if location.Business.OwnerID != userID {
 
 		return dto.SurplusFoodDetailResponse{},
-			errors.New("unauthorized access")
+			errors.New(
+				"unauthorized access",
+			)
 	}
 
-	if req.DiscountPrice > req.OriginalPrice {
+	if req.DiscountPrice >
+		req.OriginalPrice {
 
 		return dto.SurplusFoodDetailResponse{},
 			errors.New(
@@ -51,85 +59,91 @@ func CreateMerchantSurplusFood(
 		ExpiryTime:         req.ExpiryTime,
 	}
 
-	food.Status = utils.GetFoodStatus(
-		food.QuantityRemaining,
-		food.ExpiryTime,
-	)
+	food.Status =
+		utils.GetFoodStatus(
+			food.QuantityRemaining,
+			food.ExpiryTime,
+		)
 
-	if err := database.DB.
-		Create(&food).Error; err != nil {
+	err =
+		repositories.CreateSurplusFood(
+			&food,
+		)
+
+	if err != nil {
 
 		return dto.SurplusFoodDetailResponse{},
-			errors.New("failed to create food")
+			errors.New(
+				"failed to create food",
+			)
 	}
 
-	return mapSurplusFoodDetail(food), nil
+	return mapSurplusFoodDetail(food),
+		nil
 }
 
 func GetMerchantSurplusFoodDetail(
 	userID string,
 	foodID string,
-) (dto.SurplusFoodDetailResponse, error) {
+) (
+	dto.SurplusFoodDetailResponse,
+	error,
+) {
 
-	var food models.SurplusFood
+	food, err :=
+		repositories.FindMerchantFoodByID(
+			userID,
+			foodID,
+		)
 
-	if err := database.DB.
-		Joins(`
-			JOIN business_locations
-			ON business_locations.id =
-			surplus_foods.business_location_id
-		`).
-		Joins(`
-			JOIN businesses
-			ON businesses.id =
-			business_locations.business_id
-		`).
-		Where("businesses.owner_id = ?", userID).
-		Where("surplus_foods.id = ?", foodID).
-		First(&food).Error; err != nil {
+	if err != nil {
 
 		return dto.SurplusFoodDetailResponse{},
-			errors.New("food not found")
+			errors.New(
+				"food not found",
+			)
 	}
 
-	food.Status = utils.GetFoodStatus(
-		food.QuantityRemaining,
-		food.ExpiryTime,
-	)
+	food.Status =
+		utils.GetFoodStatus(
+			food.QuantityRemaining,
+			food.ExpiryTime,
+		)
 
-	database.DB.Save(&food)
+	_ =
+		repositories.UpdateSurplusFood(
+			&food,
+		)
 
-	return mapSurplusFoodDetail(food), nil
+	return mapSurplusFoodDetail(food),
+		nil
 }
 
 func UpdateMerchantSurplusFood(
 	userID string,
 	foodID string,
 	req dto.UpdateSurplusFoodRequest,
-) (dto.SurplusFoodDetailResponse, error) {
+) (
+	dto.SurplusFoodDetailResponse,
+	error,
+) {
 
-	var food models.SurplusFood
+	food, err :=
+		repositories.FindMerchantFoodByID(
+			userID,
+			foodID,
+		)
 
-	if err := database.DB.
-		Joins(`
-			JOIN business_locations
-			ON business_locations.id =
-			surplus_foods.business_location_id
-		`).
-		Joins(`
-			JOIN businesses
-			ON businesses.id =
-			business_locations.business_id
-		`).
-		Where("businesses.owner_id = ?", userID).
-		Where("surplus_foods.id = ?", foodID).
-		First(&food).Error; err != nil {
+	if err != nil {
 
 		return dto.SurplusFoodDetailResponse{},
-			errors.New("food not found")
+			errors.New(
+				"food not found",
+			)
 	}
 
-	if req.DiscountPrice > req.OriginalPrice {
+	if req.DiscountPrice >
+		req.OriginalPrice {
 
 		return dto.SurplusFoodDetailResponse{},
 			errors.New(
@@ -155,10 +169,12 @@ func UpdateMerchantSurplusFood(
 
 	if req.QuantityAvailable > 0 {
 
-		diff := req.QuantityAvailable -
-			food.QuantityAvailable
+		diff :=
+			req.QuantityAvailable -
+				food.QuantityAvailable
 
-		newRemaining := food.QuantityRemaining + diff
+		newRemaining :=
+			food.QuantityRemaining + diff
 
 		if newRemaining < 0 {
 			newRemaining = 0
@@ -172,30 +188,41 @@ func UpdateMerchantSurplusFood(
 	}
 
 	if !req.PickupStartTime.IsZero() {
-		food.PickupStartTime = req.PickupStartTime
+		food.PickupStartTime =
+			req.PickupStartTime
 	}
 
 	if !req.PickupEndTime.IsZero() {
-		food.PickupEndTime = req.PickupEndTime
+		food.PickupEndTime =
+			req.PickupEndTime
 	}
 
 	if !req.ExpiryTime.IsZero() {
-		food.ExpiryTime = req.ExpiryTime
+		food.ExpiryTime =
+			req.ExpiryTime
 	}
 
-	food.Status = utils.GetFoodStatus(
-		food.QuantityRemaining,
-		food.ExpiryTime,
-	)
+	food.Status =
+		utils.GetFoodStatus(
+			food.QuantityRemaining,
+			food.ExpiryTime,
+		)
 
-	if err := database.DB.
-		Save(&food).Error; err != nil {
+	err =
+		repositories.UpdateSurplusFood(
+			&food,
+		)
+
+	if err != nil {
 
 		return dto.SurplusFoodDetailResponse{},
-			errors.New("failed to update food")
+			errors.New(
+				"failed to update food",
+			)
 	}
 
-	return mapSurplusFoodDetail(food), nil
+	return mapSurplusFoodDetail(food),
+		nil
 }
 
 func DeleteMerchantSurplusFood(
@@ -203,51 +230,30 @@ func DeleteMerchantSurplusFood(
 	foodID string,
 ) error {
 
-	var food models.SurplusFood
+	food, err :=
+		repositories.FindMerchantFoodByID(
+			userID,
+			foodID,
+		)
 
-	if err := database.DB.
-		Joins(`
-			JOIN business_locations
-			ON business_locations.id =
-			surplus_foods.business_location_id
-		`).
-		Joins(`
-			JOIN businesses
-			ON businesses.id =
-			business_locations.business_id
-		`).
-		Where("businesses.owner_id = ?", userID).
-		Where("surplus_foods.id = ?", foodID).
-		First(&food).Error; err != nil {
+	if err != nil {
 
-		return errors.New("food not found")
+		return errors.New(
+			"food not found",
+		)
 	}
 
-	if err := database.DB.
-		Delete(&food).Error; err != nil {
+	err =
+		repositories.DeleteSurplusFood(
+			&food,
+		)
 
-		return errors.New("failed to delete food")
+	if err != nil {
+
+		return errors.New(
+			"failed to delete food",
+		)
 	}
 
 	return nil
-}
-
-func mapSurplusFoodDetail(
-	food models.SurplusFood,
-) dto.SurplusFoodDetailResponse {
-
-	return dto.SurplusFoodDetailResponse{
-		ID:                 food.ID,
-		Title:              food.Title,
-		Description:        food.Description,
-		OriginalPrice:      food.OriginalPrice,
-		DiscountPrice:      food.DiscountPrice,
-		QuantityAvailable:  food.QuantityAvailable,
-		QuantityRemaining:  food.QuantityRemaining,
-		Status:             string(food.Status),
-		PickupStartTime:    food.PickupStartTime,
-		PickupEndTime:      food.PickupEndTime,
-		ExpiryTime:         food.ExpiryTime,
-		BusinessLocationID: food.BusinessLocationID,
-	}
 }

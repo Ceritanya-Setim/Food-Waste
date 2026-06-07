@@ -1,12 +1,11 @@
 package services
 
 import (
-	"backend/database"
 	"backend/dto"
 	"backend/models"
+	"backend/repositories"
 	"backend/utils"
 	"errors"
-	"time"
 )
 
 func GetMerchantDashboardService(
@@ -19,227 +18,83 @@ func GetMerchantDashboardService(
 	user,
 		business,
 		_,
-		err := utils.GetMerchantData(userID)
+		err := repositories.GetMerchantData(userID)
 
 	if err != nil {
-		return dto.MerchantDashboardResponse{}, err
+
+		return dto.MerchantDashboardResponse{},
+			err
 	}
 
 	if user.Role != models.RoleMerchant {
 
 		return dto.MerchantDashboardResponse{},
-			errors.New("only merchant can access this endpoint")
+			errors.New(
+				"only merchant can access this endpoint",
+			)
 	}
 
-	totalRevenue := getMerchantRevenue(business.ID)
-
-	activeMenu := getActiveMenuCount(business.ID)
-
-	soldMenu := getSoldMenuCount(business.ID)
-
-	totalDiscount := getTotalDiscount(business.ID)
-
-	availableMenu := getAvailableMenuCount(business.ID)
-
-	expiredMenu := getExpiredMenuCount(business.ID)
-
-	foods, err := getMerchantFoods(business.ID)
+	revenue, err :=
+		repositories.GetMerchantRevenue(
+			business.ID,
+		)
 
 	if err != nil {
 		return dto.MerchantDashboardResponse{}, err
 	}
 
-	response := dto.MerchantDashboardResponse{
-		TotalRevenue:  totalRevenue,
-		ActiveMenu:    activeMenu,
-		SoldMenu:      soldMenu,
-		TotalDiscount: totalDiscount,
-		AvailableMenu: availableMenu,
-		ExpiredMenu:   expiredMenu,
-		SurplusFoods:  foods,
+	activeMenu, err :=
+		repositories.GetActiveMenuCount(
+			business.ID,
+		)
+
+	if err != nil {
+		return dto.MerchantDashboardResponse{}, err
 	}
 
-	return response, nil
-}
+	soldMenu, err :=
+		repositories.GetSoldMenuCount(
+			business.ID,
+		)
 
-func getMerchantRevenue(
-	businessID string,
-) int {
-
-	type RevenueResult struct {
-		Total int
+	if err != nil {
+		return dto.MerchantDashboardResponse{}, err
 	}
 
-	var result RevenueResult
+	discount, err :=
+		repositories.GetTotalDiscount(
+			business.ID,
+		)
 
-	database.DB.
-		Table("orders").
-		Select("COALESCE(SUM(orders.total_price), 0) as total").
-		Where("orders.status = ?", models.OrderCompleted).
-		Where(`
-			orders.business_location_id IN (
-				SELECT id
-				FROM business_locations
-				WHERE business_id = ?
-			)
-		`, businessID).
-		Scan(&result)
-
-	return result.Total
-}
-
-func getActiveMenuCount(
-	businessID string,
-) int {
-
-	var count int64
-
-	database.DB.
-		Model(&models.SurplusFood{}).
-		Where(`
-			business_location_id IN (
-				SELECT id
-				FROM business_locations
-				WHERE business_id = ?
-			)
-		`, businessID).
-		Where("status = ?", models.StatusActive).
-		Count(&count)
-
-	return int(count)
-}
-
-func getSoldMenuCount(
-	businessID string,
-) int {
-
-	type SoldResult struct {
-		Total int
+	if err != nil {
+		return dto.MerchantDashboardResponse{}, err
 	}
 
-	var result SoldResult
+	availableMenu, err :=
+		repositories.GetAvailableMenuCount(
+			business.ID,
+		)
 
-	database.DB.
-		Table("order_items").
-		Select("COALESCE(SUM(order_items.quantity), 0) as total").
-		Joins(`
-			JOIN surplus_foods
-			ON surplus_foods.id = order_items.surplus_food_id
-		`).
-		Joins(`
-			JOIN business_locations
-			ON business_locations.id = surplus_foods.business_location_id
-		`).
-		Where("business_locations.business_id = ?", businessID).
-		Scan(&result)
-
-	return result.Total
-}
-
-func getTotalDiscount(
-	businessID string,
-) int {
-
-	type DiscountResult struct {
-		Total int
+	if err != nil {
+		return dto.MerchantDashboardResponse{}, err
 	}
 
-	var result DiscountResult
+	expiredMenu, err :=
+		repositories.GetExpiredMenuCount(
+			business.ID,
+		)
 
-	database.DB.
-		Table("order_items").
-		Select(`
-			COALESCE(SUM(
-				(
-					surplus_foods.original_price -
-					surplus_foods.discount_price
-				) * order_items.quantity
-			), 0) as total
-		`).
-		Joins(`
-			JOIN surplus_foods
-			ON surplus_foods.id = order_items.surplus_food_id
-		`).
-		Joins(`
-			JOIN business_locations
-			ON business_locations.id = surplus_foods.business_location_id
-		`).
-		Where("business_locations.business_id = ?", businessID).
-		Scan(&result)
+	if err != nil {
+		return dto.MerchantDashboardResponse{}, err
+	}
 
-	return result.Total
-}
+	foods, err :=
+		repositories.GetMerchantFoods(
+			business.ID,
+		)
 
-func getAvailableMenuCount(
-	businessID string,
-) int {
-
-	var count int64
-
-	database.DB.
-		Model(&models.SurplusFood{}).
-		Where(`
-			business_location_id IN (
-				SELECT id
-				FROM business_locations
-				WHERE business_id = ?
-			)
-		`, businessID).
-		Where("expiry_time > ?", time.Now()).
-		Where("status != ?", models.StatusExpired).
-		Count(&count)
-
-	return int(count)
-}
-
-func getExpiredMenuCount(
-	businessID string,
-) int {
-
-	var count int64
-
-	database.DB.
-		Model(&models.SurplusFood{}).
-		Where(`
-			business_location_id IN (
-				SELECT id
-				FROM business_locations
-				WHERE business_id = ?
-			)
-		`, businessID).
-		Where(`
-			expiry_time <= ?
-			OR status = ?
-		`,
-			time.Now(),
-			models.StatusExpired,
-		).
-		Count(&count)
-
-	return int(count)
-}
-
-func getMerchantFoods(
-	businessID string,
-) (
-	[]dto.MerchantFoodItem,
-	error,
-) {
-
-	var foods []models.SurplusFood
-
-	if err := database.DB.
-		Where(`
-			business_location_id IN (
-				SELECT id
-				FROM business_locations
-				WHERE business_id = ?
-			)
-		`, businessID).
-		Order("created_at DESC").
-		Find(&foods).Error; err != nil {
-
-		return nil, err
+	if err != nil {
+		return dto.MerchantDashboardResponse{}, err
 	}
 
 	foodResponses := make(
@@ -250,10 +105,11 @@ func getMerchantFoods(
 
 	for _, food := range foods {
 
-		shortDescription := utils.TruncateWords(
-			food.Description,
-			10,
-		)
+		shortDescription :=
+			utils.TruncateWords(
+				food.Description,
+				10,
+			)
 
 		foodResponses = append(
 			foodResponses,
@@ -272,5 +128,13 @@ func getMerchantFoods(
 		)
 	}
 
-	return foodResponses, nil
+	return dto.MerchantDashboardResponse{
+		TotalRevenue:  revenue,
+		ActiveMenu:    activeMenu,
+		SoldMenu:      soldMenu,
+		TotalDiscount: discount,
+		AvailableMenu: availableMenu,
+		ExpiredMenu:   expiredMenu,
+		SurplusFoods:  foodResponses,
+	}, nil
 }

@@ -1,17 +1,17 @@
-package utils
+package repositories
 
 import (
 	"backend/database"
 	"backend/dto"
 	"backend/models"
 	"fmt"
-
-	"gorm.io/gorm"
 )
 
-func BuildSurplusFoodQuery(
+func FindSurplusFoods(
 	req dto.SurplusFoodRequest,
-) *gorm.DB {
+) ([]models.SurplusFood, error) {
+
+	var foods []models.SurplusFood
 
 	query := database.DB.
 		Model(&models.SurplusFood{}).
@@ -43,7 +43,7 @@ func BuildSurplusFoodQuery(
 	if req.Category != "" {
 
 		query = query.Where(
-			"LOWER(businesses.category) = LOWER(?)",
+			"LOWER(businesses.category)=LOWER(?)",
 			req.Category,
 		)
 	}
@@ -96,21 +96,21 @@ func BuildSurplusFoodQuery(
 					AVG(reviews.rating),
 					0
 				) DESC,
-
 				COUNT(reviews.id) DESC
 			`)
 
 	case "closest":
 
-		if req.Lat != 0 && req.Lon != 0 {
+		if req.Lat != 0 &&
+			req.Lon != 0 {
 
 			query = query.Order(
 				fmt.Sprintf(`
 					POWER(
 						business_locations.latitude - %f,
 						2
-					) +
-
+					)
+					+
 					POWER(
 						business_locations.longitude - %f,
 						2
@@ -123,5 +123,34 @@ func BuildSurplusFoodQuery(
 		}
 	}
 
-	return query
+	err := query.Find(&foods).Error
+
+	return foods, err
+}
+
+func CreateSurplusFood(
+	food *models.SurplusFood,
+) error {
+
+	return database.DB.
+		Create(food).
+		Error
+}
+
+func UpdateSurplusFood(
+	food *models.SurplusFood,
+) error {
+
+	return database.DB.
+		Save(food).
+		Error
+}
+
+func DeleteSurplusFood(
+	food *models.SurplusFood,
+) error {
+
+	return database.DB.
+		Delete(food).
+		Error
 }

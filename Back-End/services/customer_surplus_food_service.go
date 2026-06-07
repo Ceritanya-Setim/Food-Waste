@@ -2,8 +2,7 @@ package services
 
 import (
 	"backend/dto"
-	"backend/models"
-	"backend/utils"
+	"backend/repositories"
 	"errors"
 )
 
@@ -11,14 +10,15 @@ func GetSurplusFoods(
 	req dto.SurplusFoodRequest,
 ) ([]dto.SurplusFoodResponse, error) {
 
-	var foods []models.SurplusFood
+	foods, err :=
+		repositories.FindSurplusFoods(req)
 
-	query := utils.BuildSurplusFoodQuery(req)
-
-	if err := query.Find(&foods).Error; err != nil {
+	if err != nil {
 
 		return nil,
-			errors.New("failed to fetch surplus foods")
+			errors.New(
+				"failed to fetch surplus foods",
+			)
 	}
 
 	response := make(
@@ -31,7 +31,7 @@ func GetSurplusFoods(
 
 		response = append(
 			response,
-			utils.MapSurplusFoodResponse(food),
+			mapSurplusFoodResponse(food),
 		)
 	}
 
