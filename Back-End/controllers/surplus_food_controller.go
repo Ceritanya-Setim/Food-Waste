@@ -14,7 +14,6 @@ func GetSurplusFood(c *gin.Context) {
 	var req dto.SurplusFoodRequest
 
 	if err := c.ShouldBindQuery(&req); err != nil {
-
 		utils.ErrorResponse(
 			c,
 			http.StatusBadRequest,
@@ -47,7 +46,7 @@ func CreateMerchantSurplusFood(c *gin.Context) {
 
 	var req dto.CreateSurplusFoodRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 
 		utils.ErrorResponse(
 			c,
@@ -57,16 +56,12 @@ func CreateMerchantSurplusFood(c *gin.Context) {
 		return
 	}
 
+	file, _ := c.FormFile("image_url")
 	userID := c.MustGet("user_id").(string)
 
-	response, err := services.
-		CreateMerchantSurplusFood(
-			userID,
-			req,
-		)
+	response, err := services.CreateMerchantSurplusFood(userID, req, file)
 
 	if err != nil {
-
 		utils.ErrorResponse(
 			c,
 			http.StatusBadRequest,

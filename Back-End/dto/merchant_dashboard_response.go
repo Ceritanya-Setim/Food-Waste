@@ -4,6 +4,7 @@ import "time"
 
 type MerchantFoodItem struct {
 	ID                string    `json:"id"`
+	ImageURL          string    `json:"image_url"`
 	Name              string    `json:"name"`
 	Description       string    `json:"description"`
 	OriginalPrice     int       `json:"original_price"`

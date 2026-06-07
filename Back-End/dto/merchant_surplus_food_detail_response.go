@@ -4,6 +4,7 @@ import "time"
 
 type SurplusFoodDetailResponse struct {
 	ID                 string    `json:"id"`
+	ImageURL           string    `json:"image_url"`
 	Title              string    `json:"title"`
 	Description        string    `json:"description"`
 	OriginalPrice      int       `json:"original_price"`

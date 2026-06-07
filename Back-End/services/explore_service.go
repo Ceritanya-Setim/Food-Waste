@@ -46,6 +46,8 @@ func GetExploreData() (
 		topFoods = append(
 			topFoods,
 			dto.ExploreFoodItem{
+				ID:             food.ID,
+				ImageURL:       food.ImageURL,
 				Name:           food.Name,
 				Category:       food.Category,
 				OriginalPrice:  food.OriginalPrice,

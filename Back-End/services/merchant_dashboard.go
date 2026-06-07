@@ -115,6 +115,7 @@ func GetMerchantDashboardService(
 			foodResponses,
 			dto.MerchantFoodItem{
 				ID:                food.ID,
+				ImageURL:          food.ImageURL,
 				Name:              food.Title,
 				Description:       shortDescription,
 				OriginalPrice:     food.OriginalPrice,

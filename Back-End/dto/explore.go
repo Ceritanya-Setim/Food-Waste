@@ -1,6 +1,8 @@
 package dto
 
 type ExploreFoodItem struct {
+	ID             string `json:"id"`
+	ImageURL       string `json:"image-url"`
 	Name           string `json:"name"`
 	Category       string `json:"category"`
 	OriginalPrice  int    `json:"original_price"`

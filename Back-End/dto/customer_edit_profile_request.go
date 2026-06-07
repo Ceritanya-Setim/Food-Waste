@@ -1,10 +1,11 @@
 package dto
 
 type EditProfileRequest struct {
-	FullName        string `json:"full_name"`
-	Email           string `json:"email"`
-	PhoneNumber     string `json:"phone_number"`
-	Role            string `json:"role"`
-	Password        string `json:"password"`
-	ProfileImageURL string `json:"profile_image_url"`
+	FullName    string `form:"full_name"`
+	Email       string `form:"email"`
+	PhoneNumber string `form:"phone_number"`
+	Role        string `form:"role"`
+	Password    string `form:"password"`
+
+	ProfileImageURL string `form:"-" json:"-"`
 }

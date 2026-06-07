@@ -29,15 +29,6 @@ CREATE TABLE public.businesses (
     deleted_at timestamp without time zone
 );
 
-CREATE TABLE public.food_images (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    surplus_food_id uuid NOT NULL,
-    image_url text NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    deleted_at timestamp without time zone
-);
-
 CREATE TABLE public.order_items (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     order_id uuid NOT NULL,
@@ -87,15 +78,10 @@ CREATE TABLE public.reviews (
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     deleted_at timestamp without time zone
 );
-
-CREATE TABLE public.schema_migrations (
-    version bigint NOT NULL,
-    dirty boolean NOT NULL
-);
-
 CREATE TABLE public.surplus_foods (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     business_location_id uuid NOT NULL,
+    image_url text NOT NULL,
     title character varying(255) NOT NULL,
     description text,
     original_price integer NOT NULL,
@@ -145,15 +131,6 @@ INSERT INTO public.businesses (id, owner_id, business_name, description, categor
 INSERT INTO public.businesses (id, owner_id, business_name, description, category, logo_url, is_verified, created_at, updated_at, deleted_at) VALUES ('82eb463b-d4f8-429b-aa31-40ef4f29ed39', '3d1dc838-b1ab-4360-b2cc-dcc7e424ac56', 'Eka''s Eatery', 'Casual dining with tasty local dishes', 'buffets', 'https://example.com/logo5.png', FALSE, '2026-03-07 14:22:32.131852', '2026-03-07 14:22:32.131852', NULL);
 
 -- =====================================================
--- DATA: public.food_images
--- =====================================================
-INSERT INTO public.food_images (id, surplus_food_id, image_url, created_at, updated_at, deleted_at) VALUES ('9a153ea6-ecf5-47a1-aef1-0a8cd73137e2', '17572007-4b29-4a05-9391-17d243ac3440', 'https://images.unsplash.com/photo-1509440159596-0249088772ff', '2026-03-07 14:22:32.163264', '2026-03-07 14:22:32.163264', NULL);
-INSERT INTO public.food_images (id, surplus_food_id, image_url, created_at, updated_at, deleted_at) VALUES ('f64de879-4076-438b-a211-aa721d38f963', '536a0dd4-fa98-4eb5-8415-0240ab83c404', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c', '2026-03-07 14:22:32.166397', '2026-03-07 14:22:32.166397', NULL);
-INSERT INTO public.food_images (id, surplus_food_id, image_url, created_at, updated_at, deleted_at) VALUES ('843e8ead-6e43-42b4-8d90-24ddfcf54ceb', '62e546bc-6d68-4fe1-90af-e91e71aad525', 'https://images.unsplash.com/photo-1604908176997-431ff0f9d9b3', '2026-03-07 14:22:32.168439', '2026-03-07 14:22:32.168439', NULL);
-INSERT INTO public.food_images (id, surplus_food_id, image_url, created_at, updated_at, deleted_at) VALUES ('75af13ba-b5cc-43d4-b0ca-e83c8e4fcec2', '3dabc633-55d3-42c6-b002-f6bac1081687', 'https://images.unsplash.com/photo-1504674900247-0877df9cc836', '2026-03-07 14:22:32.170666', '2026-03-07 14:22:32.170666', NULL);
-INSERT INTO public.food_images (id, surplus_food_id, image_url, created_at, updated_at, deleted_at) VALUES ('daf6b71b-906b-4f67-9ce7-85d0c0e1c18f', '90d1c0fb-fd7f-463a-bc0a-46be06444998', 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e', '2026-03-07 14:22:32.172566', '2026-03-07 14:22:32.172566', NULL);
-
--- =====================================================
 -- DATA: public.order_items
 -- =====================================================
 INSERT INTO public.order_items (id, order_id, surplus_food_id, quantity, price_per_item, subtotal, created_at, updated_at, deleted_at) VALUES ('45108541-dbde-4bb0-9c47-a59a4f896b72', '80e56344-5ef4-472f-a333-ac0b6603312f', '17572007-4b29-4a05-9391-17d243ac3440', 2, 15000, 30000, '2026-03-07 14:22:32.189926', '2026-03-07 14:22:32.189926', NULL);
@@ -190,28 +167,23 @@ INSERT INTO public.reviews (id, order_id, surplus_food_id, user_id, rating, comm
 INSERT INTO public.reviews (id, order_id, surplus_food_id, user_id, rating, comment, created_at, updated_at, deleted_at) VALUES ('6a47ef86-e083-4e81-b765-258f38e894f4', 'e50f6bb3-c074-45af-94b3-b84d840b4e83', '90d1c0fb-fd7f-463a-bc0a-46be06444998', '3d1dc838-b1ab-4360-b2cc-dcc7e424ac56', 3, 'Portion was okay but still good', '2026-05-25 03:37:42.532294', '2026-05-25 03:37:42.532294', NULL);
 
 -- =====================================================
--- DATA: public.schema_migrations
--- =====================================================
-INSERT INTO public.schema_migrations (version, dirty) VALUES (20260221182322, FALSE);
-
--- =====================================================
 -- DATA: public.surplus_foods
 -- =====================================================
-INSERT INTO public.surplus_foods (id, business_location_id, title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('17572007-4b29-4a05-9391-17d243ac3440', '3e7dd2ab-f9b0-4d90-a830-684df5b2f274', 'Paket Roti Sisa Hari Ini', 'Berisi 5 roti campur (manis & asin)', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148574', '2026-03-07 19:22:32.148579', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.149232', '2026-03-07 14:22:32.149232', NULL);
-INSERT INTO public.surplus_foods (id, business_location_id, title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('536a0dd4-fa98-4eb5-8415-0240ab83c404', 'dbb69039-637b-4d7f-98e4-ed0198164a1d', 'Buffet Hotel Surplus', 'Makanan buffet sisa layak konsumsi', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148587', '2026-03-07 19:22:32.148591', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.152986', '2026-03-07 14:22:32.152986', NULL);
-INSERT INTO public.surplus_foods (id, business_location_id, title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('62e546bc-6d68-4fe1-90af-e91e71aad525', '9fa914ed-b715-408c-9d26-cea9d503ec4b', 'Nasi Box Restoran', 'Nasi ayam + sayur', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148598', '2026-03-07 19:22:32.148602', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.155437', '2026-03-07 14:22:32.155437', NULL);
-INSERT INTO public.surplus_foods (id, business_location_id, title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('3dabc633-55d3-42c6-b002-f6bac1081687', '1bb574ae-e29c-42e8-bae3-f33d6179936b', 'Paket Kopi & Pastry', '1 kopi + 1 pastry random', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148608', '2026-03-07 19:22:32.148611', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.157885', '2026-03-07 14:22:32.157885', NULL);
-INSERT INTO public.surplus_foods (id, business_location_id, title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('90d1c0fb-fd7f-463a-bc0a-46be06444998', 'de25f5c8-46b8-4de2-b4f2-d5b9ff6e5947', 'Dessert Box Surprise', 'Dessert mix 3 item', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148618', '2026-03-07 19:22:32.148622', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.159891', '2026-03-07 14:22:32.159891', NULL);
+INSERT INTO public.surplus_foods (id, business_location_id, image_url ,title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('17572007-4b29-4a05-9391-17d243ac3440', '3e7dd2ab-f9b0-4d90-a830-684df5b2f274', '/storage/food/food.png','Paket Roti Sisa Hari Ini', 'Berisi 5 roti campur (manis & asin)', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148574', '2026-03-07 19:22:32.148579', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.149232', '2026-03-07 14:22:32.149232', NULL);
+INSERT INTO public.surplus_foods (id, business_location_id, image_url ,title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('536a0dd4-fa98-4eb5-8415-0240ab83c404', 'dbb69039-637b-4d7f-98e4-ed0198164a1d', '/storage/food/food.png','Buffet Hotel Surplus', 'Makanan buffet sisa layak konsumsi', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148587', '2026-03-07 19:22:32.148591', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.152986', '2026-03-07 14:22:32.152986', NULL);
+INSERT INTO public.surplus_foods (id, business_location_id, image_url ,title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('62e546bc-6d68-4fe1-90af-e91e71aad525', '9fa914ed-b715-408c-9d26-cea9d503ec4b', '/storage/food/food.png','Nasi Box Restoran', 'Nasi ayam + sayur', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148598', '2026-03-07 19:22:32.148602', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.155437', '2026-03-07 14:22:32.155437', NULL);
+INSERT INTO public.surplus_foods (id, business_location_id, image_url ,title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('3dabc633-55d3-42c6-b002-f6bac1081687', '1bb574ae-e29c-42e8-bae3-f33d6179936b', '/storage/food/food.png','Paket Kopi & Pastry', '1 kopi + 1 pastry random', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148608', '2026-03-07 19:22:32.148611', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.157885', '2026-03-07 14:22:32.157885', NULL);
+INSERT INTO public.surplus_foods (id, business_location_id, image_url ,title, description, original_price, discount_price, quantity_available, quantity_remaining, pickup_start_time, pickup_end_time, expiry_time, status, created_at, updated_at, deleted_at) VALUES ('90d1c0fb-fd7f-463a-bc0a-46be06444998', 'de25f5c8-46b8-4de2-b4f2-d5b9ff6e5947', '/storage/food/food.png','Dessert Box Surprise', 'Dessert mix 3 item', 50000, 10000, 10, 10, '2026-03-07 16:22:32.148618', '2026-03-07 19:22:32.148622', '2026-09-13 00:00:00', 'active', '2026-03-07 14:22:32.159891', '2026-03-07 14:22:32.159891', NULL);
 
 -- =====================================================
 -- DATA: public.users
 -- =====================================================
-INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('38b1024e-c9d2-4e02-a004-b9ad6c53bda2', 'Budi Santoso', 'budi@example.com', '081234567891', '$2a$10$ked/3avpdrwMmClgOQzGUOgDVRqvGT3nRyEBanPlFObBe2WS6spwG', 'customer', '', FALSE, '2026-03-07 14:22:32.114247', '2026-03-07 14:22:32.114247', NULL);
-INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('62e87872-9c31-42f3-8bcb-28839910d4e9', 'Citra Lestari', 'citra@example.com', '081234567892', '$2a$10$CCGz88IO7UPDytuQn4cVDec8Z7D.j8u32Zr28.IXklCQEh9.ICXf.', 'merchant', '', TRUE, '2026-03-07 14:22:32.116165', '2026-03-07 14:22:32.116165', NULL);
-INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('fbe4077e-8446-48aa-8e75-441c2c9fa0d9', 'Dewa Saputra', 'dewa@example.com', '081234567893', '$2a$10$Iiq2zt1I5dyV8byA9NazPuCoHT1FECfBdP1GWEsJacSNQ1NeQnqNe', 'merchant', '', TRUE, '2026-03-07 14:22:32.11773', '2026-03-07 14:22:32.11773', NULL);
-INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('3d1dc838-b1ab-4360-b2cc-dcc7e424ac56', 'Eka Wijaya', 'eka@example.com', '081234567894', '$2a$10$z/pO/dg2CiHJCsnWntIy7ef0Hb/kPuURUpfgUXEj/Pc/mdTiQMItW', 'customer', '', FALSE, '2026-03-07 14:22:32.119222', '2026-03-07 14:22:32.119222', NULL);
-INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('b48e37fe-9682-4a03-87c0-bc78adb9dbf9', 'orgil', 'orgil@gmail.com', '123412341234', '$2a$10$WQ1Qw9RB75VmQ9rJgMW6SOt11e8YQg2Iqx8d1aW1zSq5C6eeYtsre', 'customer', '', FALSE, '2026-05-27 16:39:02.855661', '2026-05-27 16:39:02.855661', NULL);
-INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('c5dcb69b-bf2b-4bba-a29f-f35a703d7e43', 'andi', 'andi@example.com', '081234567890', '$2a$10$EDT9FVMzcogKYkyDYQlV2O3uAmAkOa4coGF/COalSulNu674w1zee', 'customer', '', TRUE, '2026-03-07 14:22:32.107379', '2026-05-27 16:41:26.96963', NULL);
+INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('38b1024e-c9d2-4e02-a004-b9ad6c53bda2', 'Budi Santoso', 'budi@example.com', '081234567891', '$2a$10$ked/3avpdrwMmClgOQzGUOgDVRqvGT3nRyEBanPlFObBe2WS6spwG', 'customer', '/storage/profile/avatar.png', FALSE, '2026-03-07 14:22:32.114247', '2026-03-07 14:22:32.114247', NULL);
+INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('62e87872-9c31-42f3-8bcb-28839910d4e9', 'Citra Lestari', 'citra@example.com', '081234567892', '$2a$10$CCGz88IO7UPDytuQn4cVDec8Z7D.j8u32Zr28.IXklCQEh9.ICXf.', 'merchant', '/storage/profile/avatar.png', TRUE, '2026-03-07 14:22:32.116165', '2026-03-07 14:22:32.116165', NULL);
+INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('fbe4077e-8446-48aa-8e75-441c2c9fa0d9', 'Dewa Saputra', 'dewa@example.com', '081234567893', '$2a$10$Iiq2zt1I5dyV8byA9NazPuCoHT1FECfBdP1GWEsJacSNQ1NeQnqNe', 'merchant', '/storage/profile/avatar.png', TRUE, '2026-03-07 14:22:32.11773', '2026-03-07 14:22:32.11773', NULL);
+INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('3d1dc838-b1ab-4360-b2cc-dcc7e424ac56', 'Eka Wijaya', 'eka@example.com', '081234567894', '$2a$10$z/pO/dg2CiHJCsnWntIy7ef0Hb/kPuURUpfgUXEj/Pc/mdTiQMItW', 'customer', '/storage/profile/avatar.png', FALSE, '2026-03-07 14:22:32.119222', '2026-03-07 14:22:32.119222', NULL);
+INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('b48e37fe-9682-4a03-87c0-bc78adb9dbf9', 'orgil', 'orgil@gmail.com', '123412341234', '$2a$10$WQ1Qw9RB75VmQ9rJgMW6SOt11e8YQg2Iqx8d1aW1zSq5C6eeYtsre', 'customer', '/storage/profile/avatar.png', FALSE, '2026-05-27 16:39:02.855661', '2026-05-27 16:39:02.855661', NULL);
+INSERT INTO public.users (id, full_name, email, phone_number, password_hash, role, profile_image_url, is_verified, created_at, updated_at, deleted_at) VALUES ('c5dcb69b-bf2b-4bba-a29f-f35a703d7e43', 'andi', 'andi@example.com', '081234567890', '$2a$10$EDT9FVMzcogKYkyDYQlV2O3uAmAkOa4coGF/COalSulNu674w1zee', 'customer', '/storage/profile/avatar.png', TRUE, '2026-03-07 14:22:32.107379', '2026-05-27 16:41:26.96963', NULL);
 
 -- FOREIGN KEYS
 ALTER TABLE ONLY public.business_locations
@@ -224,14 +196,6 @@ ALTER TABLE ONLY public.business_locations
 
 ALTER TABLE ONLY public.businesses
     ADD CONSTRAINT businesses_pkey PRIMARY KEY (id);
-
-
---
--- Name: food_images food_images_pkey; Type: CONSTRAINT; Schema: public; Owner: cihuy
---
-
-ALTER TABLE ONLY public.food_images
-    ADD CONSTRAINT food_images_pkey PRIMARY KEY (id);
 
 
 --
@@ -275,14 +239,6 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: cihuy
---
-
-ALTER TABLE ONLY public.schema_migrations
-    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-
---
 -- Name: surplus_foods surplus_foods_pkey; Type: CONSTRAINT; Schema: public; Owner: cihuy
 --
 
@@ -314,8 +270,6 @@ ALTER TABLE ONLY public.business_locations
     ADD CONSTRAINT fk_business_location FOREIGN KEY (business_id) REFERENCES public.businesses(id) ON DELETE CASCADE;
 ALTER TABLE ONLY public.businesses
     ADD CONSTRAINT fk_business_owner FOREIGN KEY (owner_id) REFERENCES public.users(id) ON DELETE CASCADE;
-ALTER TABLE ONLY public.food_images
-    ADD CONSTRAINT fk_image_food FOREIGN KEY (surplus_food_id) REFERENCES public.surplus_foods(id) ON DELETE CASCADE;
 ALTER TABLE ONLY public.order_items
     ADD CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE;
 ALTER TABLE ONLY public.order_items

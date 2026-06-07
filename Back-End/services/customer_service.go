@@ -5,6 +5,7 @@ import (
 	"backend/repositories"
 	"backend/utils"
 	"errors"
+	"mime/multipart"
 )
 
 func GetCustomerProfileService(
@@ -34,15 +35,24 @@ func GetCustomerProfileService(
 func UpdateCustomerProfileService(
 	userID string,
 	req dto.EditProfileRequest,
+	file *multipart.FileHeader,
 ) (dto.CustomerProfileResponse, error) {
 
 	user, err := repositories.
 		FindUserByID(userID)
 
 	if err != nil {
-
 		return dto.CustomerProfileResponse{},
 			errors.New("user not found")
+	}
+
+	if file != nil {
+		imageURL, err := utils.SaveImage(file, "profile")
+		if err != nil {
+			return dto.CustomerProfileResponse{},
+				err
+		}
+		req.ProfileImageURL = imageURL
 	}
 
 	updates := map[string]interface{}{}

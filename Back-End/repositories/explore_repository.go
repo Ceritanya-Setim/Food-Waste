@@ -19,6 +19,8 @@ type CategoryResult struct {
 }
 
 type FoodResult struct {
+	ID             string
+	ImageURL       string
 	Name           string
 	Category       string
 	OriginalPrice  int
@@ -113,6 +115,8 @@ func GetTopFoods() (
 	err := database.DB.
 		Table("order_items").
 		Select(`
+			surplus_foods.id,
+			surplus_foods.image_url,
 			surplus_foods.title as name,
 			businesses.category,
 			surplus_foods.original_price,
@@ -151,7 +155,10 @@ func GetTopFoods() (
 		).
 		Group(`
 			surplus_foods.id,
-			businesses.category
+			surplus_foods.title,
+			businesses.category,
+			surplus_foods.original_price,
+			surplus_foods.discount_price
 		`).
 		Order("total_purchased DESC").
 		Limit(10).
