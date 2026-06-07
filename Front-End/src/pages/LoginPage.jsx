@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../AuthContext";
+import axiosInstance from "../api/axiosInstance";
 
 // ── ICONS ──────────────────────────────────────────────
 const LeafIcon = () => (
@@ -43,25 +45,36 @@ const EyeIcon = ({ open }) =>
 // ── COMPONENT ──────────────────────────────────────────
 export const Login = () => {
   const navigate = useNavigate();
+  const { login } = React.useContext(AuthContext);
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // TODO: connect to API
-    // Jika pengguna sudah memilih role saat register, gunakan role tersebut
-    const role = localStorage.getItem('userRole');
-    if (role === 'merchant') {
-      navigate('/ExploreMerchant');
-    } else if (role === 'consumer') {
-      navigate('/ExploreConsumer');
-    } else {
-      navigate('/PickRole');
+    setErrorMsg("");
+    try {
+      const response = await axiosInstance.post('/auth/login', {email: form.email, password: form.password});
+      const result = response.data?.data || {};
+      const token = result.token;
+      login(token);
+      const role = localStorage.getItem('userRole') || result.role;
+      if (role === 'merchant') {
+        navigate('/ExploreMerchant');
+      } else if (role === 'customer') {
+        navigate('/ExploreConsumer');
+      } else {
+        navigate('/PickRole');
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      const message = error?.response?.data?.error || error?.response?.data?.message || error?.message || "Login gagal. Silakan coba lagi.";
+      setErrorMsg(message);
     }
   };
 
@@ -69,9 +82,6 @@ export const Login = () => {
     <div className="flex min-h-screen font-sans bg-white">
 
       {/* ── LEFT PANEL ── */}
-      {/* w-1/2       = lebar 50%                          */}
-      {/* relative    = agar child yang absolute bisa ikut */}
-      {/* overflow-hidden = gambar tidak keluar batas       */}
       <div className="hidden md:flex w-1/2 relative overflow-hidden flex-shrink-0">
 
         {/* Background gradient coklat/terrakota */}
@@ -81,8 +91,6 @@ export const Login = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/50" />
 
         {/* Konten teks */}
-        {/* z-10        = tampil di atas overlay             */}
-        {/* mt-auto     = dorong konten ke bawah             */}
         <div className="relative z-10 flex flex-col justify-end h-full p-12">
 
           {/* Brand */}
@@ -103,8 +111,6 @@ export const Login = () => {
       </div>
 
       {/* ── RIGHT PANEL ── */}
-      {/* flex-1      = ambil sisa lebar                   */}
-      {/* justify-center = tengah secara vertikal          */}
       <div className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12">
         <div className="w-full max-w-md mx-auto">
 
@@ -114,6 +120,14 @@ export const Login = () => {
           <p className="text-slate-500 text-sm mb-9 leading-relaxed">
             Platform untuk mengurangi food waste dan hemat makanan berkualitas
           </p>
+          {errorMsg && (
+              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{errorMsg}</span>
+              </div>
+            )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
@@ -122,12 +136,10 @@ export const Login = () => {
               <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Email
               </label>
-              {/* relative  = agar ikon bisa diposisikan absolute di dalam */}
               <div className="relative flex items-center">
                 <span className="absolute left-3.5 text-slate-400">
                   <EmailIcon />
                 </span>
-                {/* pl-10   = padding kiri biar teks tidak ketimpa ikon     */}
                 <input
                   type="email"
                   name="email"

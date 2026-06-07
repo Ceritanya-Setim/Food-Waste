@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axiosInstance from '../../../api/axiosInstance'
+import { AuthContext } from '../../../AuthContext'
 
 const Avatar = () => (
   <div className="relative w-20 h-20 flex-shrink-0">
@@ -19,7 +21,7 @@ const Avatar = () => (
   </div>
 );
 
-const InputField = ({ label, id, type = "text", value, onChange, icon, placeholder, className = "" }) => (
+const InputField = ({ label, id, type = "text", value, onChange, icon, placeholder, className = "", disabled = false }) => (
   <div className={`flex flex-col gap-1.5 ${className}`}>
     {label && <label htmlFor={id} className="text-sm font-medium text-gray-700">{label}</label>}
     <div className="relative">
@@ -34,7 +36,8 @@ const InputField = ({ label, id, type = "text", value, onChange, icon, placehold
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full border border-gray-200 rounded-xl bg-white text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition py-2.5 pr-3 ${icon ? "pl-9" : "pl-3"}`}
+        disabled={disabled}
+        className={`w-full border border-gray-200 rounded-xl bg-white text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition py-2.5 pr-3 ${icon ? "pl-9" : "pl-3"} ${disabled ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""}`}
       />
     </div>
   </div>
@@ -58,55 +61,98 @@ const BottomCard = ({ icon, title, subtitle, danger = false, onClick }) => (
 
 export default function ProfileConsumer() {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const [form, setForm] = useState({
-    nama: "Demo User",
-    email: "demo@example.com",
-    telepon: "08123456789",
-    alamat: "Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta",
+    nama: "",
+    email: "",
+    telepon: "",
   });
-
   const [saved, setSaved] = useState(false);
   const [showSecurity, setShowSecurity] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [securitySaved, setSecuritySaved] = useState(false);
   const [securityError, setSecurityError] = useState("");
+  const [pageError, setPageError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+  const [originalProfile, setOriginalProfile] = useState(null);
 
-  const EXISTING_PASSWORD = "password123";
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        setPageError("");
+        const response = await axiosInstance.get("/customer/me");
+        const data = response.data.data;
+        const profileData = {
+          nama: data.FullName || "",
+          email: data.Email || "",
+          telepon: data.PhoneNumber || "",
+        };
+        setForm(profileData);
+        setOriginalProfile(profileData);
+      } catch (error) {
+        const responseError = error?.response?.data?.message;
+        setPageError(responseError || "Gagal mengambil data profil. Silakan login ulang.");
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          logout();
+          navigate("/");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [logout, navigate]);
 
   const handleChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    setPageError("");
+
+    try {
+      const payload = {
+        full_name: form.nama,
+        phone_number: form.telepon,
+      };
+
+      const response = await axiosInstance.put("/customer/me", payload);
+      const data = response.data.data;
+      const updatedProfile = {
+        nama: data.FullName || "",
+        email: data.Email || "",
+        telepon: data.PhoneNumber || "",
+      };
+      setForm(updatedProfile);
+      setOriginalProfile(updatedProfile);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      const responseError = error?.response?.data?.message;
+      setPageError(responseError || "Gagal menyimpan perubahan profil.");
+    }
   };
 
   const handleCancel = () => {
-    setForm({
-      nama: "Demo User",
-      email: "demo@example.com",
-      telepon: "08123456789",
-      alamat: "Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta",
-    });
+    if (originalProfile) {
+      setForm(originalProfile);
+    }
+    setPageError("");
   };
 
   const handleSecurityChange = (field) => (e) =>
     setPasswordForm({ ...passwordForm, [field]: e.target.value });
 
-  const handleSaveSecurity = () => {
+  const handleSaveSecurity = async () => {
     setSecurityError("");
 
     if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
       setSecurityError("Semua field kata sandi harus diisi.");
-      return;
-    }
-
-    if (passwordForm.currentPassword !== EXISTING_PASSWORD) {
-      setSecurityError("Kata sandi saat ini tidak sesuai.");
       return;
     }
 
@@ -115,9 +161,23 @@ export default function ProfileConsumer() {
       return;
     }
 
-    setSecuritySaved(true);
-    setTimeout(() => setSecuritySaved(false), 2000);
-    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    try {
+      await axiosInstance.post("/auth/login", {
+        email: form.email,
+        password: passwordForm.currentPassword,
+      });
+
+      await axiosInstance.put("/customer/me", {
+        password: passwordForm.newPassword,
+      });
+
+      setSecuritySaved(true);
+      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setTimeout(() => setSecuritySaved(false), 2000);
+    } catch (error) {
+      const responseError = error?.response?.data?.message;
+      setSecurityError(responseError || "Gagal memperbarui kata sandi. Pastikan kata sandi lama benar.");
+    }
   };
 
   const handleLogout = () => {
@@ -126,12 +186,21 @@ export default function ProfileConsumer() {
 
   const confirmLogout = () => {
     setShowLogoutConfirm(false);
+    logout();
     navigate("/");
   };
 
   const cancelLogout = () => {
     setShowLogoutConfirm(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 px-4 py-10 flex items-center justify-center">
+        <div className="text-gray-700 text-lg">Memuat profil...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10">
@@ -160,6 +229,11 @@ export default function ProfileConsumer() {
           {/* Informasi Pribadi */}
           <div>
             <h2 className="text-base font-bold text-gray-800 mb-4">Informasi Pribadi</h2>
+            {pageError && (
+              <div className="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-700 mb-4">
+                {pageError}
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InputField
                 label="Nama Lengkap"
@@ -185,6 +259,7 @@ export default function ProfileConsumer() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 }
+                disabled
               />
               <InputField
                 label="Nomor Telepon"

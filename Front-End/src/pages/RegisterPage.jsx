@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-// ── ICONS ──────────────────────────────────────────────
-const LeafIcon = () => (
-  <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6">
-    <path d="M17 8C8 10 5.9 16.17 3.82 19.34L5.71 21l1-1C7.38 19.33 8 19 9 19c2 0 4-2 6-2s3.5 1 3.5 1L21 14c0-6-4-6-4-6z" />
-  </svg>
-);
+import { LeafIcon } from "../components/Icons";
 
 const EyeIcon = ({ open }) =>
   open ? (
@@ -30,21 +24,36 @@ export const Register = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     agree: false,
   });
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: connect to API
+    if (form.password !== form.confirmPassword) {
+      setErrorMsg("Password dan konfirmasi password harus sama.");
+      return;
+    }
+
+    setErrorMsg("");
+    const payload = {
+      full_name: form.name,
+      email: form.email,
+      phone_number: form.phone,
+      password: form.password,
+    };
+
+    localStorage.setItem("pendingRegister", JSON.stringify(payload));
     navigate("/PickRole");
   };
 
@@ -103,6 +112,12 @@ export const Register = () => {
             Bergabung dengan FoodSave untuk mengurangi food waste
           </p>
 
+          {errorMsg && (
+            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              {errorMsg}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* Nama Lengkap */}
@@ -131,6 +146,22 @@ export const Register = () => {
                 name="email"
                 placeholder="Alamat email aktif"
                 value={form.email}
+                onChange={handleChange}
+                required
+                className={inputClass}
+              />
+            </div>
+
+            {/* Nomor Telepon */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Nomor Telepon
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Contoh: 081234567890"
+                value={form.phone}
                 onChange={handleChange}
                 required
                 className={inputClass}

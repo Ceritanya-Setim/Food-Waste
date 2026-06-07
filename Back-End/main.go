@@ -10,6 +10,7 @@ import (
 func main() {
 	database.Connect()
 	r := gin.Default()
+
 	routes.SetupRoutes(r)
 	r.Run(":5000")
 }

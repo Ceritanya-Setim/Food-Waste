@@ -54,7 +54,6 @@ export default function ImpactPage() {
                 </div>
               </div>
 
-              <button className="mt-4 px-4 py-2 rounded-full bg-emerald-600 text-white font-bold">Lihat Rank <ArrowRightIcon /></button>
             </section>
 
             <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
@@ -76,7 +75,6 @@ export default function ImpactPage() {
             <section className="bg-gradient-to-br from-slate-900 to-slate-700 rounded-2xl p-6 text-white">
               <h3 className="text-2xl font-extrabold">Setiap Pesanan Berarti Untuk Bumi Kita</h3>
               <p className="mt-3 text-slate-200">Kamu telah berkontribusi mencegah 5.4kg metana dilepaskan ke atmosfer.</p>
-              <button className="mt-4 px-4 py-2 rounded-full bg-emerald-600 text-white font-bold">Pelajari Metodologi Kami <ArrowRightIcon /></button>
             </section>
           </div>
 

@@ -81,48 +81,10 @@ export default function Footer() {
           <div className="text-sm text-slate-400">
             © 2024 FoodSave Business. All rights reserved.
           </div>
-          <div className="flex gap-4 flex-wrap text-sm text-slate-400">
-            {["Settings", "Notifications", "Reports"].map((l) => (
-              <a
-                key={l}
-                href="#"
-                className="text-slate-500 text-sm hover:text-green-600 transition"
-              >
-                {l}
-              </a>
-            ))}
-          </div>
         </div>
       </div>
 
-      <div className="bg-slate-50 border-t border-gray-100 py-4">
-        <div className="max-w-[1120px] mx-auto px-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              PLATFORM STATUS
-            </div>
-            <div className="text-lg font-extrabold text-slate-900">
-              All Systems Operational
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              TOTAL PARTNERS
-            </div>
-            <div className="text-lg font-extrabold text-slate-900">
-              2,450+ Restoran
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              FOOD SAVED
-            </div>
-            <div className="text-lg font-extrabold text-slate-900">
-              45,000+ Porsi
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </footer>
   );
 }
