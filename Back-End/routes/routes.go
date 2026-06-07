@@ -28,6 +28,7 @@ func SetupRoutes(r *gin.Engine) {
 	}
 
 	r.GET("/surplus-food", controllers.GetSurplusFood)
+	r.GET("/surplus-food/:id", controllers.GetFoodDetailController)
 	r.GET("/explore", controllers.GetExplore)
 
 	protected := r.Group("/")

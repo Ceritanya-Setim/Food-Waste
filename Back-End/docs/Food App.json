@@ -62,7 +62,40 @@
       }
     },
     {
-      "name": "Login",
+      "name": "Login Customer",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"orgil@gmail.com\",\n    \"password\": \"password123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Login Merchant",
       "request": {
         "method": "POST",
         "header": [],
@@ -101,7 +134,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODYzNDYsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.Hxm8SWpQpkPBkMKgetQsh8I3BwI5hHWID7YiNmNyxbo",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
             "disabled": false,
             "type": "default"
           }
@@ -132,7 +165,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
             "disabled": false,
             "type": "default"
           }
@@ -155,13 +188,21 @@
           "variable": []
         },
         "body": {
-          "mode": "raw",
-          "raw": "{\n    \"full_name\": \"andi\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "full_name",
+              "disabled": false,
+              "type": "text",
+              "value": "jojo"
+            },
+            {
+              "key": "profile_image",
+              "disabled": false,
+              "type": "file",
+              "src": "/home/hrry6/Downloads/jojo.png"
             }
-          }
+          ]
         }
       }
     },
@@ -212,7 +253,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
             "disabled": false,
             "type": "default"
           }
@@ -249,7 +290,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODYzNDYsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.Hxm8SWpQpkPBkMKgetQsh8I3BwI5hHWID7YiNmNyxbo",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
             "disabled": false,
             "type": "default"
           }
@@ -310,6 +351,30 @@
       }
     },
     {
+      "name": "Get Surplus Food Detail",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/surplus-food/17572007-4b29-4a05-9391-17d243ac3440",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "surplus-food",
+            "17572007-4b29-4a05-9391-17d243ac3440"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
       "name": "Get Explore",
       "request": {
         "method": "GET",
@@ -339,7 +404,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODgyODQsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.tm7f_QiI5XZhRZUFT5ASE3bLKE0_ZsoZui-AB2qOWcw",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
@@ -370,7 +435,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5ODgyODQsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.tm7f_QiI5XZhRZUFT5ASE3bLKE0_ZsoZui-AB2qOWcw",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
@@ -393,13 +458,21 @@
           "variable": []
         },
         "body": {
-          "mode": "raw",
-          "raw": "{\n  \"full_name\": \"Citra\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": " full_name",
+              "disabled": false,
+              "type": "text",
+              "value": "Citra"
+            },
+            {
+              "key": "profile_image",
+              "disabled": false,
+              "type": "file",
+              "src": "/home/hrry6/Downloads/jojo.png"
             }
-          }
+          ]
         }
       }
     },
@@ -410,7 +483,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMjk1NTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.TEyGQKcjfiTRIKShaHvYLGckJJqMaEsob1yrsRGv_5Q",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
@@ -440,7 +513,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
@@ -463,13 +536,69 @@
           "variable": []
         },
         "body": {
-          "mode": "raw",
-          "raw": "{\n  \"business_location_id\": \"9fa914ed-b715-408c-9d26-cea9d503ec4b\",\n  \"title\": \"Roti Croissant Coklat\",\n  \"description\": \"Croissant fresh sisa hari ini masih layak konsumsi\",\n  \"original_price\": 45000,\n  \"discount_price\": 20000,\n  \"quantity_available\": 10,\n  \"pickup_start_time\": \"2026-05-28T18:00:00Z\",\n  \"pickup_end_time\": \"2026-05-28T21:00:00Z\",\n  \"expiry_time\": \"2026-05-29T00:00:00Z\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "business_location_id",
+              "disabled": false,
+              "type": "text",
+              "value": "9fa914ed-b715-408c-9d26-cea9d503ec4b"
+            },
+            {
+              "key": "title",
+              "disabled": false,
+              "type": "text",
+              "value": "Roti Croissant Coklat"
+            },
+            {
+              "key": "description",
+              "disabled": false,
+              "type": "text",
+              "value": "Croissant fresh sisa hari ini masih layak konsumsi"
+            },
+            {
+              "key": "original_price",
+              "disabled": false,
+              "type": "text",
+              "value": "45000"
+            },
+            {
+              "key": "discount_price",
+              "disabled": false,
+              "type": "text",
+              "value": "20000"
+            },
+            {
+              "key": "quantity_available",
+              "disabled": false,
+              "type": "text",
+              "value": "10"
+            },
+            {
+              "key": "pickup_start_time",
+              "disabled": false,
+              "type": "text",
+              "value": "2026-05-28T18:00:00Z"
+            },
+            {
+              "key": "pickup_end_time",
+              "disabled": false,
+              "type": "text",
+              "value": "2026-05-28T21:00:00Z"
+            },
+            {
+              "key": "expiry_time",
+              "disabled": false,
+              "type": "text",
+              "value": "2026-05-29T00:00:00Z"
+            },
+            {
+              "key": "image_url",
+              "disabled": false,
+              "type": "file",
+              "src": "/home/hrry6/Downloads/ramen.jpeg"
             }
-          }
+          ]
         }
       }
     },
@@ -483,7 +612,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
@@ -524,7 +653,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
@@ -565,7 +694,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODAwMzQyNTgsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.rHmG_fE7VnXiAoq5IHLbMO2Cu0wOIM2I00Nqysp4pgg",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
             "disabled": false,
             "type": "default"
           }
