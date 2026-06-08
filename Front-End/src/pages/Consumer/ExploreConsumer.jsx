@@ -8,6 +8,13 @@ import {
   ChevronDownIcon,
 } from "../../components/Icons";
 
+import saladBowl from "../../assets/Consumer/Explore/Donasi/ChicknSaladBowl.png";
+import pizzaslice from "../../assets/Consumer/Explore/Donasi/PizzaSlice6Mix.png";
+import burgerFries from "../../assets/Consumer/Explore/Gratis/Burger&Fries.png"; // Nama variabel asli
+import nasgorKambing from "../../assets/Consumer/Explore/Donasi/NasiGorengKambing.png";
+import rotiManis from "../../assets/Consumer/Explore/Donasi/RotiManis.png";
+import bentoBox from "../../assets/Consumer/Explore/Gratis/BentoBox.png";
+
 export default function ExplorePage() {
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState("explore");
@@ -25,6 +32,7 @@ export default function ExplorePage() {
       original: "Rp 85.000",
       tag: "Gratis",
       color: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+      image: pizzaslice,
     },
     {
       id: "burger-fries-pack",
@@ -36,6 +44,7 @@ export default function ExplorePage() {
       original: "Rp 45.000",
       tag: "Donasi",
       color: "linear-gradient(135deg,#78350f,#d97706)",
+      image: burgerFries, // FIX: Sudah disamakan dengan nama import di atas
     },
     {
       id: "nasi-goreng-kambing",
@@ -47,6 +56,7 @@ export default function ExplorePage() {
       original: "Rp 40.000",
       tag: "Terdekat",
       color: "linear-gradient(135deg,#1b4332,#16a34a)",
+      image: nasgorKambing,
     },
     {
       id: "paket-roti-manis",
@@ -58,6 +68,7 @@ export default function ExplorePage() {
       original: "Rp 120.000",
       tag: "Terdekat",
       color: "linear-gradient(135deg,#5c3d2e,#92400e)",
+      image: rotiManis,
     },
     {
       id: "chicken-salad-bowl",
@@ -69,6 +80,7 @@ export default function ExplorePage() {
       original: "Rp 75.000",
       tag: "Populer",
       color: "linear-gradient(135deg,#14532d,#15803d)",
+      image: saladBowl,
     },
     {
       id: "bento-box-lunch",
@@ -80,6 +92,7 @@ export default function ExplorePage() {
       original: "Rp 55.000",
       tag: "Gratis",
       color: "linear-gradient(135deg,#1e3a5f,#1d4ed8)",
+      image: bentoBox,
     },
   ];
 
@@ -104,7 +117,7 @@ export default function ExplorePage() {
       <main className="max-w-[1120px] mx-auto px-6 py-8">
         <section className="mb-4">
           <h1 className="text-4xl font-extrabold text-slate-900">
-            Simpan makanan, hemat uang
+            Satu klik buat kurangi food waste
           </h1>
           <p className="text-slate-500 mt-2">
             Temukan makanan lezat di sekitarmu dengan harga terjangkau.
@@ -122,7 +135,6 @@ export default function ExplorePage() {
               className="w-full rounded-full border border-gray-200 px-12 py-3 bg-white shadow-sm focus:outline-none focus:border-emerald-500"
             />
           </div>
-          
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -164,10 +176,13 @@ export default function ExplorePage() {
               onClick={() => navigate(`/food-detail/${item.id}`)}
               className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm cursor-pointer transition hover:shadow-md"
             >
-              <div
-                className="min-h-[160px] relative"
-                style={{ background: item.color }}
-              >
+              {/* FIX: Sekarang menggunakan tag <img> untuk merender foto makanan */}
+              <div className="h-[160px] relative bg-slate-100">
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover"
+                />
                 <span
                   className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${item.tag === "Donasi" ? "bg-emerald-600 text-white" : "bg-slate-900 text-white"}`}
                 >
