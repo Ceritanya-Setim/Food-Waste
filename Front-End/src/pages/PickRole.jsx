@@ -1,7 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../AuthContext";
-import axiosInstance from "../api/axiosInstance";
+import { authAPI, saveAuth } from "../services/api";
 
 // ── ICONS ──────────────────────────────────────────────
 const CheckIcon = () => (
@@ -37,51 +36,39 @@ const StoreIcon = () => (
 // ── COMPONENT ──────────────────────────────────────────
 export const PickRole = () => {
   const [selected, setSelected] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
-  const handleRoute = async () => {
-    if (!selected) return;
-    setErrorMsg("");
+  const doRegister = async (role) => {
+    const raw = sessionStorage.getItem("pendingRegister");
 
-    const pendingRegister = localStorage.getItem("pendingRegister");
-    if (!pendingRegister) {
-      localStorage.setItem("userRole", selected);
-      navigate("/login");
+    // Tidak ada data pending — user buka PickRole langsung tanpa register
+    if (!raw) {
+      navigate(role === "merchant" ? "/MerchantDashboard" : "/ExploreConsumer");
       return;
     }
 
-    const payload = JSON.parse(pendingRegister);
-    payload.role = selected;
-
+    setLoading(true);
+    setError("");
     try {
-      setLoading(true);
-      await axiosInstance.post("/auth/register", payload);
+      const pending = JSON.parse(raw);
 
-      const loginResponse = await axiosInstance.post("/auth/login", {
-        email: payload.email,
-        password: payload.password,
-      });
+      // 1. Register ke BE dengan role yang dipilih
+      await authAPI.register({ ...pending, role });
 
-      const token = loginResponse.data?.data?.token;
-      if (token) {
-        login(token);
-      }
+      // 2. Auto login setelah register berhasil
+      const loginRes = await authAPI.login(pending.email, pending.password);
+      const { token, role: userRole } = loginRes.data;
+      saveAuth(token, userRole);
 
-      localStorage.removeItem("pendingRegister");
-      localStorage.setItem("userRole", selected);
+      // 3. Bersihkan data sementara
+      sessionStorage.removeItem("pendingRegister");
 
-      if (selected === "customer") {
-        navigate("/ProfileConsumer");
-      } else {
-        navigate("/MerchantDashboard");
-      }
-    } catch (error) {
-      console.error("Register error:", error);
-      const message = error?.response?.data?.error || error?.response?.data?.message || error?.message || "Registrasi gagal. Silakan coba lagi.";
-      setErrorMsg(message);
+      // 4. Redirect sesuai role
+      navigate(userRole === "merchant" ? "/MerchantDashboard" : "/ExploreConsumer");
+    } catch (err) {
+      setError(err.message || "Registrasi gagal, coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -132,16 +119,8 @@ export const PickRole = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-7 w-full max-w-3xl mb-12">
 
           {/* ── Card Pembeli ── */}
-          <div
-            onClick={() => setSelected("customer")}
-            className={`bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-200
-              border-2 shadow-sm hover:shadow-xl hover:-translate-y-0.5
-              ${selected === "customer"
-                ? "border-green-500 shadow-green-100"
-                : "border-transparent"
-              }`}
-          >
-            {/* Gambar */}
+          <div onClick={() => setSelected("consumer")}
+            className={`bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 border-2 shadow-sm hover:shadow-xl hover:-translate-y-0.5 ${selected === "consumer" ? "border-green-500 shadow-green-100" : "border-transparent"}`}>
             <div className="relative h-56 overflow-hidden">
               <img src="https://media.istockphoto.com/id/2000117676/photo/here-try-some-tacos-are-super-tasty.jpg?s=612x612&w=0&k=20&c=cPSqg040qMkg5uYiKUhqg7QJkwwNR9_ZYbnzlZ2-rF8=" alt="Pembeli" className="w-full h-full object-cover" />
               <div className="absolute top-3.5 right-3.5 w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md text-gray-600">
@@ -159,15 +138,8 @@ export const PickRole = () => {
                   </li>
                 ))}
               </ul>
-
-              <button
-                onClick={() => setSelected('customer')}
-                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition
-                  ${selected === "customer"
-                    ? "bg-green-50 border-green-500 text-green-700"
-                    : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"
-                  }`}
-              >
+              <button onClick={(e) => { e.stopPropagation(); setSelected("consumer"); }}
+                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition ${selected === "consumer" ? "bg-green-50 border-green-500 text-green-700" : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"}`}>
                 Pilih sebagai Pembeli
               </button>
             </div>
@@ -193,15 +165,8 @@ export const PickRole = () => {
                   </li>
                 ))}
               </ul>
-
-              <button
-                onClick={() => setSelected('merchant')}
-                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition
-                  ${selected === "merchant"
-                    ? "bg-green-50 border-green-500 text-green-700"
-                    : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"
-                  }`}
-              >
+              <button onClick={(e) => { e.stopPropagation(); setSelected("merchant"); }}
+                className={`w-full py-3.5 rounded-xl text-sm font-bold border transition ${selected === "merchant" ? "bg-green-50 border-green-500 text-green-700" : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-green-50 hover:border-green-200"}`}>
                 Pilih sebagai Restaurant
               </button>
             </div>
@@ -209,23 +174,9 @@ export const PickRole = () => {
 
         </div>
 
-        {errorMsg && (
-          <div className="mb-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {errorMsg}
-          </div>
-        )}
-
-        {/* Tombol Lanjutkan */}
-        <button
-          onClick={handleRoute}
-          disabled={!selected || loading}
-          className={`flex items-center gap-2 px-14 py-4 rounded-xl text-base font-bold transition-all duration-200
-            ${selected && !loading
-              ? "bg-green-500 text-white shadow-lg shadow-green-200 hover:bg-green-600 hover:-translate-y-0.5"
-              : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-        >
-          {loading ? "Memproses..." : "Lanjutkan"} <span>→</span>
+        <button onClick={handleRoute} disabled={!selected || loading}
+          className={`flex items-center gap-2 px-14 py-4 rounded-xl text-base font-bold transition-all duration-200 ${selected && !loading ? "bg-green-500 text-white shadow-lg shadow-green-200 hover:bg-green-600 hover:-translate-y-0.5" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
+          {loading ? "Memproses..." : <>Lanjutkan <span>→</span></>}
         </button>
       </div>
 

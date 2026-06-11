@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LeafIcon } from "../components/Icons";
+import { authAPI } from "../services/api";
+
+// ── ICONS ──────────────────────────────────────────────
+const LeafIcon = () => (
+  <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6">
+    <path d="M17 8C8 10 5.9 16.17 3.82 19.34L5.71 21l1-1C7.38 19.33 8 19 9 19c2 0 4-2 6-2s3.5 1 3.5 1L21 14c0-6-4-6-4-6z" />
+  </svg>
+);
 
 const EyeIcon = ({ open }) =>
   open ? (
@@ -25,14 +32,15 @@ export const Register = () => {
     name: "",
     phone: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
     agree: false,
   });
   const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  // ↓↓ HANYA INI YANG DITAMBAH ↓↓
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -42,21 +50,28 @@ export const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (form.password !== form.confirmPassword) {
-      setErrorMsg("Password dan konfirmasi password harus sama.");
+      setError("Password dan konfirmasi password tidak sama.");
       return;
     }
 
-    setErrorMsg("");
-    const payload = {
-      full_name: form.name,
-      email: form.email,
-      phone_number: form.phone,
-      password: form.password,
-    };
+    setLoading(true);
+    setError("");
 
-    localStorage.setItem("pendingRegister", JSON.stringify(payload));
-    navigate("/PickRole");
+    try {
+      sessionStorage.setItem("pendingRegister", JSON.stringify({
+        full_name:    form.name.trim(),
+        phone_number: form.phone.trim(),
+        email:        form.email.trim(),
+        password:     form.password,
+      }));
+      navigate("/PickRole");
+    } catch (err) {
+      setError(err.message || "Terjadi kesalahan, coba lagi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Class input yang dipakai berulang — sama persis dengan aslinya
@@ -101,9 +116,10 @@ export const Register = () => {
             Bergabung dengan FoodSave untuk mengurangi food waste
           </p>
 
-          {errorMsg && (
-            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-              {errorMsg}
+          {/* Error banner — satu-satunya elemen baru di JSX */}
+          {error && (
+            <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl">
+              {error}
             </div>
           )}
 
@@ -128,22 +144,6 @@ export const Register = () => {
               <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
               <input type="email" name="email" placeholder="Alamat email aktif"
                 value={form.email} onChange={handleChange} required className={inputClass} />
-            </div>
-
-            {/* Nomor Telepon */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Nomor Telepon
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Contoh: 081234567890"
-                value={form.phone}
-                onChange={handleChange}
-                required
-                className={inputClass}
-              />
             </div>
 
             {/* Password */}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../AuthContext";
-import axiosInstance from "../api/axiosInstance";
+import { authAPI, saveAuth } from "../services/api";
 
 // ── ICONS ──────────────────────────────────────────────
 const LeafIcon = () => (
@@ -42,10 +41,11 @@ const EyeIcon = ({ open }) =>
 // ── COMPONENT ──────────────────────────────────────────
 export const Login = () => {
   const navigate = useNavigate();
-  const { login } = React.useContext(AuthContext);
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  // ↓↓ HANYA INI YANG DITAMBAH ↓↓
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,26 +53,25 @@ export const Login = () => {
     if (error) setError("");
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
+    setLoading(true);
+    setError("");
     try {
-      const response = await axiosInstance.post('/auth/login', {email: form.email, password: form.password});
-      const result = response.data?.data || {};
-      const token = result.token;
-      login(token);
-      const role = localStorage.getItem('userRole') || result.role;
-      if (role === 'merchant') {
-        navigate('/ExploreMerchant');
-      } else if (role === 'customer') {
-        navigate('/ExploreConsumer');
-      } else {
-        navigate('/PickRole');
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      const message = error?.response?.data?.error || error?.response?.data?.message || error?.message || "Login gagal. Silakan coba lagi.";
-      setErrorMsg(message);
+      const res = await authAPI.login(form.email, form.password);
+      const { role, token } = res.data;
+      saveAuth(token, role);
+      if (role === "merchant")  navigate("/MerchantDashboard");
+      else if (role === "consumer") navigate("/ExploreConsumer");
+      else navigate("/PickRole");
+    } catch (err) {
+      setError(
+        err.message === "Failed to fetch"
+          ? "Tidak dapat terhubung ke server. Pastikan backend sudah berjalan."
+          : err.message || "Email atau password salah."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,8 +82,6 @@ export const Login = () => {
       <div className="hidden md:flex w-1/2 relative overflow-hidden flex-shrink-0">
         <div className="absolute inset-0 bg-gradient-to-br from-[#c9856a] via-[#4a2820] to-[#2d1a10]" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/50" />
-
-        {/* Konten teks */}
         <div className="relative z-10 flex flex-col justify-end h-full p-12">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-11 h-11 bg-orange-500 rounded-xl flex items-center justify-center">
@@ -110,14 +107,6 @@ export const Login = () => {
           <p className="text-slate-500 text-sm mb-9 leading-relaxed">
             Platform untuk mengurangi food waste dan hemat makanan berkualitas
           </p>
-          {errorMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <span>{errorMsg}</span>
-              </div>
-            )}
 
           {/* Error banner — satu-satunya elemen baru di JSX */}
           {error && (
@@ -129,13 +118,9 @@ export const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Email
-              </label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
               <div className="relative flex items-center">
-                <span className="absolute left-3.5 text-slate-400">
-                  <EmailIcon />
-                </span>
+                <span className="absolute left-3.5 text-slate-400"><EmailIcon /></span>
                 <input
                   type="email" name="email" placeholder="nama@email.com"
                   value={form.email} onChange={handleChange} required
