@@ -13,14 +13,12 @@ export const clearAuth = () => {
   localStorage.removeItem("role");
 };
 
-// Gabungkan BASE_URL + path gambar dari BE
 export const imageURL = (path) => {
   if (!path) return null;
   if (path.startsWith("http")) return path;
   return `${BASE_URL}/${path.replace(/^\//, "")}`;
 };
 
-// Request dengan JSON (untuk endpoint yang pakai ShouldBindJSON)
 async function request(path, options = {}) {
   const token = getToken();
   if (!token) { clearAuth(); window.location.href = "/login"; return; }
@@ -32,12 +30,22 @@ async function request(path, options = {}) {
   };
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
   if (res.status === 401) { clearAuth(); window.location.href = "/login"; return; }
-  const data = await res.json();
+
+  const textMentah = await res.text();
+  let data;
+
+  try {
+    data = textMentah ? JSON.parse(textMentah) : {};
+  } catch (err) {
+    console.error(`⚠️ Endpoint [${path}] tidak mengembalikan JSON asli! Isi mentahnya:`, textMentah);
+    
+    data = { message: textMentah, data: [] };
+  }
+
   if (!res.ok) throw new Error(data.message || data.error || `Error ${res.status}`);
   return data;
 }
 
-// Request multipart/form-data (untuk endpoint yang pakai ShouldBind + FormFile)
 async function requestForm(path, formData, method = "POST") {
   const token = getToken();
   if (!token) { clearAuth(); window.location.href = "/login"; return; }
@@ -53,7 +61,6 @@ async function requestForm(path, formData, method = "POST") {
   return data;
 }
 
-// Request tanpa auth (login, register)
 async function publicRequest(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...options.headers };
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
@@ -62,7 +69,6 @@ async function publicRequest(path, options = {}) {
   return data;
 }
 
-// ── Auth ──────────────────────────────────────────────
 export const authAPI = {
   login: (email, password) =>
     publicRequest("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
@@ -70,13 +76,11 @@ export const authAPI = {
     publicRequest("/auth/register", { method: "POST", body: JSON.stringify(payload) }),
 };
 
-// ── Merchant ──────────────────────────────────────────
 export const merchantAPI = {
   getDashboard: () => request("/merchant/"),
 
   getProfile: () => request("/merchant/me"),
 
-  // updateProfile pakai multipart/form-data karena BE pakai ShouldBind + FormFile("profile_image")
   updateProfile: (fields, imageFile = null) => {
     const fd = new FormData();
     Object.entries(fields).forEach(([k, v]) => { if (v !== undefined && v !== null) fd.append(k, v); });
@@ -84,21 +88,16 @@ export const merchantAPI = {
     return requestForm("/merchant/me", fd, "PUT");
   },
 
-  // createSurplusFood pakai multipart/form-data karena BE pakai ShouldBind + FormFile("image_url")
   createSurplusFood: (fields, imageFile = null) => {
     const fd = new FormData();
     Object.entries(fields).forEach(([k, v]) => { if (v !== undefined && v !== null) fd.append(k, String(v)); });
     if (imageFile) fd.append("image_url", imageFile);
     return requestForm("/merchant/surplus-food", fd, "POST");
   },
-
-  // update pakai JSON biasa (UpdateSurplusFoodRequest pakai json tag)
   updateSurplusFood: (id, payload) =>
     request(`/merchant/surplus-food/${id}`, { method: "PUT", body: JSON.stringify(payload) }),
-
   getSurplusFoodDetail: (id) => request(`/merchant/surplus-food/${id}`),
-
   deleteSurplusFood: (id) => request(`/merchant/surplus-food/${id}`, { method: "DELETE" }),
-
+  getNotifications: () => request('/merchant/notif'),
   getExploreData: () => request("/explore"),
 };
