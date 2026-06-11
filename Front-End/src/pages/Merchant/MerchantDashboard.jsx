@@ -19,7 +19,7 @@ const FALLBACK_IMG = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?
 
 export const MerchantDashboard = () => {
     const [activePage, setActivePage]         = useState("dashboard");
-    const [notifCount, setNotifCount]         = useState(3);
+    const [notifCount, setNotifCount]         = useState(0); // Diubah default ke 0 agar dinamis
     const [isModalOpen, setIsModalOpen]       = useState(false);
     const [editingListing, setEditingListing] = useState(null);
     const [listings, setListings]             = useState([]);
@@ -27,22 +27,37 @@ export const MerchantDashboard = () => {
     const [loading, setLoading]               = useState(true);
     const [error, setError]                   = useState("");
     
-    // Menyimpan business_location_id dari dashboard tanpa mentrigger re-render berkali-kali
     const businessLocationIdRef               = useRef(null);
-    // Profile data untuk navbar foto
     const [profileData, setProfileData]       = useState(null);
+    
+    const [notifications, setNotifications]   = useState([]);
 
-    // ── Fetch Profile (untuk foto navbar) ────────────
     const fetchProfile = useCallback(async () => {
         try {
             const res = await merchantAPI.getProfile();
             setProfileData(res.data);
         } catch (e) {
-            // silent fail, navbar akan gunakan fallback
         }
     }, []);
 
-    // ── Fetch Dashboard ───────────────────────────────
+    const fetchNotifications = useCallback(async () => {
+        try {
+            const res = await merchantAPI.getNotifications();
+            
+            if (res && res.data) {
+                const cleanData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+                setNotifications(cleanData);
+                setNotifCount(cleanData.length); // Sinkronisasi badge angka merah di bel navbar
+            } else {
+                const cleanData = Array.isArray(res) ? res : [];
+                setNotifications(cleanData);
+                setNotifCount(cleanData.length);
+            }
+        } catch (e) {
+            console.error("Gagal memuat notifikasi:", e);
+        }
+    }, []);
+
     const fetchDashboard = useCallback(async () => {
         setLoading(true); setError("");
         try {
@@ -82,9 +97,9 @@ export const MerchantDashboard = () => {
     useEffect(() => {
         fetchDashboard();
         fetchProfile();
-    }, [fetchDashboard, fetchProfile]);
+        fetchNotifications(); // Panggil fungsi notifikasi saat komponen pertama kali di-load
+    }, [fetchDashboard, fetchProfile, fetchNotifications]);
 
-    // ── Handlers ─────────────────────────────────────
     const resolveBusinessLocationId = useCallback(async () => {
         if (businessLocationIdRef.current) return businessLocationIdRef.current;
 
@@ -107,7 +122,6 @@ export const MerchantDashboard = () => {
                     return detail.business_location_id;
                 }
             } catch {
-                // fallback below
             }
         }
 
@@ -181,9 +195,8 @@ export const MerchantDashboard = () => {
         }
     };
 
-    // ── Pre-kalkulasi Statistik ───────────────────────
     const conversionRate = dashboard && dashboard.active_menu > 0
-        ? Math.round((dashboard.sold_menu / dashboard.active_menu) * 100)
+        ? Math.round((dashboard.sold_menu / dashboard.active_menu)*100)
         : 0;
 
     const impactScore = dashboard && dashboard.sold_menu > 0
@@ -383,6 +396,7 @@ export const MerchantDashboard = () => {
                 setActivePage={setActivePage}
                 notifCount={notifCount}
                 profileData={profileData}
+                notificationsFromBE={notifications} // Oper state notifikasi ke Navbar di sini
             />
             {renderContent()}
             <Footer />

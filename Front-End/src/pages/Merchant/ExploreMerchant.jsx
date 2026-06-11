@@ -3,7 +3,6 @@ import NavbarMerchant from "../../components/Merchant/MerchantNavbar/NavbarMerch
 import Footer from "../../components/Footer";
 import { merchantAPI, imageURL } from "../../services/api";
 
-// --- ICON COMPONENTS ---
 const ClockIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" />
@@ -51,12 +50,10 @@ export default function ExploreMerchant() {
   });
 
   useEffect(() => {
-    // Fetch profile untuk foto navbar
     merchantAPI.getProfile()
       .then(res => setProfileData(res.data))
       .catch(() => {});
 
-    // Fetch explore data
     const fetchExploreData = async () => {
       try {
         setLoading(true);
@@ -64,8 +61,10 @@ export default function ExploreMerchant() {
         const res = await merchantAPI.getExploreData();
 
         if (res) {
-          const rawSummary  = res.summary  || res.Summary  || {};
-          const rawTopFoods = res.top_foods || res.TopFoods || [];
+          const nestedData = res.data || {};
+          
+          const rawSummary  = nestedData.summary  || nestedData.Summary  || {};
+          const rawTopFoods = nestedData.top_foods || nestedData.TopFoods || [];
 
           setExploreData({
             summary: {
@@ -165,7 +164,6 @@ export default function ExploreMerchant() {
             </div>
           )}
 
-          {/* MARKET INSIGHTS */}
           <section className="mb-12">
             <div className="explore-section-header mb-6">
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">Market Insights</h2>
@@ -198,7 +196,6 @@ export default function ExploreMerchant() {
             </div>
           </section>
 
-          {/* TRENDING ITEMS */}
           <section className="explore-section">
             <div className="explore-section-header mb-6">
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">Trending Items</h2>
@@ -222,10 +219,10 @@ export default function ExploreMerchant() {
                     ? Math.round(((originalPrice - discountPrice) / originalPrice) * 100)
                     : 0;
 
-                  // Gunakan foto dari BE jika tersedia, fallback ke kategori
                   const beImageUrl = item["image-url"] || item.image_url || null;
-                  const itemImage  = beImageUrl
-                    ? imageURL(beImageUrl)
+                  
+                  const itemImage = beImageUrl
+                    ? (beImageUrl.startsWith("http") ? beImageUrl : imageURL(beImageUrl))
                     : (fallbackImages[category.toLowerCase()] || fallbackImages["default"]);
 
                   return (

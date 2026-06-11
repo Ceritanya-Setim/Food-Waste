@@ -79,7 +79,6 @@ export const PickRole = () => {
     doRegister(selected);
   };
 
-  // JSX sama persis dengan aslinya
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-50 via-green-50 to-white font-sans">
 
@@ -150,7 +149,7 @@ export const PickRole = () => {
           <div onClick={() => setSelected("merchant")}
             className={`bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 border-2 shadow-sm hover:shadow-xl hover:-translate-y-0.5 ${selected === "merchant" ? "border-green-500 shadow-green-100" : "border-transparent"}`}>
             <div className="relative h-56 overflow-hidden">
-              <img src="https://idebiz.id/wp-content/uploads/2023/09/Pelatihan-Chef-Kunci-Sukses-Kuliner.jpg" alt="Restaurant" className="w-full h-full object-cover" />
+              <img src={new URL('../assets/image/chef.jpg', import.meta.url).href} alt="Restaurant" className="w-full h-full object-cover" />
               <div className="absolute top-3.5 right-3.5 w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md text-gray-600">
                 <StoreIcon />
               </div>
