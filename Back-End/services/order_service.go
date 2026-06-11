@@ -67,6 +67,7 @@ func GetOrderHistory(
 			dto.OrderHistoryItem{
 				OrderID:      row.OrderID,
 				BusinessName: row.BusinessName,
+				PickupCode:   row.PickupCode,
 				Status:       row.Status,
 				OrderDate:    row.OrderDate,
 				TotalPrice:   row.TotalPrice,
@@ -207,7 +208,7 @@ func CreateOrder(
 		UserID:             userID,
 		BusinessLocationID: req.BusinessLocationID,
 		TotalPrice:         totalPrice,
-		Status:             models.OrderPending,
+		Status:             models.OrderCompleted,
 		PickupCode:         pickupCode,
 		OrderTime:          time.Now(),
 		PickupTime:         pickupTime,
@@ -262,4 +263,37 @@ func CreateOrder(
 		Status:     string(order.Status),
 		TotalItems: totalItems,
 	}, nil
+}
+
+func GetMerchantNotifications(merchantID string) (
+	[]dto.MerchantNotificationResponse,
+	error,
+) {
+	rows, err := repositories.GetNotificationsByMerchantOwner(merchantID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	notifications := make(
+		[]dto.MerchantNotificationResponse,
+		0,
+		len(rows),
+	)
+
+	for _, row := range rows {
+		notifications = append(
+			notifications,
+			dto.MerchantNotificationResponse{
+				OrderID:      row.OrderID,
+				CustomerName: row.CustomerName,
+				TotalPrice:   row.TotalPrice,
+				PickupCode:   row.PickupCode,
+				OrderTime:    row.OrderTime,
+				Status:       row.Status,
+			},
+		)
+	}
+
+	return notifications, nil
 }

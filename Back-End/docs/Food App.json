@@ -134,7 +134,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY2NTcsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ.FGTol4J7XT5Lak5TKansTN7ZRdy8TfnhVcJd_T-jXC0",
             "disabled": false,
             "type": "default"
           }
@@ -165,7 +165,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY2NTcsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ.FGTol4J7XT5Lak5TKansTN7ZRdy8TfnhVcJd_T-jXC0",
             "disabled": false,
             "type": "default"
           }
@@ -213,7 +213,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk5NzkxNTAsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJjNWRjYjY5Yi1iZjJiLTRiYmEtYTI5Zi1mMzVhNzAzZDdlNDMifQ.WEdrJtqDtQX7-mPIEO7rGMUWgxRFd4k8HQMOxrtpmQk",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY2NTcsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ.FGTol4J7XT5Lak5TKansTN7ZRdy8TfnhVcJd_T-jXC0",
             "disabled": false,
             "type": "default"
           }
@@ -237,7 +237,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"business_location_id\": \"3e7dd2ab-f9b0-4d90-a830-684df5b2f274\",\n  \"items\": [\n    {\n      \"surplus_food_id\": \"17572007-4b29-4a05-9391-17d243ac3440\",\n      \"quantity\": 2\n    }\n  ]\n}",
+          "raw": "{\n  \"business_location_id\": \"10c11111-1111-4111-a111-111111111111\",\n  \"items\": [\n    {\n      \"surplus_food_id\": \"f1000000-0000-4000-a000-000000000001\",\n      \"quantity\": 2\n    }\n  ]\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -253,7 +253,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY2NTcsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ.FGTol4J7XT5Lak5TKansTN7ZRdy8TfnhVcJd_T-jXC0",
             "disabled": false,
             "type": "default"
           }
@@ -290,7 +290,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQ2MDgsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ._s871E1fjw_37Up5nWQHXN26vrkk9g9H8fop2kl_fl8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY2NTcsInJvbGUiOiJjdXN0b21lciIsInVzZXJfaWQiOiJiNDhlMzdmZS05NjgyLTRhMDMtODdjMC1iYzc4YWRiOWRiZjkifQ.FGTol4J7XT5Lak5TKansTN7ZRdy8TfnhVcJd_T-jXC0",
             "disabled": false,
             "type": "default"
           }
@@ -360,14 +360,14 @@
         },
         "description": "",
         "url": {
-          "raw": "http://localhost:5000/surplus-food/17572007-4b29-4a05-9391-17d243ac3440",
+          "raw": "http://localhost:5000/surplus-food/f3000000-0000-4000-a000-000000000002",
           "protocol": "http",
           "host": [
             "localhost:5000"
           ],
           "path": [
             "surplus-food",
-            "17572007-4b29-4a05-9391-17d243ac3440"
+            "f3000000-0000-4000-a000-000000000002"
           ],
           "query": [],
           "variable": []
@@ -404,7 +404,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -435,7 +435,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -483,7 +483,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -513,7 +513,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -542,7 +542,7 @@
               "key": "business_location_id",
               "disabled": false,
               "type": "text",
-              "value": "9fa914ed-b715-408c-9d26-cea9d503ec4b"
+              "value": "10c11111-1111-4111-a111-111111111111"
             },
             {
               "key": "title",
@@ -612,7 +612,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -622,7 +622,7 @@
         },
         "description": "",
         "url": {
-          "raw": "http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee",
+          "raw": "http://localhost:5000/merchant/surplus-food/f1000000-0000-4000-a000-000000000001",
           "protocol": "http",
           "host": [
             "localhost:5000"
@@ -630,7 +630,7 @@
           "path": [
             "merchant",
             "surplus-food",
-            "a7241915-16f7-46fd-af3f-41a1204ecbee"
+            "f1000000-0000-4000-a000-000000000001"
           ],
           "query": [],
           "variable": []
@@ -653,7 +653,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -663,7 +663,7 @@
         },
         "description": "",
         "url": {
-          "raw": "http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee",
+          "raw": "http://localhost:5000/merchant/surplus-food/f1000000-0000-4000-a000-000000000001",
           "protocol": "http",
           "host": [
             "localhost:5000"
@@ -671,7 +671,7 @@
           "path": [
             "merchant",
             "surplus-food",
-            "a7241915-16f7-46fd-af3f-41a1204ecbee"
+            "f1000000-0000-4000-a000-000000000001"
           ],
           "query": [],
           "variable": []
@@ -694,7 +694,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODA5MjQzOTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.EdN-RtjGzEkOeWxl6vKhl8tWWa1xA18yOCC4mtqZbU8",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDY4MTcsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.v6ROdlajoBMjsVr0qJAqBZOXvi3dHUMO_cnmSVUmOHg",
             "disabled": false,
             "type": "default"
           }
@@ -704,7 +704,7 @@
         },
         "description": "",
         "url": {
-          "raw": "http://localhost:5000/merchant/surplus-food/a7241915-16f7-46fd-af3f-41a1204ecbee",
+          "raw": "http://localhost:5000/merchant/surplus-food/f1000000-0000-4000-a000-000000000001",
           "protocol": "http",
           "host": [
             "localhost:5000"
@@ -712,7 +712,38 @@
           "path": [
             "merchant",
             "surplus-food",
-            "a7241915-16f7-46fd-af3f-41a1204ecbee"
+            "f1000000-0000-4000-a000-000000000001"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Merchant Get Notif",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODEyNDYzNzMsInJvbGUiOiJtZXJjaGFudCIsInVzZXJfaWQiOiI2MmU4Nzg3Mi05YzMxLTQyZjMtOGJjYi0yODgzOTkxMGQ0ZTkifQ.YDnUspKDB-0_2IndRyDw1EyklinNpcC__Q27IG08e7w",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:5000/merchant/notif",
+          "protocol": "http",
+          "host": [
+            "localhost:5000"
+          ],
+          "path": [
+            "merchant",
+            "notif"
           ],
           "query": [],
           "variable": []

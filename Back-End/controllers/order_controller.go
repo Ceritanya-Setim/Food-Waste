@@ -86,3 +86,25 @@ func GetOrderHistory(c *gin.Context) {
 		response,
 	)
 }
+
+func GetMerchantNotification(c *gin.Context) {
+	merchantID := c.MustGet("user_id").(string)
+	response, err := services.GetMerchantNotifications(merchantID)
+
+	if err != nil {
+		utils.ErrorResponse(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
+		return
+	}
+
+	utils.SuccessResponse(
+		c,
+		http.StatusOK,
+		"Merchant notifications fetched successfully",
+		response,
+	)
+
+}

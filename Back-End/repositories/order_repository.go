@@ -17,6 +17,7 @@ type OrderHistoryStats struct {
 type OrderHistoryRow struct {
 	OrderID      string
 	BusinessName string
+	PickupCode   string
 	Status       string
 	OrderDate    time.Time
 	TotalPrice   int
@@ -125,6 +126,7 @@ func GetOrderHistoryRows(
 		Select(`
 			orders.id as order_id,
 			businesses.business_name,
+			orders.pickup_code as pickup_code,
 			orders.status,
 			orders.order_time as order_date,
 			orders.total_price
@@ -195,4 +197,45 @@ func CreateOrderItems(
 ) error {
 
 	return tx.Create(items).Error
+}
+
+type MerchantNotificationRow struct {
+	OrderID      string
+	CustomerName string
+	TotalPrice   int
+	PickupCode   string
+	OrderTime    time.Time
+	Status       string
+}
+
+func GetNotificationsByMerchantOwner(
+	merchantID string,
+) (
+	[]MerchantNotificationRow,
+	error,
+) {
+
+	var notifications []MerchantNotificationRow
+
+	err := database.DB.Table("orders o").
+		Select(`
+			o.id AS order_id, 
+			u.full_name AS customer_name, 
+			o.total_price, 
+			o.pickup_code, 
+			o.order_time, 
+			o.status
+		`).
+		Joins("JOIN users u ON o.user_id = u.id").
+		Joins("JOIN business_locations bl ON o.business_location_id = bl.id").
+		Joins("JOIN businesses b ON bl.business_id = b.id").
+		Where("b.owner_id = ?", merchantID).
+		Order("o.order_time DESC").
+		Scan(&notifications).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return notifications, nil
 }

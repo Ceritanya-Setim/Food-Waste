@@ -59,6 +59,8 @@ func SetupRoutes(r *gin.Engine) {
 			merchant.GET("/surplus-food/:id", controllers.GetMerchantFoodDetail)
 			merchant.PUT("/surplus-food/:id", controllers.UpdateMerchantFood)
 			merchant.DELETE("/surplus-food/:id", controllers.DeleteMerchantFood)
+
+			merchant.GET("/notif", controllers.GetMerchantNotification)
 		}
 	}
 }

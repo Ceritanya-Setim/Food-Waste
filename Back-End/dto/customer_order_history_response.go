@@ -5,6 +5,7 @@ import "time"
 type OrderHistoryItem struct {
 	OrderID      string    `json:"order_id"`
 	BusinessName string    `json:"business_name"`
+	PickupCode   string    `json:"pickup_code"`
 	Status       string    `json:"status"`
 	OrderDate    time.Time `json:"order_date"`
 	TotalPrice   int       `json:"total_price"`
