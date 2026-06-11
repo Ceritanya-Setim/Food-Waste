@@ -17,6 +17,7 @@ type MerchantFoodItem struct {
 }
 
 type MerchantDashboardResponse struct {
+	BusinessLocationID string        `json:"business_location_id"`
 	TotalRevenue  int                `json:"total_revenue"`
 	ActiveMenu    int                `json:"active_menu"`
 	SoldMenu      int                `json:"sold_menu"`
