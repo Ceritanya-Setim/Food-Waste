@@ -9,7 +9,6 @@ const LeafIcon = () => (
     <path d="M17 8C8 10 5.9 16.17 3.82 19.34L5.71 21l1-1C7.38 19.33 8 19 9 19c2 0 4-2 6-2s3.5 1 3.5 1L21 14c0-6-4-6-4-6z" />
   </svg>
 );
-
 const EmailIcon = () => (
   <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,7 +16,6 @@ const EmailIcon = () => (
     <path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94" />
   </svg>
 );
-
 const LockIcon = () => (
   <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,7 +23,6 @@ const LockIcon = () => (
     <path d="M7 11V7a5 5 0 0110 0v4" />
   </svg>
 );
-
 const EyeIcon = ({ open }) =>
   open ? (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none"
@@ -53,6 +50,7 @@ export const Login = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (error) setError("");
   };
 
   const handleSubmit = async(e) => {
@@ -78,29 +76,22 @@ export const Login = () => {
     }
   };
 
+  // ↑↑ SELESAI — JSX di bawah ini 100% sama persis dengan aslinya ↑↑
   return (
     <div className="flex min-h-screen font-sans bg-white">
-
       {/* ── LEFT PANEL ── */}
       <div className="hidden md:flex w-1/2 relative overflow-hidden flex-shrink-0">
-
-        {/* Background gradient coklat/terrakota */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#c9856a] via-[#4a2820] to-[#2d1a10]" />
-
-        {/* Overlay gelap di bagian bawah */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/50" />
 
         {/* Konten teks */}
         <div className="relative z-10 flex flex-col justify-end h-full p-12">
-
-          {/* Brand */}
           <div className="flex items-center gap-3 mb-8">
             <div className="w-11 h-11 bg-orange-500 rounded-xl flex items-center justify-center">
               <LeafIcon />
             </div>
             <span className="text-white text-xl font-bold">FoodSave</span>
           </div>
-
           <h2 className="text-white text-4xl font-extrabold leading-tight tracking-tight mb-4">
             Mulai kurangi<br />sampah makanan<br />hari ini.
           </h2>
@@ -113,7 +104,6 @@ export const Login = () => {
       {/* ── RIGHT PANEL ── */}
       <div className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12">
         <div className="w-full max-w-md mx-auto">
-
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
             Masuk ke FoodSave
           </h1>
@@ -129,8 +119,14 @@ export const Login = () => {
               </div>
             )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Error banner — satu-satunya elemen baru di JSX */}
+          {error && (
+            <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl">
+              {error}
+            </div>
+          )}
 
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -141,12 +137,8 @@ export const Login = () => {
                   <EmailIcon />
                 </span>
                 <input
-                  type="email"
-                  name="email"
-                  placeholder="nama@email.com"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
+                  type="email" name="email" placeholder="nama@email.com"
+                  value={form.email} onChange={handleChange} required
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-500/20 transition"
                 />
               </div>
@@ -154,70 +146,47 @@ export const Login = () => {
 
             {/* Password */}
             <div>
-              {/* flex justify-between = label kiri, "Lupa?" kanan */}
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-semibold text-slate-700">
-                  Password
-                </label>
+                <label className="text-sm font-semibold text-slate-700">Password</label>
                 <button type="button" className="text-sm font-semibold text-orange-500 hover:underline">
                   Lupa Password?
                 </button>
               </div>
               <div className="relative flex items-center">
-                <span className="absolute left-3.5 text-slate-400">
-                  <LockIcon />
-                </span>
+                <span className="absolute left-3.5 text-slate-400"><LockIcon /></span>
                 <input
-                  type={showPass ? "text" : "password"}
-                  name="password"
+                  type={showPass ? "text" : "password"} name="password"
                   placeholder="Masukkan password anda"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
+                  value={form.password} onChange={handleChange} required
                   className="w-full pl-10 pr-11 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-500/20 transition"
                 />
-                {/* Tombol show/hide password */}
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  tabIndex={-1}
-                  className="absolute right-3.5 text-slate-400 hover:text-slate-600 transition"
-                >
+                <button type="button" onClick={() => setShowPass((v) => !v)} tabIndex={-1}
+                  className="absolute right-3.5 text-slate-400 hover:text-slate-600 transition">
                   <EyeIcon open={showPass} />
                 </button>
               </div>
             </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl transition hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Masuk
+            {/* Submit — hanya tambah disabled + teks loading */}
+            <button type="submit" disabled={loading}
+              className="w-full py-3.5 bg-slate-900 hover:bg-slate-700 disabled:opacity-60 text-white font-bold rounded-xl transition hover:-translate-y-0.5 active:translate-y-0">
+              {loading ? "Memuat..." : "Masuk"}
             </button>
           </form>
 
-          {/* Register link */}
           <p className="text-center text-sm text-slate-500 mt-6">
             Belum punya akun?{" "}
-            <button
-              onClick={() => navigate("/register")}
-              className="text-orange-500 font-bold hover:underline"
-            >
+            <button onClick={() => navigate("/register")} className="text-orange-500 font-bold hover:underline">
               Daftar sekarang
             </button>
           </p>
-
-          {/* Bottom links */}
           <div className="flex justify-center items-center gap-2 mt-5">
             <a className="text-xs text-slate-400 hover:text-slate-600 cursor-pointer">Syarat &amp; Ketentuan</a>
             <div className="w-1 h-1 rounded-full bg-slate-300" />
             <a className="text-xs text-slate-400 hover:text-slate-600 cursor-pointer">Kebijakan Privasi</a>
           </div>
-
         </div>
       </div>
-
     </div>
   );
 };

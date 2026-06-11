@@ -1,242 +1,394 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NavbarMerchant from "../../components/Merchant/MerchantNavbar/NavbarMerchant";
-import { LeafIcon } from "../../components/Icons";
 import Footer from "../../components/Footer";
+import { LeafIcon } from "../../components/Icons";
 import AddListingModal from "./AddListingModal";
-import ExploreMerchant from "./ExploreMerchant"; 
-import ProfileMerchant from "../../components/ProfileMerchant/ProfileMerchant"; 
+import ProfileMerchant from "../../components/ProfileMerchant/ProfileMerchant";
+import { merchantAPI, imageURL } from "../../services/api";
+import wasteImg from "../../assets/image/waste.jpeg";
+
+const fmt = (rp) => rp ? `${(rp/1000).toFixed(0)}K` : '0';
+const fmtPickup = (s, e) => {
+  if (!s) return '-';
+  const d = new Date(s);
+  const de = e ? new Date(e) : null;
+  return `${d.toLocaleDateString('id-ID',{day:'numeric',month:'short'})}, ${d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}${de?` - ${de.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}` : ''}`;
+};
+
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150';
 
 export const MerchantDashboard = () => {
-    const [activePage, setActivePage] = useState("dashboard");
-    const [notifCount] = useState(3);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    
-    // State untuk menampung data listing yang sedang diedit
+    const [activePage, setActivePage]         = useState("dashboard");
+    const [notifCount, setNotifCount]         = useState(3);
+    const [isModalOpen, setIsModalOpen]       = useState(false);
     const [editingListing, setEditingListing] = useState(null);
+    const [listings, setListings]             = useState([]);
+    const [dashboard, setDashboard]           = useState(null);
+    const [loading, setLoading]               = useState(true);
+    const [error, setError]                   = useState("");
+    
+    // Menyimpan business_location_id dari dashboard tanpa mentrigger re-render berkali-kali
+    const businessLocationIdRef               = useRef(null);
+    // Profile data untuk navbar foto
+    const [profileData, setProfileData]       = useState(null);
 
-    const [listings, setListings] = useState([
-        {
-            id: 1,
-            nama: "Nasi Bakar",
-            deskripsi: "ada pete",
-            hargaNormal: "50K",
-            hargaDiskon: "25K",
-            stok: "5 porsi",
-            status: "Tersedia",
-            pickup: "17 Mei, 19.50",
-            foto: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150" 
+    // ── Fetch Profile (untuk foto navbar) ────────────
+    const fetchProfile = useCallback(async () => {
+        try {
+            const res = await merchantAPI.getProfile();
+            setProfileData(res.data);
+        } catch (e) {
+            // silent fail, navbar akan gunakan fallback
         }
-    ]);
+    }, []);
 
-    // 🟢 Handler BARU saat tombol "+ Tambah Listing" diklik
-    const handleAddNewClick = () => {
-        setEditingListing(null); // Pastikan state edit dibersihkan agar form kosong!
-        setIsModalOpen(true);    // Buka modal
-    };
+    // ── Fetch Dashboard ───────────────────────────────
+    const fetchDashboard = useCallback(async () => {
+        setLoading(true); setError("");
+        try {
+            const res = await merchantAPI.getDashboard();
+            const d = res.data;
+            setDashboard(d);
 
-    // Handler saat tombol pensil (📝) diklik
-    const handleEditClick = (listing) => {
-        setEditingListing(listing); // Isi data yang mau diedit
-        setIsModalOpen(true);       // Buka modal
-    };
+            // Ambil business_location_id langsung dari response dashboard utama (Solusi Pragmatis)
+            if (d?.business_location_id) {
+                businessLocationIdRef.current = d.business_location_id;
+            }
 
-    // Handler untuk menutup modal dan membersihkan state edit
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingListing(null); // Reset agar kalau tombol tambah diklik form-nya kembali kosong
-    };
+            const foods = d.surplus_foods || [];
+            const mapped = foods.map(f => ({
+                id:                  f.id,
+                nama:                f.name,
+                deskripsi:           f.description,
+                hargaNormal:         f.original_price,
+                hargaDiskon:         f.discount_price,
+                stok:                f.quantity_remaining,
+                status:              f.status,
+                pickup_start_time:   f.pickup_start_time,
+                pickup_end_time:     f.pickup_end_time,
+                expiry_time:         f.expiry_time,
+                business_location_id: f.business_location_id || d.business_location_id,
+                foto: imageURL(f.image_url) || FALLBACK_IMG,
+            }));
+            setListings(mapped);
 
-    // Fungsi submit tunggal (bisa tambah atau edit tergantung kondisi)
-    const handleSaveListing = (listingData) => {
-        if (editingListing) {
-            // Jika sedang edit, update item yang id-nya cocok
-            setListings(listings.map(item => item.id === editingListing.id ? { ...item, ...listingData } : item));
-        } else {
-            // Jika tidak sedang edit, tambah data baru seperti biasa
-            setListings([...listings, { id: Date.now(), ...listingData }]);
+        } catch(err) { 
+            setError(err.message); 
+        } finally { 
+            setLoading(false); 
         }
-        handleCloseModal();
+    }, []);
+
+    useEffect(() => {
+        fetchDashboard();
+        fetchProfile();
+    }, [fetchDashboard, fetchProfile]);
+
+    // ── Handlers ─────────────────────────────────────
+    const resolveBusinessLocationId = useCallback(async () => {
+        if (businessLocationIdRef.current) return businessLocationIdRef.current;
+
+        const fromDashboard =
+            dashboard?.business_location_id ||
+            dashboard?.businessLocationId ||
+            null;
+
+        if (fromDashboard) {
+            businessLocationIdRef.current = fromDashboard;
+            return fromDashboard;
+        }
+
+        if (listings.length > 0) {
+            try {
+                const res = await merchantAPI.getSurplusFoodDetail(listings[0].id);
+                const detail = res?.data;
+                if (detail?.business_location_id) {
+                    businessLocationIdRef.current = detail.business_location_id;
+                    return detail.business_location_id;
+                }
+            } catch {
+                // fallback below
+            }
+        }
+
+        return null;
+    }, [dashboard, listings]);
+
+    const handleAddNewClick = async () => {
+        const locationId = await resolveBusinessLocationId();
+
+        if (!locationId) {
+            alert("Lokasi bisnis tidak ditemukan.\nMohon pastikan data lokasi bisnis sudah diisi di Profil atau tanyakan tim Support.");
+            return;
+        }
+
+        setEditingListing(null);
+        setIsModalOpen(true);
     };
 
-    const handleDeleteListing = (id) => {
-        setListings(listings.filter(item => item.id !== id));
+    const handleEditClick = async (item) => {
+        try {
+            const res = await merchantAPI.getSurplusFoodDetail(item.id);
+            const detail = res.data;
+            
+            if (detail?.business_location_id && !businessLocationIdRef.current) {
+                businessLocationIdRef.current = detail.business_location_id;
+            }
+            
+            setEditingListing({
+                ...item,
+                ...detail,
+                _beId: item.id,
+                foto: imageURL(detail?.image_url) || FALLBACK_IMG
+            });
+        } catch { 
+            setEditingListing({ ...item, _beId: item.id }); 
+        }
+        setIsModalOpen(true);
     };
+
+    const handleCloseModal  = () => { setIsModalOpen(false); setEditingListing(null); };
+
+    const handleSaveListing = async (fields, imageFile) => {
+        try {
+            if (editingListing?._beId) {
+                await merchantAPI.updateSurplusFood(editingListing._beId, fields);
+            } else {
+                const locationId = businessLocationIdRef.current || await resolveBusinessLocationId();
+
+                if (!locationId) {
+                    alert("Lokasi bisnis belum tersedia untuk membuat listing. Silakan coba lagi atau cek data lokasi bisnis Anda.");
+                    return;
+                }
+
+                const fieldsWithLocation = { ...fields, business_location_id: locationId };
+                await merchantAPI.createSurplusFood(fieldsWithLocation, imageFile);
+            }
+            handleCloseModal();
+            await fetchDashboard();
+        } catch(err) {
+            alert("Gagal menyimpan: " + err.message);
+        }
+    };
+
+    const handleDeleteListing = async (id) => {
+        if (!window.confirm("Hapus listing ini?")) return;
+        try { 
+            await merchantAPI.deleteSurplusFood(id); 
+            await fetchDashboard(); 
+        } catch(err) { 
+            alert("Gagal menghapus: " + err.message); 
+        }
+    };
+
+    // ── Pre-kalkulasi Statistik ───────────────────────
+    const conversionRate = dashboard && dashboard.active_menu > 0
+        ? Math.round((dashboard.sold_menu / dashboard.active_menu) * 100)
+        : 0;
+
+    const impactScore = dashboard && dashboard.sold_menu > 0
+        ? (dashboard.sold_menu * 2.5).toFixed(1)
+        : '0';
+
+    const potensiPendapatan = listings
+        .filter(item => item.status === 'active' || item.status === 'available')
+        .reduce((sum, item) => sum + (item.stok * item.hargaDiskon), 0);
 
     const stats = [
-        { label: 'Total Pendapatan', value: 'Rp 0K', trend: '+12% dari bulan lalu', icon: '$', color: 'light-green' },
-        { label: 'Listing Aktif', value: '0', sub: '0 total porsi', icon: '📦', color: 'blue' },
-        { label: 'Terjual', value: '0', sub: 'Performa bagus!', icon: '✔️', color: 'purple' },
-        { label: 'Potensi Pendapatan', value: 'Rp 0K', sub: 'Dari listing aktif', icon: '📈', color: 'orange' }
+        {
+            label: 'Total Pendapatan',
+            value: dashboard ? `Rp ${fmt(dashboard.total_revenue)}` : 'Rp 0K',
+            trend: dashboard && dashboard.total_revenue > 0 ? 'Bagus! Seluruh pesanan selesai' : 'Belum ada pendapatan masuk',
+            icon: '💰', iconBg: 'bg-[#e6f7ed] text-[#16a34a]',
+            subClass: dashboard && dashboard.total_revenue > 0 ? 'text-[#16a34a] font-medium' : 'text-[#94a3b8]'
+        },
+        {
+            label: 'Listing Aktif',
+            value: dashboard ? String(dashboard.active_menu ?? 0) : '0',
+            sub: `${dashboard?.active_menu ?? 0} jenis menu sedang tayang`,
+            icon: '📦', iconBg: 'bg-[#dbeafe]', subClass: 'text-[#94a3b8]'
+        },
+        {
+            label: 'Terjual',
+            value: dashboard ? String(dashboard.sold_menu ?? 0) : '0',
+            sub: dashboard && dashboard.sold_menu > 0 ? 'Performa penjualan mantap!' : 'Ayo raih penjualan pertamamu!',
+            icon: '✔️', iconBg: 'bg-[#f3e8ff]',
+            subClass: dashboard && dashboard.sold_menu > 0 ? 'text-[#a855f7] font-medium' : 'text-[#94a3b8]'
+        },
+        {
+            label: 'Potensi Pendapatan',
+            value: `Rp ${fmt(potensiPendapatan)}`,
+            sub: 'Estimasi dari sisa stok aktif',
+            icon: '📈', iconBg: 'bg-[#ffedd5]', subClass: 'text-[#94a3b8]'
+        },
     ];
 
     const renderContent = () => {
-        switch (activePage) {
-            case "explore":
-                return <ExploreMerchant />;
-            case "profile":
-                return <ProfileMerchant setActivePage={setActivePage} />; 
-            case "dashboard":
-            default:
-                return (
-                    <main className="max-w-[1120px] mx-auto px-6 py-8">
-                        {/* Hero Banner */}
-                        <header className="relative rounded-2xl overflow-hidden p-8 mb-8 text-white bg-gradient-to-r from-emerald-500 to-emerald-400">
-                            <div className="relative z-10">
-                                <h1 className="text-2xl font-bold mb-2">Selamat Datang Kembali! 👋</h1>
-                                <p className="opacity-90">Kelola bisnis Anda dan bantu kurangi food waste</p>
-                            </div>
-                            <div className="absolute inset-0 opacity-30 bg-cover bg-center" style={{ backgroundImage: `url('/src/assets/image/waste.jpeg')` }} />
-                        </header>
+        switch(activePage) {
+            case "profile": return <ProfileMerchant setActivePage={setActivePage} onProfileUpdate={fetchProfile} />;
+            default: return (
+                <main className="py-[30px] px-[4%]">
+                    <header className="bg-gradient-to-r from-[#65bd85] to-[#adc2b6] rounded-[16px] p-[40px] text-white relative overflow-hidden mb-[30px]">
+                        <div className="relative z-10 font-medium">
+                            <h1 className="text-[1.8rem] mb-[10px]">Selamat Datang Kembali! 👋</h1>
+                            <p>Kelola bisnis Anda dan bantu kurangi food waste</p>
+                        </div>
+                        <div className="absolute inset-0 w-full h-full bg-cover bg-center opacity-40 mix-blend-overlay z-0"
+                            style={{ backgroundImage: `url(${wasteImg})` }}></div>
+                    </header>
 
-                        {/* Stats Grid */}
-                        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-                            {stats.map((item, index) => (
-                                <div key={index} className="bg-white p-5 rounded-xl shadow-sm">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm text-slate-500 font-medium">{item.label}</span>
-                                        <span className={`p-2 rounded-md ${item.color === 'light-green' ? 'bg-emerald-100 text-emerald-600' : item.color === 'blue' ? 'bg-sky-100 text-sky-600' : item.color === 'purple' ? 'bg-violet-100 text-violet-600' : 'bg-amber-100 text-amber-600'}`}>{item.icon}</span>
-                                    </div>
-                                    <div className="text-xl font-bold">{item.value}</div>
-                                    <div className="text-xs text-slate-400 mt-2">{item.trend || item.sub}</div>
-                                </div>
-                            ))}
-                        </section>
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl flex justify-between items-center">
+                            <span>⚠️ {error}</span>
+                            <button onClick={fetchDashboard} className="text-red-500 font-bold text-xs hover:underline">Coba Lagi</button>
+                        </div>
+                    )}
 
-                        {/* Secondary Stats */}
-                        <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-                            <div className="bg-white p-5 rounded-xl">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm text-slate-500">Conversion Rate</span>
-                                    <span className="text-green-600 font-bold">0%</span>
+                    <section className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[20px] mb-[25px]">
+                        {stats.map((item, index) => (
+                            <div key={index} className="bg-white p-[20px] rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+                                <div className="flex justify-between mb-[15px]">
+                                    <span className="text-[#64748b] text-[0.9rem] font-medium">{item.label}</span>
+                                    <span className={`p-[8px] rounded-[8px] text-[1.2rem] w-[40px] h-[40px] flex items-center justify-center font-bold ${item.iconBg}`}>{item.icon}</span>
                                 </div>
-                                <div className="h-2 bg-slate-100 rounded mt-3"><div className="h-2 bg-green-500 rounded" style={{ width: '0%' }} /></div>
+                                <div className="text-[1.5rem] font-bold mb-[5px]">{item.value}</div>
+                                <div className={`text-[0.8rem] ${item.subClass}`}>{item.trend || item.sub}</div>
                             </div>
-                            <div className="bg-white p-5 rounded-xl">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm text-slate-500">Total Hemat Ditawarkan</span>
-                                    <span className="text-sky-600 font-bold">{listings.length > 0 ? "125K" : "0K"}</span>
-                                </div>
-                                <p className="text-sm">Membantu pembeli hemat lebih banyak</p>
-                            </div>
-                            <div className="bg-white p-5 rounded-xl">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm text-slate-500">Impact Score</span>
-                                    <span className="text-violet-600 font-bold">{listings.length > 0 ? "5" : "0"}</span>
-                                </div>
-                                <p className="text-sm">Kontribusi pengurangan food waste</p>
-                            </div>
-                        </section>
+                        ))}
+                    </section>
 
-                        {/* Status Row */}
-                        <div className="flex gap-4 mb-6">
-                            <div className="flex-1 bg-emerald-50 border border-emerald-100 rounded-lg p-3">✅ Tersedia: <strong>{listings.filter(i => i.status === "Tersedia").length}</strong></div>
-                            <div className="flex-1 bg-red-50 border border-red-100 rounded-lg p-3">❌ Expired: <strong>0</strong></div>
-                            <div className="flex-1 bg-sky-50 border border-sky-100 rounded-lg p-3">📦 Total Listings: <strong>{listings.length}</strong></div>
+                    <section className="grid grid-cols-1 lg:grid-cols-3 gap-[20px] mb-[20px]">
+                        <div className="bg-white p-[20px] rounded-[12px]">
+                            <div className="flex justify-between items-center mb-[15px]">
+                                <span className="inline-block text-[#64748b] text-[0.85rem] m-0">Conversion Rate</span>
+                                <span className="text-[1.2rem] font-bold text-[#16a34a]">{conversionRate}%</span>
+                            </div>
+                            <div className="h-[8px] bg-[#f1f5f9] rounded-[4px] mt-[10px]">
+                                <div className="h-full rounded-[4px] bg-[#16a34a]"
+                                    style={{ width: `${Math.min(100, conversionRate)}%` }}></div>
+                            </div>
+                        </div>
+                        <div className="bg-white p-[20px] rounded-[12px]">
+                            <div className="flex justify-between items-center mb-[15px]">
+                                <span className="inline-block text-[#64748b] text-[0.85rem] m-0">Total Hemat Ditawarkan</span>
+                                <span className="text-[1.2rem] font-bold text-[#2563eb]">Rp {fmt(dashboard?.total_discount)}</span>
+                            </div>
+                            <p className="text-[0.8rem] m-0 font-medium">Membantu pembeli hemat lebih banyak</p>
+                        </div>
+                        <div className="bg-white p-[20px] rounded-[12px]">
+                            <div className="flex justify-between items-center mb-[15px]">
+                                <span className="inline-block text-[#64748b] text-[0.85rem] m-0">Impact Score</span>
+                                <span className="text-[1.2rem] font-bold text-[#9333ea]">{impactScore} </span>
+                            </div>
+                            <p className="text-[0.8rem] m-0 font-medium">Kontribusi pengurangan food waste</p>
+                        </div>
+                    </section>
+
+                    <div className="flex flex-col lg:flex-row gap-[15px] mb-[30px]">
+                        <div className="flex-1 p-[12px] rounded-[8px] text-[0.9rem] bg-[#f0fdf4] border border-[#dcfce7]">
+                            ✅ Tersedia (Belum Expired): <strong>{dashboard?.available_menu ?? 0}</strong>
+                        </div>
+                        <div className="flex-1 p-[12px] rounded-[8px] text-[0.9rem] bg-[#fef2f2] border border-[#fee2e2]">
+                            ❌ Expired: <strong>{dashboard?.expired_menu ?? 0}</strong>
+                        </div>
+                        <div className="flex-1 p-[12px] rounded-[8px] text-[0.9rem] bg-[#eff6ff] border border-[#dbeafe]">
+                            📦 Total Jenis Makanan: <strong>{listings.length}</strong>
+                        </div>
+                    </div>
+
+                    <section className="relative w-full">
+                        <div className="pr-[180px] mb-[30px] relative">
+                            <div>
+                                <h2 className="text-[28px] font-bold text-[#1e293b] m-0 mb-[6px]">Kelola Listings</h2>
+                                <p className="text-[15px] text-[#64748b] m-0">Daftar semua makanan yang Anda tawarkan</p>
+                            </div>
+                            <button className="absolute top-[8px] right-0 bg-[#16a34a] hover:bg-[#15803d] text-white border-none py-[12px] px-[24px] rounded-[8px] font-semibold text-[14px] cursor-pointer transition-colors duration-200"
+                                onClick={handleAddNewClick}>
+                                + Tambah Listing
+                            </button>
                         </div>
 
-                        {/* Listings Section */}
-                        <section>
-                            <div className="relative mb-4">
-                                <div>
-                                    <h2 className="text-2xl font-bold">Kelola Listings</h2>
-                                    <p className="text-sm text-slate-500">Daftar semua makanan yang Anda tawarkan</p>
-                                </div>
-                                <button onClick={handleAddNewClick} className="absolute right-0 top-0 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold">+ Tambah Listing</button>
+                        {loading ? (
+                            <div className="text-center py-10 text-slate-400">Memuat data...</div>
+                        ) : listings.length === 0 ? (
+                            <div className="text-center p-[60px] border-2 border-dashed border-[#e2e8f0] rounded-[12px]">
+                                <div className="text-[3rem] mb-[20px] opacity-50">🏪</div>
+                                <h3 className="font-bold text-lg mb-1">Belum Ada Listing</h3>
+                                <p className="text-sm text-slate-500">Mulai tambahkan makanan surplus untuk dijual dengan harga diskon</p>
+                                <button className="mt-[20px] bg-[#16a34a] hover:bg-[#15803d] text-white border-none py-[12px] px-[24px] rounded-[8px] font-semibold text-[14px] cursor-pointer transition-colors duration-200"
+                                    onClick={handleAddNewClick}>
+                                    + Tambah Listing
+                                </button>
                             </div>
-
-                            {listings.length === 0 ? (
-                                <div className="text-center border-2 border-dashed border-gray-200 rounded-xl p-12">
-                                    <div className="text-4xl opacity-60 mb-4">🏪</div>
-                                    <h3 className="text-lg font-bold mb-2">Belum Ada Listing</h3>
-                                    <p className="text-slate-500 mb-4">Mulai tambahkan makanan surplus untuk dijual dengan harga diskon</p>
-                                    <button onClick={handleAddNewClick} className="bg-emerald-600 text-white px-4 py-2 rounded-lg">+ Tambah Listing</button>
-                                </div>
-                            ) : (
-                                <div className="bg-white rounded-xl shadow overflow-hidden border border-gray-100 mt-4">
-                                    <table className="w-full text-left text-sm">
-                                        <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
-                                            <tr>
-                                                <th className="px-6 py-3">MAKANAN</th>
-                                                <th className="px-6 py-3">HARGA</th>
-                                                <th className="px-6 py-3">STOK</th>
-                                                <th className="px-6 py-3">STATUS</th>
-                                                <th className="px-6 py-3">PICKUP</th>
-                                                <th className="px-6 py-3 text-center">AKSI</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {listings.map((item) => (
-                                                <tr key={item.id} className="border-t border-gray-100">
-                                                    <td className="px-6 py-4 flex items-center gap-4">
-                                                        <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
-                                                            <img src={item.foto} alt={item.nama} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=150"; }} />
-                                                        </div>
-                                                        <div>
-                                                            <div className="font-semibold text-slate-900">{item.nama}</div>
-                                                            <div className="text-xs text-slate-500">{item.deskripsi}</div>
-                                                        </div>
-                                                    </td>
-
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex flex-col">
-                                                            <span className="font-semibold">Rp {item.hargaDiskon}</span>
-                                                            <span className="text-xs text-slate-400 line-through">Rp {item.hargaNormal}</span>
-                                                        </div>
-                                                    </td>
-
-                                                    <td className="px-6 py-4">{item.stok}</td>
-
-                                                    <td className="px-6 py-4">
-                                                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-sm font-medium">🟢 {item.status}</span>
-                                                    </td>
-
-                                                    <td className="px-6 py-4">{item.pickup}</td>
-
-                                                    <td className="px-6 py-4 text-center">
-                                                        <div className="inline-flex items-center justify-center gap-2">
-                                                            <button className="p-2 rounded-md hover:bg-slate-50" onClick={() => handleEditClick(item)}>📝</button>
-                                                            <button className="p-2 rounded-md hover:bg-red-50 text-red-500" onClick={() => handleDeleteListing(item.id)}>❌</button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                        ) : (
+                            <div className="w-full bg-white rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden border border-[#f1f5f9] mt-[24px]">
+                                <table className="w-full border-collapse text-left text-[14px]">
+                                    <thead>
+                                        <tr>
+                                            {['MAKANAN', 'HARGA', 'STOK', 'STATUS', 'PICKUP', 'AKSI'].map(h => (
+                                                <th key={h} className="bg-[#f8fafc] text-[#64748b] font-semibold text-[12px] py-[16px] px-[24px] uppercase tracking-[0.5px] border-b border-[#f1f5f9]">{h}</th>
                                             ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
-                        </section>
-
-                        {/* Platform Status Footer Section */}
-                        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl mt-6">
-                            <div className="text-center">
-                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Platform Status</div>
-                                <div className="font-bold">All Systems Operational</div>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {listings.map((item) => (
+                                            <tr key={item.id} className="hover:bg-slate-50/80">
+                                                <td className="py-[16px] px-[24px] border-b border-[#f1f5f9] align-middle">
+                                                    <div className="flex items-center gap-[16px]">
+                                                        <img
+                                                            src={item.foto}
+                                                            alt={item.nama}
+                                                            className="w-[48px] h-[48px] rounded-[8px] object-cover bg-[#f1f5f9] shrink-0"
+                                                            onError={e => { e.target.src = FALLBACK_IMG; }}
+                                                        />
+                                                        <div>
+                                                            <div className="font-semibold text-[#0f172a] text-[15px]">{item.nama}</div>
+                                                            <div className="text-[12px] text-[#64748b]">{item.deskripsi}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="py-[16px] px-[24px] border-b border-[#f1f5f9] align-middle">
+                                                    <div className="font-semibold text-[14px]">Rp {fmt(item.hargaDiskon)}</div>
+                                                    <div className="text-[12px] text-[#94a3b8] line-through">Rp {fmt(item.hargaNormal)}</div>
+                                                </td>
+                                                <td className="py-[16px] px-[24px] border-b border-[#f1f5f9] align-middle">{item.stok}</td>
+                                                <td className="py-[16px] px-[24px] border-b border-[#f1f5f9] align-middle">
+                                                    <span className={`py-[6px] px-[12px] rounded-[20px] text-[12px] font-medium ${item.status === 'available' || item.status === 'active' ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-[#fee2e2] text-[#dc2626]'}`}>
+                                                        {item.status === 'available' || item.status === 'active' ? '🟢 Tersedia' : `🔴 ${item.status}`}
+                                                    </span>
+                                                </td>
+                                                <td className="py-[16px] px-[24px] border-b border-[#f1f5f9] align-middle text-[13px]">{fmtPickup(item.pickup_start_time, item.pickup_end_time)}</td>
+                                                <td className="text-center align-middle py-[10px] px-[24px] border-b border-[#f1f5f9]">
+                                                    <div className="inline-flex gap-[12px]">
+                                                        <button className="bg-transparent border-none cursor-pointer text-[16px] p-[6px] rounded-[6px] hover:bg-[#f1f5f9]" onClick={() => handleEditClick(item)}>📝</button>
+                                                        <button className="bg-transparent border-none cursor-pointer text-[16px] p-[6px] rounded-[6px] hover:bg-[#fee2e2]" onClick={() => handleDeleteListing(item.id)}>❌</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
-                            <div className="text-center">
-                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Partners</div>
-                                <div className="font-bold">2,450+ Restoran</div>
-                            </div>
-                            <div className="text-center">
-                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Food Saved</div>
-                                <div className="font-bold">45,000+ Porsi</div>
-                            </div>
-                        </section>
-                    </main>
-                );
+                        )}
+                    </section>
+                </main>
+            );
         }
     };
 
     return (
-        <div className="business-container">
-            <NavbarMerchant activePage={activePage} setActivePage={setActivePage} notifCount={notifCount} />
-
+        <div className="bg-[#f8fafc] min-h-screen">
+            <NavbarMerchant
+                activePage={activePage}
+                setActivePage={setActivePage}
+                notifCount={notifCount}
+                profileData={profileData}
+            />
             {renderContent()}
-
             <Footer />
-
-            <AddListingModal 
-                isOpen={isModalOpen} 
-                onClose={handleCloseModal} 
+            <AddListingModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
                 editingListing={editingListing}
                 onAddListing={handleSaveListing}
             />

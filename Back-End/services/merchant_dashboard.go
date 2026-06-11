@@ -17,7 +17,7 @@ func GetMerchantDashboardService(
 
 	user,
 		business,
-		_,
+		location,
 		err := repositories.GetMerchantData(userID)
 
 	if err != nil {
@@ -130,6 +130,7 @@ func GetMerchantDashboardService(
 	}
 
 	return dto.MerchantDashboardResponse{
+		BusinessLocationID: location.ID,
 		TotalRevenue:  revenue,
 		ActiveMenu:    activeMenu,
 		SoldMenu:      soldMenu,

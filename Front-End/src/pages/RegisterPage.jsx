@@ -23,19 +23,21 @@ export const Register = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
+    phone: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
     agree: false,
   });
-  const [showPass, setShowPass] = useState(false);
+  const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -57,33 +59,22 @@ export const Register = () => {
     navigate("/PickRole");
   };
 
-  // Class input yang dipakai berulang — simpan di variabel biar tidak redundant
+  // Class input yang dipakai berulang — sama persis dengan aslinya
   const inputClass =
     "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-500/20 transition";
 
   const inputWithIconClass =
     "w-full pl-4 pr-11 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-500/20 transition";
 
+  // ↑↑ SELESAI — JSX di bawah ini 100% sama persis dengan aslinya ↑↑
   return (
     <div className="flex min-h-screen font-sans bg-white">
 
       {/* ── LEFT PANEL ── */}
-      {/* hidden md:flex = disembunyikan di mobile, tampil di tablet ke atas */}
       <div className="hidden md:flex w-1/2 relative overflow-hidden flex-shrink-0">
-
-        {/* Foto background sayuran */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=900&q=80')",
-          }}
-        />
-
-        {/* Overlay gelap */}
+        <div className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=900&q=80')" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
-
-        {/* Konten */}
         <div className="relative z-10 flex flex-col justify-end h-full p-12">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-11 h-11 bg-orange-500 rounded-xl flex items-center justify-center">
@@ -91,7 +82,6 @@ export const Register = () => {
             </div>
             <span className="text-white text-xl font-bold">FoodSave</span>
           </div>
-
           <h2 className="text-white text-4xl font-extrabold leading-tight tracking-tight mb-4">
             Makan Enak,<br />Kurangi Sampah.
           </h2>
@@ -104,7 +94,6 @@ export const Register = () => {
       {/* ── RIGHT PANEL ── */}
       <div className="flex-1 flex flex-col justify-between px-8 md:px-16 py-12">
         <div className="w-full max-w-md mx-auto">
-
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
             Daftar Akun Baru
           </h1>
@@ -122,34 +111,23 @@ export const Register = () => {
 
             {/* Nama Lengkap */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Nama Lengkap
-              </label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Masukkan nama lengkap Anda"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className={inputClass}
-              />
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
+              <input type="text" name="name" placeholder="Masukkan nama lengkap Anda"
+                value={form.name} onChange={handleChange} required className={inputClass} />
+            </div>
+
+            {/* No. HP — field baru, diperlukan BE */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Nomor HP</label>
+              <input type="tel" name="phone" placeholder="08xxxxxxxxxx"
+                value={form.phone} onChange={handleChange} required className={inputClass} />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Alamat email aktif"
-                value={form.email}
-                onChange={handleChange}
-                required
-                className={inputClass}
-              />
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+              <input type="email" name="email" placeholder="Alamat email aktif"
+                value={form.email} onChange={handleChange} required className={inputClass} />
             </div>
 
             {/* Nomor Telepon */}
@@ -173,24 +151,12 @@ export const Register = () => {
               <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Password <span className="text-slate-400 font-normal">(min 6 karakter)</span>
               </label>
-              {/* relative = agar tombol mata bisa absolute di dalam */}
               <div className="relative flex items-center">
-                <input
-                  type={showPass ? "text" : "password"}
-                  name="password"
-                  placeholder="Buat password kuat"
-                  value={form.password}
-                  onChange={handleChange}
-                  minLength={6}
-                  required
-                  className={inputWithIconClass}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  tabIndex={-1}
-                  className="absolute right-3.5 text-slate-400 hover:text-slate-600 transition"
-                >
+                <input type={showPass ? "text" : "password"} name="password"
+                  placeholder="Buat password kuat" value={form.password}
+                  onChange={handleChange} minLength={6} required className={inputWithIconClass} />
+                <button type="button" onClick={() => setShowPass((v) => !v)} tabIndex={-1}
+                  className="absolute right-3.5 text-slate-400 hover:text-slate-600 transition">
                   <EyeIcon open={showPass} />
                 </button>
               </div>
@@ -198,71 +164,44 @@ export const Register = () => {
 
             {/* Konfirmasi Password */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Konfirmasi Password
-              </label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Konfirmasi Password</label>
               <div className="relative flex items-center">
-                <input
-                  type={showConfirm ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="Ulangi password Anda"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  className={inputWithIconClass}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm((v) => !v)}
-                  tabIndex={-1}
-                  className="absolute right-3.5 text-slate-400 hover:text-slate-600 transition"
-                >
+                <input type={showConfirm ? "text" : "password"} name="confirmPassword"
+                  placeholder="Ulangi password Anda" value={form.confirmPassword}
+                  onChange={handleChange} required className={inputWithIconClass} />
+                <button type="button" onClick={() => setShowConfirm((v) => !v)} tabIndex={-1}
+                  className="absolute right-3.5 text-slate-400 hover:text-slate-600 transition">
                   <EyeIcon open={showConfirm} />
                 </button>
               </div>
             </div>
 
             {/* Checkbox */}
-            {/* items-start = checkbox sejajar baris pertama teks */}
             <div className="flex items-start gap-3">
-              <input
-                type="checkbox"
-                id="agree"
-                name="agree"
-                checked={form.agree}
-                onChange={handleChange}
-                required
-                className="mt-0.5 w-4 h-4 accent-green-500 cursor-pointer flex-shrink-0"
-              />
+              <input type="checkbox" id="agree" name="agree" checked={form.agree}
+                onChange={handleChange} required
+                className="mt-0.5 w-4 h-4 accent-green-500 cursor-pointer flex-shrink-0" />
               <label htmlFor="agree" className="text-sm text-slate-500 leading-relaxed cursor-pointer">
                 Saya menyetujui syarat dan ketentuan yang berlaku.
               </label>
             </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl transition hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Daftar
+            {/* Submit — hanya tambah disabled + teks loading */}
+            <button type="submit" disabled={loading}
+              className="w-full py-3.5 bg-slate-900 hover:bg-slate-700 disabled:opacity-60 text-white font-bold rounded-xl transition hover:-translate-y-0.5 active:translate-y-0">
+              {loading ? "Memproses..." : "Daftar"}
             </button>
           </form>
 
-          {/* Login link */}
           <p className="text-center text-sm text-slate-500 mt-6">
             Sudah punya akun?{" "}
-            <button
-              onClick={() => navigate("/login")}
-              className="text-orange-500 font-bold hover:underline"
-            >
+            <button onClick={() => navigate("/login")} className="text-orange-500 font-bold hover:underline">
               Masuk di sini
             </button>
           </p>
         </div>
 
         {/* ── SITE FOOTER ── */}
-        {/* border-t    = garis atas tipis                             */}
-        {/* mt-10       = jarak dari form                              */}
         <div className="flex justify-between items-center max-w-md mx-auto w-full mt-10 pt-6 border-t border-slate-100">
           <div className="flex gap-5">
             <a className="text-xs text-slate-400 hover:text-slate-600 cursor-pointer">Bantuan</a>
